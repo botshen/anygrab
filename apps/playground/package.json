@@ -10,6 +10,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run --root ../.. apps/playground",
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {

@@ -1,0 +1,1128 @@
+{
+  "benchmarkVersion": "0.1.0",
+  "generatedAt": "2026-11-12T09:29:01.339Z",
+  "fixtureCount": 10,
+  "methods": [
+    {
+      "methodId": "raw-html",
+      "methodName": "Raw HTML + CSS",
+      "description": "Unfiltered source HTML, <style> blocks, scripts, SVG paths, and wrapper soup.",
+      "totalTokens": 31298,
+      "avgTokens": 3130,
+      "compressionPct": 0,
+      "avgDurationMs": 0.01,
+      "avgFidelity": 86.2,
+      "avgTextScore": 96,
+      "avgStyleScore": 62.4,
+      "avgTableScore": 93.2,
+      "avgControlScore": 100
+    },
+    {
+      "methodId": "naive-style-picker",
+      "methodName": "Naive Style Picker",
+      "description": "Typical browser DevTools/extension export dumping outerHTML + un-deduplicated computed styles.",
+      "totalTokens": 119176,
+      "avgTokens": 11918,
+      "compressionPct": -280.8,
+      "avgDurationMs": 0.95,
+      "avgFidelity": 84,
+      "avgTextScore": 96.8,
+      "avgStyleScore": 53.3,
+      "avgTableScore": 94.8,
+      "avgControlScore": 100
+    },
+    {
+      "methodId": "turndown-gfm",
+      "methodName": "Turndown (GFM)",
+      "description": "Plain-text GitHub-Flavored Markdown conversion (0% visual layout/style, fragile on merged tables).",
+      "totalTokens": 2360,
+      "avgTokens": 236,
+      "compressionPct": 92.5,
+      "avgDurationMs": 1.92,
+      "avgFidelity": 51.6,
+      "avgTextScore": 94.1,
+      "avgStyleScore": 0,
+      "avgTableScore": 91.6,
+      "avgControlScore": 25.3
+    },
+    {
+      "methodId": "anygrab-default",
+      "methodName": "AnyGrab (Default)",
+      "description": "Lossless CSS-to-Tailwind distillation, SVG compaction, noise pruning & 100% merged table fidelity.",
+      "totalTokens": 12697,
+      "avgTokens": 1270,
+      "compressionPct": 59.4,
+      "avgDurationMs": 4.92,
+      "avgFidelity": 99.6,
+      "avgTextScore": 100,
+      "avgStyleScore": 98.6,
+      "avgTableScore": 100,
+      "avgControlScore": 100
+    },
+    {
+      "methodId": "anygrab-budget-600",
+      "methodName": "AnyGrab (--budget 600)",
+      "description": "AST saliency-guided sibling folding constrained to a strict ~600-token context budget.",
+      "totalTokens": 4694,
+      "avgTokens": 469,
+      "compressionPct": 85,
+      "avgDurationMs": 4.63,
+      "avgFidelity": 83.4,
+      "avgTextScore": 63.5,
+      "avgStyleScore": 94.6,
+      "avgTableScore": 92.6,
+      "avgControlScore": 87.4
+    }
+  ],
+  "fixtures": [
+    {
+      "fixtureId": "saas-pricing",
+      "index": 1,
+      "name": "SaaS 3-Tier Gradient Pricing",
+      "category": "SaaS Marketing",
+      "tags": [
+        "CSS-in-JS",
+        "13x Giant SVGs",
+        "3-Col Grid",
+        "Popular Badge"
+      ],
+      "rawTokens": 7828,
+      "results": {
+        "raw-html": {
+          "methodId": "raw-html",
+          "methodName": "Raw HTML + CSS",
+          "fixtureId": "saas-pricing",
+          "fixtureName": "SaaS 3-Tier Gradient Pricing",
+          "category": "SaaS Marketing",
+          "chars": 31310,
+          "tokens": 7828,
+          "compressionPct": 0,
+          "durationMs": 0.01,
+          "fidelity": {
+            "overall": 72.8,
+            "textScore": 88,
+            "styleScore": 36,
+            "tableScore": 78,
+            "controlScore": 100
+          }
+        },
+        "naive-style-picker": {
+          "methodId": "naive-style-picker",
+          "methodName": "Naive Style Picker",
+          "fixtureId": "saas-pricing",
+          "fixtureName": "SaaS 3-Tier Gradient Pricing",
+          "category": "SaaS Marketing",
+          "chars": 109586,
+          "tokens": 27397,
+          "compressionPct": -250,
+          "durationMs": 2.7,
+          "fidelity": {
+            "overall": 75.6,
+            "textScore": 92,
+            "styleScore": 36,
+            "tableScore": 86,
+            "controlScore": 100
+          }
+        },
+        "turndown-gfm": {
+          "methodId": "turndown-gfm",
+          "methodName": "Turndown (GFM)",
+          "fixtureId": "saas-pricing",
+          "fixtureName": "SaaS 3-Tier Gradient Pricing",
+          "category": "SaaS Marketing",
+          "chars": 948,
+          "tokens": 237,
+          "compressionPct": 97,
+          "durationMs": 4.18,
+          "fidelity": {
+            "overall": 53.8,
+            "textScore": 96,
+            "styleScore": 0,
+            "tableScore": 100,
+            "controlScore": 25
+          }
+        },
+        "anygrab-default": {
+          "methodId": "anygrab-default",
+          "methodName": "AnyGrab (Default)",
+          "fixtureId": "saas-pricing",
+          "fixtureName": "SaaS 3-Tier Gradient Pricing",
+          "category": "SaaS Marketing",
+          "chars": 7138,
+          "tokens": 1785,
+          "compressionPct": 77.2,
+          "durationMs": 11.32,
+          "fidelity": {
+            "overall": 100,
+            "textScore": 100,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "anygrab-budget-600": {
+          "methodId": "anygrab-budget-600",
+          "methodName": "AnyGrab (--budget 600)",
+          "fixtureId": "saas-pricing",
+          "fixtureName": "SaaS 3-Tier Gradient Pricing",
+          "category": "SaaS Marketing",
+          "chars": 938,
+          "tokens": 235,
+          "compressionPct": 97,
+          "durationMs": 10.92,
+          "fidelity": {
+            "overall": 59.8,
+            "textScore": 11.1,
+            "styleScore": 75,
+            "tableScore": 100,
+            "controlScore": 70
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "financial-report-table",
+      "index": 2,
+      "name": "Merged-Header Financial Statement",
+      "category": "Enterprise Finance",
+      "tags": [
+        "rowspan + colspan",
+        "Multi-Axis Header",
+        "Status Pills",
+        "tfoot"
+      ],
+      "rawTokens": 2645,
+      "results": {
+        "raw-html": {
+          "methodId": "raw-html",
+          "methodName": "Raw HTML + CSS",
+          "fixtureId": "financial-report-table",
+          "fixtureName": "Merged-Header Financial Statement",
+          "category": "Enterprise Finance",
+          "chars": 10579,
+          "tokens": 2645,
+          "compressionPct": 0,
+          "durationMs": 0.01,
+          "fidelity": {
+            "overall": 81.3,
+            "textScore": 96,
+            "styleScore": 47,
+            "tableScore": 92,
+            "controlScore": 100
+          }
+        },
+        "naive-style-picker": {
+          "methodId": "naive-style-picker",
+          "methodName": "Naive Style Picker",
+          "fixtureId": "financial-report-table",
+          "fixtureName": "Merged-Header Financial Statement",
+          "category": "Enterprise Finance",
+          "chars": 39144,
+          "tokens": 9786,
+          "compressionPct": -270,
+          "durationMs": 1.02,
+          "fidelity": {
+            "overall": 87.7,
+            "textScore": 100,
+            "styleScore": 59,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "turndown-gfm": {
+          "methodId": "turndown-gfm",
+          "methodName": "Turndown (GFM)",
+          "fixtureId": "financial-report-table",
+          "fixtureName": "Merged-Header Financial Statement",
+          "category": "Enterprise Finance",
+          "chars": 737,
+          "tokens": 185,
+          "compressionPct": 93,
+          "durationMs": 1.96,
+          "fidelity": {
+            "overall": 49,
+            "textScore": 100,
+            "styleScore": 0,
+            "tableScore": 70,
+            "controlScore": 25
+          }
+        },
+        "anygrab-default": {
+          "methodId": "anygrab-default",
+          "methodName": "AnyGrab (Default)",
+          "fixtureId": "financial-report-table",
+          "fixtureName": "Merged-Header Financial Statement",
+          "category": "Enterprise Finance",
+          "chars": 6169,
+          "tokens": 1543,
+          "compressionPct": 41.7,
+          "durationMs": 5.7,
+          "fidelity": {
+            "overall": 100,
+            "textScore": 100,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "anygrab-budget-600": {
+          "methodId": "anygrab-budget-600",
+          "methodName": "AnyGrab (--budget 600)",
+          "fixtureId": "financial-report-table",
+          "fixtureName": "Merged-Header Financial Statement",
+          "category": "Enterprise Finance",
+          "chars": 1931,
+          "tokens": 483,
+          "compressionPct": 81.7,
+          "durationMs": 6.17,
+          "fidelity": {
+            "overall": 71.8,
+            "textScore": 25,
+            "styleScore": 100,
+            "tableScore": 71.7,
+            "controlScore": 100
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "bento-analytics-dashboard",
+      "index": 3,
+      "name": "Bento KPI Dashboard (20x Div Soup)",
+      "category": "Analytics UI",
+      "tags": [
+        "20-Layer Div Soup",
+        "4x KPI Grid",
+        "SVG Chart",
+        "Select + Button"
+      ],
+      "rawTokens": 2351,
+      "results": {
+        "raw-html": {
+          "methodId": "raw-html",
+          "methodName": "Raw HTML + CSS",
+          "fixtureId": "bento-analytics-dashboard",
+          "fixtureName": "Bento KPI Dashboard (20x Div Soup)",
+          "category": "Analytics UI",
+          "chars": 9402,
+          "tokens": 2351,
+          "compressionPct": 0,
+          "durationMs": 0.01,
+          "fidelity": {
+            "overall": 81.4,
+            "textScore": 100,
+            "styleScore": 46,
+            "tableScore": 88,
+            "controlScore": 100
+          }
+        },
+        "naive-style-picker": {
+          "methodId": "naive-style-picker",
+          "methodName": "Naive Style Picker",
+          "fixtureId": "bento-analytics-dashboard",
+          "fixtureName": "Bento KPI Dashboard (20x Div Soup)",
+          "category": "Analytics UI",
+          "chars": 33588,
+          "tokens": 8397,
+          "compressionPct": -257.2,
+          "durationMs": 0.66,
+          "fidelity": {
+            "overall": 80.2,
+            "textScore": 100,
+            "styleScore": 42,
+            "tableScore": 88,
+            "controlScore": 100
+          }
+        },
+        "turndown-gfm": {
+          "methodId": "turndown-gfm",
+          "methodName": "Turndown (GFM)",
+          "fixtureId": "bento-analytics-dashboard",
+          "fixtureName": "Bento KPI Dashboard (20x Div Soup)",
+          "category": "Analytics UI",
+          "chars": 374,
+          "tokens": 94,
+          "compressionPct": 96,
+          "durationMs": 2.02,
+          "fidelity": {
+            "overall": 52.5,
+            "textScore": 100,
+            "styleScore": 0,
+            "tableScore": 100,
+            "controlScore": 12.5
+          }
+        },
+        "anygrab-default": {
+          "methodId": "anygrab-default",
+          "methodName": "AnyGrab (Default)",
+          "fixtureId": "bento-analytics-dashboard",
+          "fixtureName": "Bento KPI Dashboard (20x Div Soup)",
+          "category": "Analytics UI",
+          "chars": 3176,
+          "tokens": 794,
+          "compressionPct": 66.2,
+          "durationMs": 4.3,
+          "fidelity": {
+            "overall": 100,
+            "textScore": 100,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "anygrab-budget-600": {
+          "methodId": "anygrab-budget-600",
+          "methodName": "AnyGrab (--budget 600)",
+          "fixtureId": "bento-analytics-dashboard",
+          "fixtureName": "Bento KPI Dashboard (20x Div Soup)",
+          "category": "Analytics UI",
+          "chars": 2390,
+          "tokens": 598,
+          "compressionPct": 74.6,
+          "durationMs": 3.65,
+          "fidelity": {
+            "overall": 92.5,
+            "textScore": 75,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "oauth-auth-modal",
+      "index": 4,
+      "name": "OAuth & Credentials Auth Modal",
+      "category": "Auth & Forms",
+      "tags": [
+        "ARIA Dialog",
+        "OAuth Buttons",
+        "Form Inputs",
+        "Hidden Honeypot"
+      ],
+      "rawTokens": 1690,
+      "results": {
+        "raw-html": {
+          "methodId": "raw-html",
+          "methodName": "Raw HTML + CSS",
+          "fixtureId": "oauth-auth-modal",
+          "fixtureName": "OAuth & Credentials Auth Modal",
+          "category": "Auth & Forms",
+          "chars": 6760,
+          "tokens": 1690,
+          "compressionPct": 0,
+          "durationMs": 0.01,
+          "fidelity": {
+            "overall": 91.3,
+            "textScore": 96,
+            "styleScore": 75,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "naive-style-picker": {
+          "methodId": "naive-style-picker",
+          "methodName": "Naive Style Picker",
+          "fixtureId": "oauth-auth-modal",
+          "fixtureName": "OAuth & Credentials Auth Modal",
+          "category": "Auth & Forms",
+          "chars": 23777,
+          "tokens": 5945,
+          "compressionPct": -251.8,
+          "durationMs": 1.63,
+          "fidelity": {
+            "overall": 84.7,
+            "textScore": 96,
+            "styleScore": 53,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "turndown-gfm": {
+          "methodId": "turndown-gfm",
+          "methodName": "Turndown (GFM)",
+          "fixtureId": "oauth-auth-modal",
+          "fixtureName": "OAuth & Credentials Auth Modal",
+          "category": "Auth & Forms",
+          "chars": 302,
+          "tokens": 76,
+          "compressionPct": 95.5,
+          "durationMs": 1.76,
+          "fidelity": {
+            "overall": 53,
+            "textScore": 100,
+            "styleScore": 0,
+            "tableScore": 100,
+            "controlScore": 15
+          }
+        },
+        "anygrab-default": {
+          "methodId": "anygrab-default",
+          "methodName": "AnyGrab (Default)",
+          "fixtureId": "oauth-auth-modal",
+          "fixtureName": "OAuth & Credentials Auth Modal",
+          "category": "Auth & Forms",
+          "chars": 2939,
+          "tokens": 735,
+          "compressionPct": 56.5,
+          "durationMs": 3.78,
+          "fidelity": {
+            "overall": 100,
+            "textScore": 100,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "anygrab-budget-600": {
+          "methodId": "anygrab-budget-600",
+          "methodName": "AnyGrab (--budget 600)",
+          "fixtureId": "oauth-auth-modal",
+          "fixtureName": "OAuth & Credentials Auth Modal",
+          "category": "Auth & Forms",
+          "chars": 1021,
+          "tokens": 256,
+          "compressionPct": 84.9,
+          "durationMs": 2.47,
+          "fidelity": {
+            "overall": 71.4,
+            "textScore": 28.6,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 64
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "api-docs-page",
+      "index": 5,
+      "name": "API Reference Docs + TS Code",
+      "category": "Developer Docs",
+      "tags": [
+        "Nav/Sidebar Noise",
+        "TS <pre><code>",
+        "Schema Table",
+        "docs-mdx"
+      ],
+      "rawTokens": 1441,
+      "results": {
+        "raw-html": {
+          "methodId": "raw-html",
+          "methodName": "Raw HTML + CSS",
+          "fixtureId": "api-docs-page",
+          "fixtureName": "API Reference Docs + TS Code",
+          "category": "Developer Docs",
+          "chars": 5764,
+          "tokens": 1441,
+          "compressionPct": 0,
+          "durationMs": 0.01,
+          "fidelity": {
+            "overall": 91.6,
+            "textScore": 88,
+            "styleScore": 88,
+            "tableScore": 94,
+            "controlScore": 100
+          }
+        },
+        "naive-style-picker": {
+          "methodId": "naive-style-picker",
+          "methodName": "Naive Style Picker",
+          "fixtureId": "api-docs-page",
+          "fixtureName": "API Reference Docs + TS Code",
+          "category": "Developer Docs",
+          "chars": 38423,
+          "tokens": 9606,
+          "compressionPct": -566.6,
+          "durationMs": 0.57,
+          "fidelity": {
+            "overall": 85,
+            "textScore": 88,
+            "styleScore": 66,
+            "tableScore": 94,
+            "controlScore": 100
+          }
+        },
+        "turndown-gfm": {
+          "methodId": "turndown-gfm",
+          "methodName": "Turndown (GFM)",
+          "fixtureId": "api-docs-page",
+          "fixtureName": "API Reference Docs + TS Code",
+          "category": "Developer Docs",
+          "chars": 2041,
+          "tokens": 511,
+          "compressionPct": 64.5,
+          "durationMs": 1.79,
+          "fidelity": {
+            "overall": 48.2,
+            "textScore": 92,
+            "styleScore": 0,
+            "tableScore": 78,
+            "controlScore": 25
+          }
+        },
+        "anygrab-default": {
+          "methodId": "anygrab-default",
+          "methodName": "AnyGrab (Default)",
+          "fixtureId": "api-docs-page",
+          "fixtureName": "API Reference Docs + TS Code",
+          "category": "Developer Docs",
+          "chars": 3320,
+          "tokens": 830,
+          "compressionPct": 42.4,
+          "durationMs": 2.82,
+          "fidelity": {
+            "overall": 95.7,
+            "textScore": 100,
+            "styleScore": 85.7,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "anygrab-budget-600": {
+          "methodId": "anygrab-budget-600",
+          "methodName": "AnyGrab (--budget 600)",
+          "fixtureId": "api-docs-page",
+          "fixtureName": "API Reference Docs + TS Code",
+          "category": "Developer Docs",
+          "chars": 2360,
+          "tokens": 590,
+          "compressionPct": 59.1,
+          "durationMs": 3.46,
+          "fidelity": {
+            "overall": 92.7,
+            "textScore": 100,
+            "styleScore": 85.7,
+            "tableScore": 85,
+            "controlScore": 100
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "kanban-sprint-board",
+      "index": 6,
+      "name": "Kanban Column (10 Isomorphic Cards)",
+      "category": "Product Workflow",
+      "tags": [
+        "10x Sibling Cards",
+        "Budget Folding Test",
+        "SVG Metadata",
+        "Drag-Drop Attrs"
+      ],
+      "rawTokens": 5778,
+      "results": {
+        "raw-html": {
+          "methodId": "raw-html",
+          "methodName": "Raw HTML + CSS",
+          "fixtureId": "kanban-sprint-board",
+          "fixtureName": "Kanban Column (10 Isomorphic Cards)",
+          "category": "Product Workflow",
+          "chars": 23111,
+          "tokens": 5778,
+          "compressionPct": 0,
+          "durationMs": 0.01,
+          "fidelity": {
+            "overall": 82.9,
+            "textScore": 100,
+            "styleScore": 43,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "naive-style-picker": {
+          "methodId": "naive-style-picker",
+          "methodName": "Naive Style Picker",
+          "fixtureId": "kanban-sprint-board",
+          "fixtureName": "Kanban Column (10 Isomorphic Cards)",
+          "category": "Product Workflow",
+          "chars": 99268,
+          "tokens": 24817,
+          "compressionPct": -329.5,
+          "durationMs": 1.07,
+          "fidelity": {
+            "overall": 81.4,
+            "textScore": 100,
+            "styleScore": 38,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "turndown-gfm": {
+          "methodId": "turndown-gfm",
+          "methodName": "Turndown (GFM)",
+          "fixtureId": "kanban-sprint-board",
+          "fixtureName": "Kanban Column (10 Isomorphic Cards)",
+          "category": "Product Workflow",
+          "chars": 1160,
+          "tokens": 290,
+          "compressionPct": 95,
+          "durationMs": 3.4,
+          "fidelity": {
+            "overall": 55,
+            "textScore": 100,
+            "styleScore": 0,
+            "tableScore": 100,
+            "controlScore": 25
+          }
+        },
+        "anygrab-default": {
+          "methodId": "anygrab-default",
+          "methodName": "AnyGrab (Default)",
+          "fixtureId": "kanban-sprint-board",
+          "fixtureName": "Kanban Column (10 Isomorphic Cards)",
+          "category": "Product Workflow",
+          "chars": 8518,
+          "tokens": 2130,
+          "compressionPct": 63.1,
+          "durationMs": 7.88,
+          "fidelity": {
+            "overall": 100,
+            "textScore": 100,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "anygrab-budget-600": {
+          "methodId": "anygrab-budget-600",
+          "methodName": "AnyGrab (--budget 600)",
+          "fixtureId": "kanban-sprint-board",
+          "fixtureName": "Kanban Column (10 Isomorphic Cards)",
+          "category": "Product Workflow",
+          "chars": 2370,
+          "tokens": 593,
+          "compressionPct": 89.7,
+          "durationMs": 7.13,
+          "fidelity": {
+            "overall": 96.6,
+            "textScore": 88.8,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "dark-ai-hero",
+      "index": 7,
+      "name": "Dark AI Hero + Decorative Blobs",
+      "category": "Landing Hero",
+      "tags": [
+        "8x aria-hidden Blobs",
+        "Dual CTAs",
+        "Decorative SVG Mesh",
+        "CLI Snippet"
+      ],
+      "rawTokens": 1239,
+      "results": {
+        "raw-html": {
+          "methodId": "raw-html",
+          "methodName": "Raw HTML + CSS",
+          "fixtureId": "dark-ai-hero",
+          "fixtureName": "Dark AI Hero + Decorative Blobs",
+          "category": "Landing Hero",
+          "chars": 4953,
+          "tokens": 1239,
+          "compressionPct": 0,
+          "durationMs": 0.01,
+          "fidelity": {
+            "overall": 91.5,
+            "textScore": 100,
+            "styleScore": 77,
+            "tableScore": 92,
+            "controlScore": 100
+          }
+        },
+        "naive-style-picker": {
+          "methodId": "naive-style-picker",
+          "methodName": "Naive Style Picker",
+          "fixtureId": "dark-ai-hero",
+          "fixtureName": "Dark AI Hero + Decorative Blobs",
+          "category": "Landing Hero",
+          "chars": 11555,
+          "tokens": 2889,
+          "compressionPct": -133.2,
+          "durationMs": 0.31,
+          "fidelity": {
+            "overall": 86.1,
+            "textScore": 100,
+            "styleScore": 59,
+            "tableScore": 92,
+            "controlScore": 100
+          }
+        },
+        "turndown-gfm": {
+          "methodId": "turndown-gfm",
+          "methodName": "Turndown (GFM)",
+          "fixtureId": "dark-ai-hero",
+          "fixtureName": "Dark AI Hero + Decorative Blobs",
+          "category": "Landing Hero",
+          "chars": 358,
+          "tokens": 90,
+          "compressionPct": 92.7,
+          "durationMs": 0.76,
+          "fidelity": {
+            "overall": 62.5,
+            "textScore": 100,
+            "styleScore": 0,
+            "tableScore": 100,
+            "controlScore": 62.5
+          }
+        },
+        "anygrab-default": {
+          "methodId": "anygrab-default",
+          "methodName": "AnyGrab (Default)",
+          "fixtureId": "dark-ai-hero",
+          "fixtureName": "Dark AI Hero + Decorative Blobs",
+          "category": "Landing Hero",
+          "chars": 1466,
+          "tokens": 367,
+          "compressionPct": 70.4,
+          "durationMs": 1.07,
+          "fidelity": {
+            "overall": 100,
+            "textScore": 100,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "anygrab-budget-600": {
+          "methodId": "anygrab-budget-600",
+          "methodName": "AnyGrab (--budget 600)",
+          "fixtureId": "dark-ai-hero",
+          "fixtureName": "Dark AI Hero + Decorative Blobs",
+          "category": "Landing Hero",
+          "chars": 1466,
+          "tokens": 367,
+          "compressionPct": 70.4,
+          "durationMs": 1.02,
+          "fidelity": {
+            "overall": 100,
+            "textScore": 100,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "feature-matrix-20",
+      "index": 8,
+      "name": "20-Row Capability Matrix Table",
+      "category": "Comparison Matrix",
+      "tags": [
+        "20x5 Dense Table",
+        "Cell Style Bloat",
+        "Column Highlight"
+      ],
+      "rawTokens": 6173,
+      "results": {
+        "raw-html": {
+          "methodId": "raw-html",
+          "methodName": "Raw HTML + CSS",
+          "fixtureId": "feature-matrix-20",
+          "fixtureName": "20-Row Capability Matrix Table",
+          "category": "Comparison Matrix",
+          "chars": 24689,
+          "tokens": 6173,
+          "compressionPct": 0,
+          "durationMs": 0.01,
+          "fidelity": {
+            "overall": 82.6,
+            "textScore": 100,
+            "styleScore": 42,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "naive-style-picker": {
+          "methodId": "naive-style-picker",
+          "methodName": "Naive Style Picker",
+          "fixtureId": "feature-matrix-20",
+          "fixtureName": "20-Row Capability Matrix Table",
+          "category": "Comparison Matrix",
+          "chars": 77893,
+          "tokens": 19474,
+          "compressionPct": -215.5,
+          "durationMs": 0.7,
+          "fidelity": {
+            "overall": 86.2,
+            "textScore": 100,
+            "styleScore": 54,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "turndown-gfm": {
+          "methodId": "turndown-gfm",
+          "methodName": "Turndown (GFM)",
+          "fixtureId": "feature-matrix-20",
+          "fixtureName": "20-Row Capability Matrix Table",
+          "category": "Comparison Matrix",
+          "chars": 1664,
+          "tokens": 416,
+          "compressionPct": 93.3,
+          "durationMs": 1.53,
+          "fidelity": {
+            "overall": 54.6,
+            "textScore": 100,
+            "styleScore": 0,
+            "tableScore": 98,
+            "controlScore": 25
+          }
+        },
+        "anygrab-default": {
+          "methodId": "anygrab-default",
+          "methodName": "AnyGrab (Default)",
+          "fixtureId": "feature-matrix-20",
+          "fixtureName": "20-Row Capability Matrix Table",
+          "category": "Comparison Matrix",
+          "chars": 9441,
+          "tokens": 2361,
+          "compressionPct": 61.8,
+          "durationMs": 7.64,
+          "fidelity": {
+            "overall": 100,
+            "textScore": 100,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "anygrab-budget-600": {
+          "methodId": "anygrab-budget-600",
+          "methodName": "AnyGrab (--budget 600)",
+          "fixtureId": "feature-matrix-20",
+          "fixtureName": "20-Row Capability Matrix Table",
+          "category": "Comparison Matrix",
+          "chars": 2009,
+          "tokens": 503,
+          "compressionPct": 91.9,
+          "durationMs": 6.34,
+          "fidelity": {
+            "overall": 88.9,
+            "textScore": 68,
+            "styleScore": 100,
+            "tableScore": 92.5,
+            "controlScore": 100
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "multi-section-settings",
+      "index": 9,
+      "name": "Multi-Section Settings Form",
+      "category": "Workspace Admin",
+      "tags": [
+        "3x Form Sections",
+        "ARIA Switches",
+        "Select + Textarea",
+        "<template> Noise"
+      ],
+      "rawTokens": 1173,
+      "results": {
+        "raw-html": {
+          "methodId": "raw-html",
+          "methodName": "Raw HTML + CSS",
+          "fixtureId": "multi-section-settings",
+          "fixtureName": "Multi-Section Settings Form",
+          "category": "Workspace Admin",
+          "chars": 4692,
+          "tokens": 1173,
+          "compressionPct": 0,
+          "durationMs": 0.01,
+          "fidelity": {
+            "overall": 92.2,
+            "textScore": 96,
+            "styleScore": 82,
+            "tableScore": 94,
+            "controlScore": 100
+          }
+        },
+        "naive-style-picker": {
+          "methodId": "naive-style-picker",
+          "methodName": "Naive Style Picker",
+          "fixtureId": "multi-section-settings",
+          "fixtureName": "Multi-Section Settings Form",
+          "category": "Workspace Admin",
+          "chars": 17362,
+          "tokens": 4341,
+          "compressionPct": -270.1,
+          "durationMs": 0.5,
+          "fidelity": {
+            "overall": 85.6,
+            "textScore": 96,
+            "styleScore": 60,
+            "tableScore": 94,
+            "controlScore": 100
+          }
+        },
+        "turndown-gfm": {
+          "methodId": "turndown-gfm",
+          "methodName": "Turndown (GFM)",
+          "fixtureId": "multi-section-settings",
+          "fixtureName": "Multi-Section Settings Form",
+          "category": "Workspace Admin",
+          "chars": 714,
+          "tokens": 179,
+          "compressionPct": 84.7,
+          "durationMs": 0.95,
+          "fidelity": {
+            "overall": 39.7,
+            "textScore": 57.1,
+            "styleScore": 0,
+            "tableScore": 100,
+            "controlScore": 13
+          }
+        },
+        "anygrab-default": {
+          "methodId": "anygrab-default",
+          "methodName": "AnyGrab (Default)",
+          "fixtureId": "multi-section-settings",
+          "fixtureName": "Multi-Section Settings Form",
+          "category": "Workspace Admin",
+          "chars": 3767,
+          "tokens": 942,
+          "compressionPct": 19.7,
+          "durationMs": 2.26,
+          "fidelity": {
+            "overall": 100,
+            "textScore": 100,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "anygrab-budget-600": {
+          "methodId": "anygrab-budget-600",
+          "methodName": "AnyGrab (--budget 600)",
+          "fixtureId": "multi-section-settings",
+          "fixtureName": "Multi-Section Settings Form",
+          "category": "Workspace Admin",
+          "chars": 1893,
+          "tokens": 474,
+          "compressionPct": 59.6,
+          "durationMs": 2.89,
+          "fidelity": {
+            "overall": 75.1,
+            "textScore": 71.4,
+            "styleScore": 85.7,
+            "tableScore": 100,
+            "controlScore": 40
+          }
+        }
+      }
+    },
+    {
+      "fixtureId": "academic-paper-section",
+      "index": 10,
+      "name": "Academic Paper + Theorem & Ablations",
+      "category": "Research & RAG",
+      "tags": [
+        "Theorem Callout",
+        "Multi-Dim Table",
+        "arXiv HTML",
+        "Math Notation"
+      ],
+      "rawTokens": 980,
+      "results": {
+        "raw-html": {
+          "methodId": "raw-html",
+          "methodName": "Raw HTML + CSS",
+          "fixtureId": "academic-paper-section",
+          "fixtureName": "Academic Paper + Theorem & Ablations",
+          "category": "Research & RAG",
+          "chars": 3919,
+          "tokens": 980,
+          "compressionPct": 0,
+          "durationMs": 0.01,
+          "fidelity": {
+            "overall": 94,
+            "textScore": 96,
+            "styleScore": 88,
+            "tableScore": 94,
+            "controlScore": 100
+          }
+        },
+        "naive-style-picker": {
+          "methodId": "naive-style-picker",
+          "methodName": "Naive Style Picker",
+          "fixtureId": "academic-paper-section",
+          "fixtureName": "Academic Paper + Theorem & Ablations",
+          "category": "Research & RAG",
+          "chars": 26095,
+          "tokens": 6524,
+          "compressionPct": -565.7,
+          "durationMs": 0.32,
+          "fidelity": {
+            "overall": 87.4,
+            "textScore": 96,
+            "styleScore": 66,
+            "tableScore": 94,
+            "controlScore": 100
+          }
+        },
+        "turndown-gfm": {
+          "methodId": "turndown-gfm",
+          "methodName": "Turndown (GFM)",
+          "fixtureId": "academic-paper-section",
+          "fixtureName": "Academic Paper + Theorem & Ablations",
+          "category": "Research & RAG",
+          "chars": 1127,
+          "tokens": 282,
+          "compressionPct": 71.2,
+          "durationMs": 0.87,
+          "fidelity": {
+            "overall": 47.8,
+            "textScore": 96,
+            "styleScore": 0,
+            "tableScore": 70,
+            "controlScore": 25
+          }
+        },
+        "anygrab-default": {
+          "methodId": "anygrab-default",
+          "methodName": "AnyGrab (Default)",
+          "fixtureId": "academic-paper-section",
+          "fixtureName": "Academic Paper + Theorem & Ablations",
+          "category": "Research & RAG",
+          "chars": 4840,
+          "tokens": 1210,
+          "compressionPct": -23.5,
+          "durationMs": 2.45,
+          "fidelity": {
+            "overall": 100,
+            "textScore": 100,
+            "styleScore": 100,
+            "tableScore": 100,
+            "controlScore": 100
+          }
+        },
+        "anygrab-budget-600": {
+          "methodId": "anygrab-budget-600",
+          "methodName": "AnyGrab (--budget 600)",
+          "fixtureId": "academic-paper-section",
+          "fixtureName": "Academic Paper + Theorem & Ablations",
+          "category": "Research & RAG",
+          "chars": 2378,
+          "tokens": 595,
+          "compressionPct": 39.3,
+          "durationMs": 2.28,
+          "fidelity": {
+            "overall": 85.4,
+            "textScore": 66.7,
+            "styleScore": 100,
+            "tableScore": 77,
+            "controlScore": 100
+          }
+        }
+      }
+    }
+  ]
+}

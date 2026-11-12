@@ -1,29 +1,47 @@
-import { grab, VERSION } from '@anygrab/core';
-import { Sparkles } from 'lucide-react';
-import { useMemo, useState } from 'react';
-
-const SAMPLE_HTML = `<article class="card"><header><h2>AnyGrab Demo</h2></header><p>Token-budget-aware DOM distillation.</p></article>`;
+import { useState } from 'react';
+import { LeaderboardView } from './components/LeaderboardView';
+import { LivePlayground } from './components/LivePlayground';
+import { NavbarHero } from './components/NavbarHero';
+import { QuickStartView } from './components/QuickStartView';
+import { PLAYGROUND_PRESETS, type ActiveTab } from './data/types';
 
 export function App() {
-  const [rawHtml, setRawHtml] = useState(SAMPLE_HTML);
-  const result = useMemo(() => grab(rawHtml, { format: 'prompt', maxTokens: 1200 }), [rawHtml]);
+  const [activeTab, setActiveTab] = useState<ActiveTab>('playground');
+  const [selectedPresetId, setSelectedPresetId] = useState<string>(PLAYGROUND_PRESETS[0].id);
+
+  const handleOpenPresetFromLeaderboard = (presetId: string) => {
+    setSelectedPresetId(presetId);
+    setActiveTab('playground');
+  };
 
   return (
-    <main className="mx-auto max-w-5xl p-6 space-y-6">
-      <header className="flex items-center gap-2 border-b border-slate-800 pb-4">
-        <Sparkles className="h-5 w-5 text-emerald-400" />
-        <h1 className="text-xl font-semibold">AnyGrab v{VERSION} Playground</h1>
-      </header>
-      <div className="grid gap-4 md:grid-cols-2">
-        <textarea
-          className="h-64 rounded-lg border border-slate-800 bg-slate-900 p-3 font-mono text-sm"
-          value={rawHtml}
-          onChange={(e) => setRawHtml(e.target.value)}
-        />
-        <pre className="h-64 overflow-auto rounded-lg border border-slate-800 bg-slate-900 p-3 font-mono text-sm">
-          {result.output}
-        </pre>
-      </div>
-    </main>
+    <div className="min-h-screen bg-[#09090b] text-zinc-100 flex flex-col">
+      <NavbarHero activeTab={activeTab} onTabChange={setActiveTab} />
+
+      <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-6 sm:px-6">
+        {activeTab === 'playground' && (
+          <LivePlayground
+            selectedPresetId={selectedPresetId}
+            onSelectPreset={setSelectedPresetId}
+          />
+        )}
+        {activeTab === 'leaderboard' && (
+          <LeaderboardView onOpenPresetInPlayground={handleOpenPresetFromLeaderboard} />
+        )}
+        {activeTab === 'quickstart' && <QuickStartView />}
+      </main>
+
+      <footer className="border-t border-white/[0.06] bg-zinc-950/90 py-5 text-xs text-zinc-500">
+        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 sm:px-6">
+          <span>
+            AnyGrab &amp; AnyGrab-Bench — MIT Licensed Open Source · Deterministic Sub-5ms UI
+            Context Engine
+          </span>
+          <span className="font-mono text-[11px] text-zinc-400">
+            0 LLM Calls · 100% Local Execution · Built for AI Coding Agents
+          </span>
+        </div>
+      </footer>
+    </div>
   );
 }
