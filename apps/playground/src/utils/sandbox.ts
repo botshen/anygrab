@@ -1,4 +1,5 @@
 import type { OutputFormat } from '@anygrab/core';
+import type { SiteLocale } from '../i18n';
 
 function stripScriptsAndInlineHandlers(html: string): string {
   const withoutScripts = html.replace(/<script[\s\S]*?<\/script>/gi, '');
@@ -125,7 +126,6 @@ export function buildTailwindSandboxDoc(tailwindHtml: string): string {
 <body>
   <div id="ag-sandbox-root">${safeBody}</div>
   <script>
-    // Instant arbitrary-value CSS rule synthesizer for offline / fast initial paint
     (function () {
       var rules = [];
       var seen = {};
@@ -167,18 +167,24 @@ export function buildTailwindSandboxDoc(tailwindHtml: string): string {
 
 /**
  * Formats distilled output with optional Coding Agent instruction wrapper
- * when copying directly into Codex, Antigravity, Cursor, or Claude Code.
+ * when copying directly into Antigravity, Codex, Cursor, or Claude Code.
  */
 export function buildAgentCopyPayload(
   output: string,
   format: OutputFormat,
   sourceUrl?: string,
+  locale: SiteLocale = 'en',
 ): string {
   if (format === 'prompt') {
     return output;
   }
   const fence =
     format === 'jsx' ? 'tsx' : format === 'tailwind-html' ? 'html' : 'markdown';
+  if (locale === 'zh-CN') {
+    const srcHint = sourceUrl ? `（来源：${sourceUrl}）` : '';
+    const lead = `请 1:1 视觉与结构还原以下由 AnyGrab 提纯的网页组件${srcHint}：\n\n`;
+    return format === 'markdown' ? `${lead}${output}` : `${lead}\`\`\`${fence}\n${output}\n\`\`\``;
+  }
   const header = sourceUrl
     ? `<!-- Distilled by AnyGrab from ${sourceUrl} (${format}) -->\n`
     : '';

@@ -1,7 +1,7 @@
 import benchResultsRaw from './bench-results.json';
 import presetsRaw from './presets.json';
 
-export type ActiveTab = 'playground' | 'leaderboard' | 'quickstart';
+export type ActiveTab = 'overview' | 'workflows' | 'playground' | 'leaderboard' | 'quickstart';
 
 export interface PlaygroundPreset {
   id: string;
