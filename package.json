@@ -14,8 +14,11 @@
     "build": "pnpm --filter @anygrab/core build && pnpm -r --filter '!@anygrab/core' build",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "node e2e/verify-all.mjs",
     "typecheck": "pnpm --filter @anygrab/core build && pnpm -r typecheck",
     "bench": "pnpm --filter @anygrab/core build && pnpm --filter @anygrab/benchmarks bench",
+    "playground": "pnpm --filter @anygrab/playground dev",
+    "playground:preview": "pnpm --filter @anygrab/playground preview",
     "clean": "pnpm -r clean"
   },
   "devDependencies": {
