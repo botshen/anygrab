@@ -1,13 +1,10 @@
 import type { OutputFormat } from '@anygrab/core';
-import {
-  FORMAT_CYCLE,
-  FORMAT_HUD_LABELS,
-  HOST_ID,
-  type ExtensionSettings,
-} from '../shared/types';
+import { getMessages } from '../shared/i18n';
+import { FORMAT_CYCLE, HOST_ID, type ExtensionSettings } from '../shared/types';
 
 export interface ShadowPickerCallbacks {
   onSelectFormat: (format: OutputFormat) => void;
+  onToggleLocale: () => void;
   onClose: () => void;
 }
 
@@ -19,6 +16,8 @@ export interface ShadowPickerRefs {
   badgeEl: HTMLDivElement;
   hudEl: HTMLDivElement;
   hudBudgetEl: HTMLSpanElement;
+  hudHintsEl: HTMLDivElement;
+  localeBtn: HTMLButtonElement;
   formatButtons: Map<OutputFormat, HTMLButtonElement>;
   toastEl: HTMLDivElement;
   toastTextEl: HTMLSpanElement;
@@ -33,7 +32,7 @@ const SHADOW_STYLES = `
   height: 100vh !important;
   z-index: 2147483647 !important;
   pointer-events: none !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif !important;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Inter", "Segoe UI", Roboto, sans-serif !important;
   line-height: 1.4 !important;
   -webkit-font-smoothing: antialiased !important;
 }
@@ -134,16 +133,16 @@ const SHADOW_STYLES = `
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 7px 12px;
+  gap: 9px;
+  padding: 8px 13px;
   border-radius: 14px;
-  background: rgba(9, 9, 14, 0.92);
+  background: rgba(9, 9, 14, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow:
-    0 20px 48px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(99, 102, 241, 0.22);
+    0 20px 48px rgba(0, 0, 0, 0.58),
+    0 0 0 1px rgba(99, 102, 241, 0.24);
   color: #e4e4e7;
   font-size: 12px;
   pointer-events: auto;
@@ -226,21 +225,40 @@ const SHADOW_STYLES = `
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #a1a1aa;
-  font-size: 11px;
-  padding-left: 4px;
+  color: #d4d4d8;
+  font-size: 11.5px;
+  padding-left: 2px;
+  flex-wrap: wrap;
 }
 
-.ag-kbd {
-  display: inline-block;
-  padding: 1px 5px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  color: #e4e4e7;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10.5px;
-  margin-right: 3px;
+.ag-hint-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11px;
+}
+
+.ag-locale-btn {
+  appearance: none;
+  border: 1px solid rgba(56, 189, 248, 0.42);
+  background: rgba(56, 189, 248, 0.14);
+  color: #bae6fd;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.ag-locale-btn:hover {
+  background: rgba(56, 189, 248, 0.26);
+  color: #ffffff;
 }
 
 .ag-close-btn {
@@ -271,18 +289,19 @@ const SHADOW_STYLES = `
   z-index: 4;
   top: 16px;
   right: 16px;
+  max-width: min(94vw, 560px);
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  padding: 10px 14px;
-  border-radius: 11px;
-  background: rgba(9, 9, 14, 0.95);
+  gap: 10px;
+  padding: 11px 15px;
+  border-radius: 12px;
+  background: rgba(9, 9, 14, 0.96);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(52, 211, 153, 0.42);
+  border: 1px solid rgba(52, 211, 153, 0.48);
   box-shadow:
-    0 16px 38px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(16, 185, 129, 0.15);
+    0 18px 42px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(16, 185, 129, 0.18);
   color: #f8fafc;
   font-size: 12.5px;
   font-weight: 500;
@@ -298,8 +317,8 @@ const SHADOW_STYLES = `
 }
 
 .ag-toast-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 999px;
   background: rgba(16, 185, 129, 0.2);
   border: 1px solid rgba(52, 211, 153, 0.5);
@@ -313,6 +332,16 @@ const SHADOW_STYLES = `
 }
 `;
 
+function renderHudHintsHtml(settings: ExtensionSettings): string {
+  const msg = getMessages(settings.locale);
+  return (
+    `<span class="ag-hint-pill">${msg.hudHints.click}</span>` +
+    `<span class="ag-hint-pill">${msg.hudHints.arrows}</span>` +
+    `<span class="ag-hint-pill">${msg.hudHints.tab}</span>` +
+    `<span class="ag-hint-pill">${msg.hudHints.esc}</span>`
+  );
+}
+
 export function mountShadowPickerHost(
   doc: Document,
   settings: ExtensionSettings,
@@ -323,10 +352,13 @@ export function mountShadowPickerHost(
     existing.remove();
   }
 
+  const msg = getMessages(settings.locale);
+
   const host = doc.createElement('div');
   host.id = HOST_ID;
   host.setAttribute('data-anygrab-active', 'true');
   host.setAttribute('data-anygrab-format', settings.format);
+  host.setAttribute('data-anygrab-locale', settings.locale);
 
   const shadowRoot = host.attachShadow({ mode: 'open' });
 
@@ -375,7 +407,7 @@ export function mountShadowPickerHost(
     btn.className = 'ag-format-btn';
     btn.setAttribute('data-format', fmt);
     btn.setAttribute('data-active', String(fmt === settings.format));
-    btn.textContent = FORMAT_HUD_LABELS[fmt];
+    btn.textContent = msg.formats[fmt].hudLabel;
     btn.addEventListener('click', (ev) => {
       ev.preventDefault();
       ev.stopPropagation();
@@ -388,15 +420,24 @@ export function mountShadowPickerHost(
   const hudBudgetEl = doc.createElement('span');
   hudBudgetEl.className = 'ag-budget-pill';
   hudBudgetEl.setAttribute('data-part', 'hud-budget');
-  hudBudgetEl.textContent = formatHudBudget(settings);
+  hudBudgetEl.textContent = msg.formatHudBudget(settings.maxTokens, settings.unlimitedTokens);
 
-  const hintsEl = doc.createElement('div');
-  hintsEl.className = 'ag-hints';
-  hintsEl.innerHTML =
-    '<span><kbd class="ag-kbd">↑↓</kbd>Scope</span>' +
-    '<span><kbd class="ag-kbd">Tab</kbd>Format</span>' +
-    '<span><kbd class="ag-kbd">Click/⏎</kbd>Copy</span>' +
-    '<span><kbd class="ag-kbd">Esc</kbd>Exit</span>';
+  const hudHintsEl = doc.createElement('div');
+  hudHintsEl.className = 'ag-hints';
+  hudHintsEl.setAttribute('data-part', 'hud-hints');
+  hudHintsEl.innerHTML = renderHudHintsHtml(settings);
+
+  const localeBtn = doc.createElement('button');
+  localeBtn.type = 'button';
+  localeBtn.className = 'ag-locale-btn';
+  localeBtn.setAttribute('data-action', 'toggle-locale');
+  localeBtn.title = msg.localeSwitchTitle;
+  localeBtn.textContent = msg.localeSwitchLabel;
+  localeBtn.addEventListener('click', (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    callbacks.onToggleLocale();
+  });
 
   const closeBtn = doc.createElement('button');
   closeBtn.type = 'button';
@@ -410,7 +451,7 @@ export function mountShadowPickerHost(
     callbacks.onClose();
   });
 
-  hudEl.append(brandEl, formatsWrap, hudBudgetEl, hintsEl, closeBtn);
+  hudEl.append(brandEl, formatsWrap, hudBudgetEl, hudHintsEl, localeBtn, closeBtn);
   shadowRoot.appendChild(hudEl);
 
   const toastEl = doc.createElement('div');
@@ -440,17 +481,27 @@ export function mountShadowPickerHost(
     badgeEl,
     hudEl,
     hudBudgetEl,
+    hudHintsEl,
+    localeBtn,
     formatButtons,
     toastEl,
     toastTextEl,
   };
 }
 
-export function formatHudBudget(settings: ExtensionSettings): string {
-  if (settings.unlimitedTokens) {
-    return '∞ tokens';
+export function syncShadowHudI18n(refs: ShadowPickerRefs, settings: ExtensionSettings): void {
+  const msg = getMessages(settings.locale);
+  refs.host.setAttribute('data-anygrab-format', settings.format);
+  refs.host.setAttribute('data-anygrab-locale', settings.locale);
+  refs.hudBudgetEl.textContent = msg.formatHudBudget(settings.maxTokens, settings.unlimitedTokens);
+  refs.hudHintsEl.innerHTML = renderHudHintsHtml(settings);
+  refs.localeBtn.textContent = msg.localeSwitchLabel;
+  refs.localeBtn.title = msg.localeSwitchTitle;
+
+  for (const [fmt, btn] of refs.formatButtons.entries()) {
+    btn.textContent = msg.formats[fmt].hudLabel;
+    btn.setAttribute('data-active', String(fmt === settings.format));
   }
-  return `≤${settings.maxTokens.toLocaleString('en-US')} tok`;
 }
 
 export function updateShadowHighlightPosition(
@@ -469,10 +520,13 @@ export function updateShadowHighlightPosition(
   refs.badgeEl.textContent = badgeText;
   refs.badgeEl.setAttribute('data-visible', 'true');
 
-  // Position capsule 30px above element top, or tucked just inside/below if near top of viewport
   const badgeHeight = 26;
-  const preferredTop = rect.top >= badgeHeight + 8 ? rect.top - badgeHeight - 6 : Math.max(8, rect.top + 6);
-  const clampedTop = Math.min(Math.max(8, preferredTop), Math.max(8, viewportHeight - badgeHeight - 8));
+  const preferredTop =
+    rect.top >= badgeHeight + 8 ? rect.top - badgeHeight - 6 : Math.max(8, rect.top + 6);
+  const clampedTop = Math.min(
+    Math.max(8, preferredTop),
+    Math.max(8, viewportHeight - badgeHeight - 8),
+  );
   const clampedLeft = Math.min(Math.max(8, rect.left), Math.max(8, viewportWidth - 280));
 
   refs.badgeEl.style.top = `${Math.round(clampedTop)}px`;

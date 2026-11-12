@@ -1,8 +1,8 @@
 {
   "name": "@anygrab/extension",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "AnyGrab Chrome Manifest V3 visual UI & context picker extension.",
+  "description": "AnyGrab Chrome Manifest V3 bilingual visual UI & context picker extension.",
   "type": "module",
   "license": "MIT",
   "scripts": {

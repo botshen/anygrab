@@ -10,6 +10,7 @@ export default defineConfig({
     background: 'src/background.ts',
     content: 'src/content.ts',
     popup: 'src/popup.ts',
+    guide: 'src/guide.ts',
   },
   format: ['iife'],
   outExtension: () => ({ js: '.js' }),

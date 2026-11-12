@@ -1,0 +1,22 @@
+{
+  "extName": {
+    "message": "AnyGrab — AI 编程网页组件扒取神器",
+    "description": "Extension display name in Simplified Chinese"
+  },
+  "extShortName": {
+    "message": "AnyGrab 网页扒取",
+    "description": "Short toolbar name in Simplified Chinese"
+  },
+  "extDescription": {
+    "message": "看到好看的网页或复杂表格？点一下自动剔除 95% 垃圾代码，直接粘贴进反重力 (Antigravity) / Codex / Cursor 即可 1:1 复刻！",
+    "description": "Extension description in Simplified Chinese"
+  },
+  "actionTitle": {
+    "message": "AnyGrab — 点选网页组件喂给 AI (快捷键 Alt+Shift+G)",
+    "description": "Toolbar button tooltip in Simplified Chinese"
+  },
+  "cmdTogglePicker": {
+    "message": "开启/关闭网页元素点选模式 (AnyGrab)",
+    "description": "Keyboard shortcut description in Simplified Chinese"
+  }
+}

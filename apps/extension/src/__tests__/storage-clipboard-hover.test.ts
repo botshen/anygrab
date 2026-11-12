@@ -28,9 +28,14 @@ describe('Clipboard, Storage Ring Buffer & Cross-Origin :hover Style Resolver', 
     vi.restoreAllMocks();
   });
 
-  it('formats toast compression summary matching specification', () => {
-    const text = formatGrabToastSummary('jsx', 12400, 460, 96.29);
-    expect(text).toBe('Copied JSX · 12,400 → 460 tokens (-96.3%)');
+  it('formats bilingual toast compression summaries matching specification', () => {
+    const enText = formatGrabToastSummary('jsx', 12400, 460, 96.29, 'en');
+    expect(enText).toContain('Copied JSX · 12,400 → 460 tokens (-96.3%)');
+
+    const zhText = formatGrabToastSummary('prompt', 12400, 620, 95.0, 'zh-CN');
+    expect(zhText).toBe(
+      '✅ 已复制！已为你剔除 95% 网页垃圾代码 — 现在切到【反重力 / Codex】直接按 Cmd+V 粘贴回车即可！',
+    );
   });
 
   it('falls back to document.execCommand("copy") when navigator.clipboard.writeText fails', async () => {

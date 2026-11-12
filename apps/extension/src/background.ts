@@ -20,9 +20,16 @@ const RESTRICTED_URL_PREFIXES = [
 const EXTERNAL_CSS_TIMEOUT_MS = 4000;
 const MAX_EXTERNAL_CSS_BYTES = 2 * 1024 * 1024;
 
+export function isOwnGuideTabUrl(url?: string | null): boolean {
+  if (!url) return false;
+  return /^chrome-extension:\/\/[^/]+\/guide\.html([?#]|$)/i.test(url);
+}
+
 export function isInjectableTabUrl(url?: string | null): boolean {
   if (!url) {
-    // When only `activeTab` is granted, `tab.url` may be undefined until invoked; allow attempt
+    return true;
+  }
+  if (isOwnGuideTabUrl(url)) {
     return true;
   }
   const lower = url.toLowerCase();
@@ -73,7 +80,13 @@ export async function dispatchPickerToTab(
   try {
     return await sendMessageToTab(tabId, message);
   } catch {
-    // Content script not yet present on pre-existing tab; inject dynamically and retry
+    if (isOwnGuideTabUrl(tabUrl)) {
+      return {
+        ok: false,
+        error: 'Practice Arena page is still loading — please try again in a moment.',
+      };
+    }
+
     try {
       await chrome.scripting.executeScript({
         target: { tabId },
@@ -165,11 +178,27 @@ export function registerBackgroundListeners(): void {
     return;
   }
 
-  chrome.runtime?.onInstalled?.addListener(() => {
+  chrome.runtime?.onInstalled?.addListener((details) => {
     void (async () => {
       const current = await loadSettings();
       await saveSettings(current);
       console.info(`[AnyGrab] Extension v${VERSION} ready.`);
+
+      // Open built-in 30-second interactive guide & practice arena on fresh install
+      if (
+        details?.reason === 'install' &&
+        chrome.runtime?.getURL &&
+        chrome.tabs?.create
+      ) {
+        try {
+          chrome.tabs.create({
+            url: chrome.runtime.getURL('guide.html'),
+            active: true,
+          });
+        } catch {
+          // Ignore tab creation errors in restricted test contexts
+        }
+      }
     })();
   });
 

@@ -1,10 +1,12 @@
 import { grab, type GrabOptions, type GrabResult, type OutputFormat } from '@anygrab/core';
 import { copyTextToClipboard } from '../shared/clipboard';
 import { collectHoverRulesFromDocument, createPageStyleResolver } from '../shared/hover-styles';
+import { toggleLocale } from '../shared/i18n';
 import { appendHistoryItem, loadSettings, saveSettings } from '../shared/storage';
 import {
   DEFAULT_EXTENSION_SETTINGS,
   FORMAT_CYCLE,
+  type ExtensionLocale,
   type ExtensionSettings,
   type GrabHistoryItem,
 } from '../shared/types';
@@ -20,8 +22,8 @@ import {
   resolvePointerTarget,
 } from './dom-utils';
 import {
-  formatHudBudget,
   mountShadowPickerHost,
+  syncShadowHudI18n,
   updateShadowHighlightPosition,
   type ShadowPickerRefs,
 } from './shadow-ui';
@@ -61,7 +63,6 @@ export class AnyGrabPicker {
   private settings: ExtensionSettings = { ...DEFAULT_EXTENSION_SETTINGS };
   private uiRefs: ShadowPickerRefs | null = null;
   private selectedEl: Element | null = null;
-  /** Breadcrumb stack allowing `ArrowUp` then `ArrowDown` to retrace exact child path */
   private childStack: Element[] = [];
   private tokenEstimateCache = new WeakMap<Element, number>();
 
@@ -73,7 +74,7 @@ export class AnyGrabPicker {
   constructor(options: AnyGrabPickerOptions = {}) {
     this.doc = options.document ?? document;
     this.win = options.window ?? (this.doc.defaultView ?? window);
-    this.toastDurationMs = options.toastDurationMs ?? 3200;
+    this.toastDurationMs = options.toastDurationMs ?? 3800;
   }
 
   public isActive(): boolean {
@@ -110,6 +111,9 @@ export class AnyGrabPicker {
     this.uiRefs = mountShadowPickerHost(this.doc, this.settings, {
       onSelectFormat: (fmt) => {
         this.setFormat(fmt);
+      },
+      onToggleLocale: () => {
+        this.togglePickerLocale();
       },
       onClose: () => {
         this.stop();
@@ -164,6 +168,21 @@ export class AnyGrabPicker {
     return format;
   }
 
+  public setLocale(locale: ExtensionLocale): ExtensionLocale {
+    this.settings = { ...this.settings, locale };
+    this.syncHudState();
+    if (this.selectedEl) {
+      this.renderSelectionOverlay();
+    }
+    void saveSettings({ locale });
+    this.emitStateEvent();
+    return locale;
+  }
+
+  public togglePickerLocale(): ExtensionLocale {
+    return this.setLocale(toggleLocale(this.settings.locale));
+  }
+
   public cycleFormat(reverse = false): OutputFormat {
     const idx = FORMAT_CYCLE.indexOf(this.settings.format);
     const delta = reverse ? -1 : 1;
@@ -215,7 +234,6 @@ export class AnyGrabPicker {
       return null;
     }
 
-    // Retrace exact previously visited child if valid, else dive into first visible child
     while (this.childStack.length > 0) {
       const popped = this.childStack.pop()!;
       if (
@@ -245,11 +263,12 @@ export class AnyGrabPicker {
     }
 
     const latestSettings = await loadSettings();
-    // Preserve in-session Tab format choice while syncing latest budget/toggle preferences
     const activeFormat = this.settings.format;
+    const activeLocale = this.settings.locale;
     this.settings = {
       ...latestSettings,
       format: activeFormat,
+      locale: activeLocale,
     };
 
     const hoverRules = this.settings.includeHoverStyles
@@ -259,6 +278,7 @@ export class AnyGrabPicker {
 
     const grabOptions: GrabOptions = {
       format: this.settings.format,
+      locale: this.settings.locale,
       maxTokens: this.settings.unlimitedTokens ? undefined : this.settings.maxTokens,
       compactSvg: this.settings.compactSvg,
       includeHoverStyles: this.settings.includeHoverStyles,
@@ -275,6 +295,7 @@ export class AnyGrabPicker {
       result.metrics.rawTokens,
       result.metrics.outputTokens,
       result.metrics.compressionRatio,
+      this.settings.locale,
     );
 
     const preview = result.output.replace(/\s+/g, ' ').trim().slice(0, 140);
@@ -294,8 +315,6 @@ export class AnyGrabPicker {
     };
 
     await appendHistoryItem(historyItem);
-
-    // Exit active picking mode while displaying top-right confirmation toast in Shadow Root
     this.showSuccessToastAndExitPicker(toastText);
 
     const outcome: GrabExecutionOutcome = {
@@ -340,11 +359,7 @@ export class AnyGrabPicker {
 
   private syncHudState(): void {
     if (!this.uiRefs) return;
-    this.uiRefs.host.setAttribute('data-anygrab-format', this.settings.format);
-    this.uiRefs.hudBudgetEl.textContent = formatHudBudget(this.settings);
-    for (const [fmt, btn] of this.uiRefs.formatButtons.entries()) {
-      btn.setAttribute('data-active', String(fmt === this.settings.format));
-    }
+    syncShadowHudI18n(this.uiRefs, this.settings);
   }
 
   private renderSelectionOverlay(): void {
@@ -354,7 +369,12 @@ export class AnyGrabPicker {
 
     const rect = this.selectedEl.getBoundingClientRect();
     const estTokens = estimateElementDistilledTokens(this.selectedEl, this.tokenEstimateCache);
-    const badgeText = formatHoverBadgeText(this.selectedEl, rect, estTokens);
+    const badgeText = formatHoverBadgeText(
+      this.selectedEl,
+      rect,
+      estTokens,
+      this.settings.locale,
+    );
     const tagId = formatElementTagIdentifier(this.selectedEl);
 
     this.uiRefs.host.setAttribute('data-anygrab-target', tagId);
@@ -427,7 +447,6 @@ export class AnyGrabPicker {
       'click',
       (ev: MouseEvent) => {
         if (!this.active || this.isEventInsideHud(ev)) {
-          // Let HUD format/close buttons handle their own click inside Shadow DOM
           return;
         }
 
@@ -556,6 +575,7 @@ export class AnyGrabPicker {
           detail: {
             active: this.active,
             format: this.settings.format,
+            locale: this.settings.locale,
           },
         }),
       );

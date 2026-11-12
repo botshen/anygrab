@@ -1,5 +1,5 @@
 import { estimateTokens, type OutputFormat } from '@anygrab/core';
-import { FORMAT_SHORT_LABELS, HOST_ID } from '../shared/types';
+import { FORMAT_SHORT_LABELS, HOST_ID, type ExtensionLocale } from '../shared/types';
 
 const NON_PICKABLE_TAGS = new Set([
   'SCRIPT',
@@ -13,7 +13,8 @@ const NON_PICKABLE_TAGS = new Set([
   'BASE',
 ]);
 
-const GENERATED_CLASS_RE = /^(css|sc|jsx|emotion|svelte|tw)-[a-z0-9_-]{4,}$|^_[a-z0-9]+_[a-z0-9]+_\d+$/i;
+const GENERATED_CLASS_RE =
+  /^(css|sc|jsx|emotion|svelte|tw)-[a-z0-9_-]{4,}$|^_[a-z0-9]+_[a-z0-9]+_\d+$/i;
 
 /**
  * Returns `true` if `target` is `#__anygrab-host__` or lives inside its Light/Shadow DOM.
@@ -38,7 +39,6 @@ export function isHostOrInsideHost(
       current = current.parentNode;
       continue;
     }
-    // Cross ShadowRoot boundary up to host element
     const root = typeof current.getRootNode === 'function' ? current.getRootNode() : null;
     if (root && 'host' in root && (root as ShadowRoot).host) {
       current = (root as ShadowRoot).host;
@@ -240,11 +240,15 @@ export function formatHoverBadgeText(
   el: Element,
   rect: Pick<DOMRectReadOnly, 'width' | 'height'>,
   estimatedTokens: number,
+  locale: ExtensionLocale = 'en',
 ): string {
   const tagId = formatElementTagIdentifier(el);
   const w = Math.max(0, Math.round(rect.width));
   const h = Math.max(0, Math.round(rect.height));
   const tok = Math.max(1, Math.round(estimatedTokens)).toLocaleString('en-US');
+  if (locale === 'zh-CN') {
+    return `<${tagId}> · ${w}×${h} px · 约 ~${tok} tokens`;
+  }
   return `<${tagId}> · ${w}×${h} px · ~${tok} tokens`;
 }
 
@@ -261,11 +265,9 @@ export function estimateElementDistilledTokens(
   }
 
   const rawHtml = el.outerHTML ?? '';
-  // Cap inspected slice at 64KB so hovering `<body>` on giant pages never stutters
   const sample = rawHtml.length > 65536 ? rawHtml.slice(0, 65536) : rawHtml;
   const scale = rawHtml.length > 65536 ? rawHtml.length / 65536 : 1;
 
-  // Strip scripts, styles, and verbose SVG path data for realistic post-distillation estimate
   const cleaned = sample
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
@@ -278,28 +280,39 @@ export function estimateElementDistilledTokens(
 }
 
 /**
- * Formats the top-right success toast message, e.g.:
- * `Copied JSX · 12,400 → 460 tokens (-96.3%)`
+ * Formats the top-right success toast message with clear AI workflow guidance:
+ * - `zh-CN`: `✅ 已复制！已为你剔除 95% 网页垃圾代码 — 现在切到【反重力 / Codex】直接按 Cmd+V 粘贴回车即可！`
+ * - `en`:    `Copied JSX · 12,400 → 460 tokens (-96.3%) — Paste (Cmd+V) into Antigravity / Codex!`
  */
 export function formatGrabToastSummary(
   format: OutputFormat,
   rawTokens: number,
   outputTokens: number,
   compressionRatio: number,
+  locale: ExtensionLocale = 'en',
 ): string {
+  const normalizedRatio = Number.isFinite(compressionRatio) ? compressionRatio : 0;
+
+  if (locale === 'zh-CN') {
+    const savedPct =
+      normalizedRatio > 0 ? Math.min(99, Math.max(1, Math.round(normalizedRatio))) : 90;
+    return `✅ 已复制！已为你剔除 ${savedPct}% 网页垃圾代码 — 现在切到【反重力 / Codex】直接按 Cmd+V 粘贴回车即可！`;
+  }
+
   const label = FORMAT_SHORT_LABELS[format] ?? format.toUpperCase();
   const rawStr = Math.max(0, Math.round(rawTokens)).toLocaleString('en-US');
   const outStr = Math.max(0, Math.round(outputTokens)).toLocaleString('en-US');
-  const normalizedRatio = Number.isFinite(compressionRatio) ? compressionRatio : 0;
-  const pctStr =
-    normalizedRatio > 0 ? `-${normalizedRatio.toFixed(1)}%` : '0.0%';
+  const pctStr = normalizedRatio > 0 ? `-${normalizedRatio.toFixed(1)}%` : '0.0%';
 
-  return `Copied ${label} · ${rawStr} → ${outStr} tokens (${pctStr})`;
+  return `Copied ${label} · ${rawStr} → ${outStr} tokens (${pctStr}) — Paste (Cmd+V) into Antigravity / Codex!`;
 }
 
 export function extractDomainFromUrl(url: string): string {
   try {
     const parsed = new URL(url);
+    if (parsed.protocol === 'chrome-extension:') {
+      return 'AnyGrab Practice Arena';
+    }
     return parsed.hostname ? parsed.hostname.replace(/^www\./i, '') : 'local-page';
   } catch {
     return 'local-page';

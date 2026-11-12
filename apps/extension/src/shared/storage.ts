@@ -1,10 +1,13 @@
+import { detectDefaultLocale } from './i18n';
 import {
   DEFAULT_EXTENSION_SETTINGS,
+  DEFAULT_WEBSITE_URL,
   FORMAT_CYCLE,
   MAX_HISTORY_ITEMS,
   MAX_TOKEN_BUDGET,
   MIN_TOKEN_BUDGET,
   STORAGE_KEYS,
+  type ExtensionLocale,
   type ExtensionSettings,
   type GrabHistoryItem,
 } from './types';
@@ -69,10 +72,34 @@ async function storageSet(key: string, value: unknown): Promise<void> {
   });
 }
 
-export function sanitizeSettings(raw?: Partial<ExtensionSettings> | null): ExtensionSettings {
-  if (!raw || typeof raw !== 'object') {
-    return { ...DEFAULT_EXTENSION_SETTINGS };
+function sanitizeWebsiteUrl(rawUrl?: string): string {
+  if (!rawUrl || typeof rawUrl !== 'string') {
+    return DEFAULT_WEBSITE_URL;
   }
+  const trimmed = rawUrl.trim();
+  try {
+    const parsed = new URL(trimmed);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.toString().replace(/\/$/, '');
+    }
+  } catch {
+    // Fall back to default URL
+  }
+  return DEFAULT_WEBSITE_URL;
+}
+
+export function sanitizeSettings(raw?: Partial<ExtensionSettings> | null): ExtensionSettings {
+  const fallbackLocale: ExtensionLocale = detectDefaultLocale();
+
+  if (!raw || typeof raw !== 'object') {
+    return {
+      ...DEFAULT_EXTENSION_SETTINGS,
+      locale: fallbackLocale,
+    };
+  }
+
+  const locale: ExtensionLocale =
+    raw.locale === 'zh-CN' || raw.locale === 'en' ? raw.locale : fallbackLocale;
 
   const format =
     raw.format && (FORMAT_CYCLE as readonly string[]).includes(raw.format)
@@ -86,6 +113,7 @@ export function sanitizeSettings(raw?: Partial<ExtensionSettings> | null): Exten
   const maxTokens = Math.min(MAX_TOKEN_BUDGET, Math.max(MIN_TOKEN_BUDGET, rawBudget));
 
   return {
+    locale,
     format,
     maxTokens,
     unlimitedTokens:
@@ -100,6 +128,7 @@ export function sanitizeSettings(raw?: Partial<ExtensionSettings> | null): Exten
       typeof raw.includeHoverStyles === 'boolean'
         ? raw.includeHoverStyles
         : DEFAULT_EXTENSION_SETTINGS.includeHoverStyles,
+    websiteUrl: sanitizeWebsiteUrl(raw.websiteUrl),
   };
 }
 

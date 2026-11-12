@@ -250,7 +250,7 @@ describe('AnyGrabPicker Shadow DOM Lifecycle & Keyboard/Mouse Interaction', () =
       const toast = host.shadowRoot!.querySelector('[data-part="toast"]')!;
       const toastText = host.shadowRoot!.querySelector('[data-part="toast-text"]')!;
       expect(toast.getAttribute('data-visible')).toBe('true');
-      expect(toastText.textContent).toMatch(/^Copied JSX · [\d,]+ → [\d,]+ tokens \([-0-9.]+%\)$/);
+      expect(toastText.textContent).toMatch(/Copied JSX · [\d,]+ → [\d,]+ tokens \([-0-9.]+%\)/);
       expect(grabbedEvent.detail.historyItem.tagLabel).toBe('article.pricing-card');
 
       // History saved

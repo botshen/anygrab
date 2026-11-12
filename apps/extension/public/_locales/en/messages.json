@@ -1,0 +1,22 @@
+{
+  "extName": {
+    "message": "AnyGrab — UI & Table Picker for AI Coding Agents",
+    "description": "Extension display name in English"
+  },
+  "extShortName": {
+    "message": "AnyGrab",
+    "description": "Short toolbar name in English"
+  },
+  "extDescription": {
+    "message": "Click any webpage UI or complex table to copy clean, token-saving prompts & code for Antigravity, Codex, and Cursor.",
+    "description": "Extension description in English"
+  },
+  "actionTitle": {
+    "message": "AnyGrab — Click to Pick Webpage UI for AI (Alt+Shift+G)",
+    "description": "Toolbar button tooltip in English"
+  },
+  "cmdTogglePicker": {
+    "message": "Toggle AnyGrab element picker on the active page",
+    "description": "Keyboard shortcut description in English"
+  }
+}
