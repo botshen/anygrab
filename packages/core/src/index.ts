@@ -1,4 +1,33 @@
+import {
+  ADAPTER_SHORT_ALIASES,
+  arxivPaperAdapter,
+  BUILTIN_ADAPTERS,
+  docsMdxAdapter,
+  githubUiAdapter,
+  marketingPricingAdapter,
+} from './adapters';
+import { applyTokenBudgetPruning } from './budget-pruner';
+import { distillDomTree } from './cleaner';
+import {
+  cloneIntoLiteNode,
+  isDocumentLike,
+  isElementLike,
+  LiteElement,
+  normalizeDomInput,
+  parseHtmlFallback,
+  queryFirstElement,
+} from './dom-adapter';
+import {
+  formatJsx,
+  formatMarkdown,
+  formatPrompt,
+  formatTailwindHtml,
+} from './formatters';
+import { parseCssStylesheet } from './style-differ';
+import { isObfuscatedClassName, mapStylesToTailwind } from './tailwind-mapper';
+import { DesignTokenCollector, extractDesignTokens } from './tokens';
 import type {
+  AdapterContext,
   AnyGrabAdapter,
   DesignTokens,
   GrabInput,
@@ -9,6 +38,18 @@ import type {
 } from './types';
 
 export * from './types';
+export {
+  extractDesignTokens,
+  BUILTIN_ADAPTERS,
+  docsMdxAdapter,
+  githubUiAdapter,
+  arxivPaperAdapter,
+  marketingPricingAdapter,
+  parseHtmlFallback,
+  parseCssStylesheet,
+  mapStylesToTailwind,
+  isObfuscatedClassName,
+};
 
 export const VERSION = '0.1.0';
 
@@ -26,6 +67,18 @@ export const DEFAULT_GRAB_OPTIONS: Required<
 };
 
 const adapterRegistry = new Map<string, AnyGrabAdapter>();
+
+/**
+ * Registers all built-in public standard adapters (`docs-mdx`, `github-ui`, `arxiv-paper`, `marketing-pricing`).
+ */
+export function registerBuiltinAdapters(): void {
+  for (const adapter of BUILTIN_ADAPTERS) {
+    adapterRegistry.set(adapter.name, adapter);
+  }
+}
+
+// Register built-in adapters by default on package initialization
+registerBuiltinAdapters();
 
 /**
  * Estimates LLM token count using a fast deterministic heuristic (~4 chars/token for ASCII/code,
@@ -80,80 +133,208 @@ export function createEmptyDesignTokens(): DesignTokens {
   };
 }
 
-function serializeRawInput(input: GrabInput): string {
-  if (typeof input === 'string') {
-    return input;
+function doesAdapterMatch(
+  adapter: AnyGrabAdapter,
+  context: { url?: string; root?: Element | Document },
+): boolean {
+  const matcher = adapter.match;
+  if (typeof matcher === 'function') {
+    try {
+      return Boolean(matcher(context));
+    } catch {
+      return false;
+    }
   }
-  if ('outerHTML' in input && typeof input.outerHTML === 'string') {
-    return input.outerHTML;
+  if (matcher instanceof RegExp) {
+    return Boolean(context.url && matcher.test(context.url));
   }
-  if ('documentElement' in input && input.documentElement) {
-    return input.documentElement.outerHTML;
+  if (Array.isArray(matcher)) {
+    return Boolean(context.url && matcher.some((re) => re.test(context.url!)));
   }
-  return input.textContent ?? '';
+  return false;
+}
+
+function resolveActiveAdapter(
+  options: GrabOptions,
+  rootCandidate?: Element | Document,
+): { adapter?: AnyGrabAdapter; warning?: string } {
+  const customList = options.customAdapters ?? [];
+  const registeredList = getAdapters();
+  const combined = [...customList, ...registeredList].sort(
+    (a, b) => (b.priority ?? 0) - (a.priority ?? 0),
+  );
+
+  if (options.adapter) {
+    const requested = options.adapter.trim();
+    const canonical = ADAPTER_SHORT_ALIASES[requested.toLowerCase()] ?? requested;
+    const found =
+      combined.find((a) => a.name === requested || a.name === canonical) ??
+      BUILTIN_ADAPTERS.find((a) => a.name === requested || a.name === canonical);
+    if (found) return { adapter: found };
+    return {
+      warning: `Requested adapter "${options.adapter}" was not found; proceeding with default distillation.`,
+    };
+  }
+
+  for (const candidate of combined) {
+    if (doesAdapterMatch(candidate, { url: options.sourceUrl, root: rootCandidate })) {
+      return { adapter: candidate };
+    }
+  }
+
+  return {};
 }
 
 /**
- * Extracts `DesignTokens` from a target DOM node or HTML string.
- * (Placeholder implementation; full style/computed-token extraction implemented in `@anygrab/core`.)
- */
-export function extractDesignTokens(_input: GrabInput, _options?: GrabOptions): DesignTokens {
-  return createEmptyDesignTokens();
-}
-
-/**
- * Distills a DOM `Element`, `Document`, or raw HTML string into token-budget-aware
- * multi-format AI context (`prompt`, `tailwind-html`, `jsx`, `markdown`).
+ * Distills a DOM `Element`, `Document`, `DocumentFragment`, or raw HTML string into
+ * token-budget-aware multi-format AI context (`prompt`, `tailwind-html`, `jsx`, `markdown`).
  */
 export function grab(input: GrabInput, options: GrabOptions = {}): GrabResult {
   const start = typeof performance !== 'undefined' ? performance.now() : Date.now();
   const format: OutputFormat = options.format ?? DEFAULT_GRAB_OPTIONS.format;
   const warnings: string[] = [];
 
-  const rawHtml = serializeRawInput(input);
-  const rawChars = rawHtml.length;
-  const rawTokens = estimateTokens(rawHtml);
+  // Pre-match URL-based or explicit adapter before DOM scoping so `rootSelector` applies cleanly
+  const initialAdapterLookup = resolveActiveAdapter(
+    options,
+    typeof input !== 'string' && (isElementLike(input) || isDocumentLike(input))
+      ? input
+      : undefined,
+  );
+  if (initialAdapterLookup.warning) {
+    warnings.push(initialAdapterLookup.warning);
+  }
+  let activeAdapter = initialAdapterLookup.adapter;
 
-  const strippedText = rawHtml
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  const normalized = normalizeDomInput(input, {
+    selector: options.selector,
+    rootSelector: !options.selector ? activeAdapter?.rootSelector : undefined,
+  });
+  warnings.push(...normalized.warnings);
 
-  const tailwindHtml = rawHtml.trim() || '<div></div>';
-  const jsx = tailwindHtml.replace(/\bclass=/g, 'className=');
-  const markdown = strippedText;
+  // If no adapter matched on URL alone (e.g. HTML string input), evaluate DOM-based adapter matchers
+  if (!activeAdapter && !options.adapter) {
+    const domLookup = resolveActiveAdapter(options, normalized.rootElement);
+    if (domLookup.adapter) {
+      activeAdapter = domLookup.adapter;
+      if (!options.selector && activeAdapter.rootSelector) {
+        const scoped = queryFirstElement(normalized.rootElement, activeAdapter.rootSelector);
+        if (scoped) {
+          normalized.rootElement = scoped;
+          normalized.isSyntheticWrapper = false;
+        }
+      }
+    }
+  }
+
+  const rawChars = normalized.rawHtml.length;
+  const rawTokens = normalized.rawHtml ? estimateTokens(normalized.rawHtml) : 0;
+
+  let workingRoot = normalized.rootElement;
+  const adapterContext: AdapterContext = {
+    sourceUrl: options.sourceUrl,
+    root: workingRoot,
+    options,
+  };
+
+  if (activeAdapter?.preprocess) {
+    const cloned = cloneIntoLiteNode(workingRoot);
+    if (cloned instanceof LiteElement) {
+      const preprocessed = activeAdapter.preprocess(cloned as unknown as Element, adapterContext);
+      workingRoot = (preprocessed ?? cloned) as unknown as Element;
+      adapterContext.root = workingRoot;
+    }
+  }
+
+  const stylesheet = parseCssStylesheet(normalized.extractedCssText);
+  const tokenCollector = new DesignTokenCollector();
+
+  const { root: distilledRoot, stats } = distillDomTree(workingRoot, {
+    options,
+    stylesheet,
+    tokenCollector,
+    adapter: activeAdapter,
+    adapterContext,
+    isSyntheticRootWrapper: normalized.isSyntheticWrapper,
+  });
+
   const designTokens =
     (options.includeDesignTokens ?? DEFAULT_GRAB_OPTIONS.includeDesignTokens)
-      ? extractDesignTokens(input, options)
+      ? tokenCollector.toDesignTokens()
       : createEmptyDesignTokens();
 
+  let compactPromptMeta = false;
+
+  if (options.maxTokens !== undefined && options.maxTokens > 0) {
+    const measureTargetFormatTokens = (compactMeta: boolean): number => {
+      switch (format) {
+        case 'tailwind-html':
+          return estimateTokens(formatTailwindHtml(distilledRoot));
+        case 'jsx':
+          return estimateTokens(formatJsx(distilledRoot));
+        case 'markdown':
+          return estimateTokens(formatMarkdown(distilledRoot));
+        case 'prompt':
+        default: {
+          const html = formatTailwindHtml(distilledRoot);
+          return estimateTokens(
+            formatPrompt({
+              root: distilledRoot,
+              tailwindHtml: html,
+              designTokens,
+              sourceUrl: options.sourceUrl,
+              adapterName: activeAdapter?.name,
+              compactMode: compactMeta,
+            }),
+          );
+        }
+      }
+    };
+
+    const pruneResult = applyTokenBudgetPruning(
+      distilledRoot,
+      options.maxTokens,
+      measureTargetFormatTokens,
+    );
+    stats.nodesPruned += pruneResult.prunedElementsCount;
+    compactPromptMeta = pruneResult.compactPromptMeta;
+    if (pruneResult.didFold) {
+      warnings.push(
+        `AST budget folding applied to fit within maxTokens (${options.maxTokens}) without breaking tag structure.`,
+      );
+    }
+  }
+
+  let tailwindHtml = formatTailwindHtml(distilledRoot) || '<div></div>';
+  let jsx = formatJsx(distilledRoot) || '<div />';
+  let markdown = formatMarkdown(distilledRoot);
+  let promptOutput = formatPrompt({
+    root: distilledRoot,
+    tailwindHtml,
+    designTokens,
+    sourceUrl: options.sourceUrl,
+    adapterName: activeAdapter?.name,
+    compactMode: compactPromptMeta,
+  });
+
+  if (activeAdapter?.postprocess) {
+    tailwindHtml = activeAdapter.postprocess(tailwindHtml, 'tailwind-html', adapterContext);
+    jsx = activeAdapter.postprocess(jsx, 'jsx', adapterContext);
+    markdown = activeAdapter.postprocess(markdown, 'markdown', adapterContext);
+    promptOutput = activeAdapter.postprocess(promptOutput, 'prompt', adapterContext);
+  }
+
   const formatMap: Record<OutputFormat, string> = {
-    prompt: [
-      options.sourceUrl ? `Source: ${options.sourceUrl}` : '',
-      markdown ? `## Content\n${markdown}` : '',
-      `## Structure\n\`\`\`html\n${tailwindHtml}\n\`\`\``,
-    ]
-      .filter(Boolean)
-      .join('\n\n'),
+    prompt: promptOutput,
     'tailwind-html': tailwindHtml,
     jsx,
     markdown,
   };
 
-  let output = formatMap[format];
-  if (options.maxTokens && options.maxTokens > 0) {
-    const currentTokens = estimateTokens(output);
-    if (currentTokens > options.maxTokens) {
-      const targetChars = Math.max(32, options.maxTokens * 4);
-      output = output.slice(0, targetChars);
-      warnings.push(`Output truncated to fit maxTokens budget (${options.maxTokens}).`);
-    }
-  }
-
+  const output = formatMap[format];
   const outputChars = output.length;
   const outputTokens = estimateTokens(output);
+
   const end = typeof performance !== 'undefined' ? performance.now() : Date.now();
   const durationMs = Math.max(0, Number((end - start).toFixed(2)));
   const compressionRatio =
@@ -165,9 +346,9 @@ export function grab(input: GrabInput, options: GrabOptions = {}): GrabResult {
     outputChars,
     outputTokens,
     compressionRatio,
-    nodesVisited: rawHtml ? 1 : 0,
-    nodesPruned: 0,
-    stylesStripped: 0,
+    nodesVisited: stats.nodesVisited,
+    nodesPruned: stats.nodesPruned,
+    stylesStripped: stats.stylesStripped,
     durationMs,
   };
 
