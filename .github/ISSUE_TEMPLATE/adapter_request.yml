@@ -1,0 +1,38 @@
+name: Adapter Request (Site / Framework)
+description: Propose a declarative AnyGrabAdapter for a public documentation framework or UI library.
+title: "[Adapter]: "
+labels: ["adapter", "enhancement", "good first issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **AnyGrab Adapters** are lightweight, declarative hooks (~20–30 lines of TypeScript) that strip framework-specific chrome (navbars, TOC sidebars, cookie banners) and normalize domain elements (admonitions, math, code tabs) on **public, standards-based webpages**.
+        > **Policy:** AnyGrab strictly rejects adapters targeting paywalls, DRM, authentication walls, or anti-bot mechanisms.
+
+  - type: input
+    id: adapter_name
+    attributes:
+      label: Proposed Adapter Name (kebab-case)
+      placeholder: "astro-starlight"
+    validations:
+      required: true
+
+  - type: input
+    id: sample_urls
+    attributes:
+      label: Public Example URL(s)
+      description: 1–3 public pages built with this framework or site structure.
+      placeholder: "https://starlight.astro.build/getting-started/"
+    validations:
+      required: true
+
+  - type: textarea
+    id: dom_observations
+    attributes:
+      label: Noise Selectors & Content Root
+      description: Which selectors should be stripped (`excludeSelectors`), and what is the primary content container (`rootSelector`)?
+      placeholder: |
+        - rootSelector: "main .sl-markdown-content"
+        - excludeSelectors: ["header.header", "nav.sidebar", "starlight-toc", ".pagination-links"]
+    validations:
+      required: true

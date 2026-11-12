@@ -1,0 +1,61 @@
+name: Bug Report / Distillation Edge Case
+description: Report a DOM distillation, CSS-to-Tailwind mapping, table alignment, or token-budget pruning bug.
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve **AnyGrab**! Providing a minimal, self-contained HTML/CSS snippet allows us to turn your edge case into a permanent regression test in minutes.
+        > **Privacy & Copyright Note:** Please only paste **public, non-sensitive, or synthetic HTML/CSS snippets**. Never submit private session data or copyrighted paywalled content.
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Affected Package / Surface
+      options:
+        - "@anygrab/core (DOM/CSS distillation, Tailwind/JSX/Markdown formatter, token budget)"
+        - "anygrab (CLI / Node SDK / stylesheet inliner)"
+        - "@anygrab/mcp (MCP stdio server)"
+        - "@anygrab/extension (Chrome MV3 visual picker)"
+        - "@anygrab/playground (Interactive Playground & Benchmark site)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: format
+    attributes:
+      label: Output Format
+      options:
+        - "prompt"
+        - "tailwind-html"
+        - "jsx"
+        - "markdown"
+    validations:
+      required: true
+
+  - type: textarea
+    id: minimal_html
+    attributes:
+      label: Minimal Reproducible HTML + CSS Snippet
+      description: Paste the smallest HTML (and optional `<style>` block) that reproduces the issue.
+      placeholder: |
+        <style>.card { display: flex; gap: 16px; }</style>
+        <div class="card"><h2>Pro Plan</h2></div>
+      render: html
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_vs_actual
+    attributes:
+      label: Expected vs. Actual Output
+      description: What did AnyGrab output, and what did you expect instead?
+    validations:
+      required: true
+
+  - type: input
+    id: options
+    attributes:
+      label: GrabOptions / CLI Flags Used
+      placeholder: "--format jsx --budget 800 --hover"
