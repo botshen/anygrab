@@ -1,13 +1,53 @@
 @import "tailwindcss";
 
+:root {
+  color-scheme: light;
+  --ag-bg-canvas: #F5F4EF;
+  --ag-bg-surface: #FFFFFF;
+  --ag-bg-subtle: #ECEAE3;
+  --ag-bg-stage: #141413;
+  --ag-bg-stage-elevated: #1F1F1D;
+  --ag-border: #DFDDD4;
+  --ag-border-strong: #C7C4B8;
+  --ag-text-primary: #141413;
+  --ag-text-secondary: #52514C;
+  --ag-text-muted: #78766F;
+  --ag-accent: #D94E28;
+  --ag-accent-soft: rgba(217, 78, 40, 0.09);
+  --ag-success: #15803D;
+  --ag-font-sans: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
+  --ag-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --ag-radius-lg: 12px;
+  --ag-radius-md: 8px;
+  --ag-radius-sm: 5px;
+}
+
 @layer base {
-  :root {
-    color-scheme: dark;
+  html {
+    font-family: var(--ag-font-sans);
+    background-color: var(--ag-bg-canvas);
+    color: var(--ag-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--ag-bg-canvas);
+    color: var(--ag-text-primary);
+    line-height: 1.65;
+  }
+
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+
+  code, pre, kbd {
+    font-family: var(--ag-font-mono);
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: #27272a transparent;
+    scrollbar-color: #C7C4B8 transparent;
   }
 
   *::-webkit-scrollbar {
@@ -20,12 +60,57 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: #27272a;
+    background-color: #C7C4B8;
     border-radius: 9999px;
   }
 }
 
-.bg-grid-pattern {
-  background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 20px 20px;
+.ag-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.ag-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.ag-no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes ag-reticle-lock {
+  0% {
+    transform: scale(1.035);
+    opacity: 0.72;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes ag-code-cut {
+  0% {
+    opacity: 0.55;
+    transform: translateY(3px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ag-reticle-snap {
+  animation: ag-reticle-lock 180ms cubic-bezier(0.18, 0.9, 0.25, 1) both;
+}
+
+.ag-code-cut {
+  animation: ag-code-cut 150ms cubic-bezier(0.2, 0.85, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ag-reticle-snap,
+  .ag-code-cut {
+    animation: none;
+  }
 }

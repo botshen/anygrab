@@ -24,6 +24,51 @@ export interface PopupControllerOptions {
   resolveExtensionUrl?: (relativePath: string) => string;
 }
 
+const BRAND_LOGO_SVG = `
+  <svg class="ag-logo-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+    <rect width="32" height="32" rx="7" fill="#141413" />
+    <path
+      d="M8.5 12.5V8.5H12.5M19.5 8.5H23.5V12.5M23.5 19.5V23.5H19.5M12.5 23.5H8.5V19.5"
+      stroke="#FAF9F5"
+      stroke-width="2.1"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <rect x="13.5" y="13.5" width="5" height="5" rx="1" fill="#D94E28" />
+  </svg>
+`;
+
+const RETICLE_ICON_SVG = `
+  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#D94E28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M4 9V5a1 1 0 0 1 1-1h4M15 4h4a1 1 0 0 1 1 1v4M20 15v4a1 1 0 0 1-1 1h-4M9 20H5a1 1 0 0 1-1-1v-4" />
+    <circle cx="12" cy="12" r="2.3" fill="#D94E28" stroke="none" />
+  </svg>
+`;
+
+const GUIDE_ICON_SVG = `
+  <svg width="13.5" height="13.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M2 5.5A2.5 2.5 0 0 1 4.5 3H11v17H4.5A2.5 2.5 0 0 0 2 22.5v-17Z" />
+    <path d="M22 5.5A2.5 2.5 0 0 0 19.5 3H13v17h6.5a2.5 2.5 0 0 1 2.5 2.5v-17Z" />
+  </svg>
+`;
+
+const WEBSITE_ICON_SVG = `
+  <svg width="13.5" height="13.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="9" />
+    <path d="M3.6 9h16.8M3.6 15h16.8" />
+    <path d="M12 3a14.5 14.5 0 0 1 0 18M12 3a14.5 14.5 0 0 0 0 18" />
+  </svg>
+`;
+
+const SLIDERS_ICON_SVG = `
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <line x1="4" y1="7" x2="20" y2="7" />
+    <line x1="4" y1="17" x2="20" y2="17" />
+    <circle cx="9" cy="7" r="2.2" fill="#FFFFFF" />
+    <circle cx="15" cy="17" r="2.2" fill="#FFFFFF" />
+  </svg>
+`;
+
 async function defaultActivateTabPicker(
   settings: ExtensionSettings,
 ): Promise<PickerActionResponse> {
@@ -105,6 +150,7 @@ export async function initPopupApp(
   const renderApp = () => {
     const msg = getMessages(settings.locale);
     const activeFmtCopy = msg.formats[settings.format];
+    const isZh = settings.locale === 'zh-CN';
 
     root.setAttribute('data-locale', settings.locale);
     doc.documentElement.lang = settings.locale;
@@ -113,40 +159,46 @@ export async function initPopupApp(
       <main class="ag-popup">
         <header class="ag-header">
           <div class="ag-logo-group">
-            <svg class="ag-logo-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
-              <defs>
-                <linearGradient id="ag-grad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stop-color="#4338ca" />
-                  <stop offset="52%" stop-color="#6366f1" />
-                  <stop offset="100%" stop-color="#38bdf8" />
-                </linearGradient>
-              </defs>
-              <rect x="1" y="1" width="30" height="30" rx="7.5" fill="url(#ag-grad)" />
-              <path d="M8 12.5V8.8C8 8.36 8.36 8 8.8 8H12.5M19.5 8H23.2C23.64 8 24 8.36 24 8.8V12.5M24 19.5V23.2C24 23.64 23.64 24 23.2 24H19.5M12.5 24H8.8C8.36 24 8 23.64 8 23.2V19.5" stroke="white" stroke-width="2.2" stroke-linecap="round" />
-              <path d="M16 11.2C16.55 13.85 18.15 15.45 20.8 16C18.15 16.55 16.55 18.15 16 20.8C15.45 18.15 13.85 16.55 11.2 16C13.85 15.45 15.45 13.85 16 11.2Z" fill="white" />
-            </svg>
+            ${BRAND_LOGO_SVG}
             <div class="ag-title-wrap">
               <span class="ag-title">AnyGrab</span>
               <span class="ag-version">v${escapeHtml(VERSION)}</span>
             </div>
           </div>
           <div class="ag-header-right">
-            <span class="ag-engine-pill">${escapeHtml(msg.taglinePill)}</span>
             <button
               type="button"
-              class="ag-lang-btn"
+              class="ag-seg-locale"
               data-action="toggle-locale"
               title="${escapeHtml(msg.localeSwitchTitle)}"
-            >${escapeHtml(msg.localeSwitchLabel)}</button>
+            >
+              <span class="ag-seg-locale-item" data-active="${String(isZh)}">中文</span>
+              <span class="ag-seg-locale-item" data-active="${String(!isZh)}">EN</span>
+            </button>
           </div>
         </header>
 
+        <button type="button" class="ag-pick-cta" data-action="pick-element">
+          <span class="ag-pick-cta-left">
+            <span class="ag-pick-cta-icon">${RETICLE_ICON_SVG}</span>
+            <div>
+              <div class="ag-pick-cta-title">${escapeHtml(msg.pickCtaTitle)}</div>
+              <div class="ag-pick-cta-sub">${escapeHtml(msg.pickCtaSub)}</div>
+            </div>
+          </span>
+          <kbd class="ag-shortcut-kbd">Alt+Shift+G</kbd>
+        </button>
+
+        <div class="ag-status-banner" data-part="status-banner" role="alert"></div>
+
         <div class="ag-onboarding-row">
           <button type="button" class="ag-guide-btn" data-action="open-guide">
-            ${escapeHtml(msg.openGuideBtn)}
+            ${GUIDE_ICON_SVG}
+            <span>${escapeHtml(msg.openGuideBtn)}</span>
           </button>
           <button type="button" class="ag-site-btn" data-action="open-website">
-            ${escapeHtml(msg.openWebsiteBtn)}
+            ${WEBSITE_ICON_SVG}
+            <span>${escapeHtml(msg.openWebsiteBtn)}</span>
           </button>
           <button
             type="button"
@@ -154,7 +206,7 @@ export async function initPopupApp(
             data-action="toggle-website-config"
             title="${escapeHtml(msg.websiteConfigLabel)}"
             aria-label="Configure official website URL"
-          >⚙</button>
+          >${SLIDERS_ICON_SVG}</button>
         </div>
 
         <div class="ag-site-config" data-part="website-config" data-open="${String(siteConfigOpen)}">
@@ -170,23 +222,7 @@ export async function initPopupApp(
           </button>
         </div>
 
-        <button type="button" class="ag-pick-cta" data-action="pick-element">
-          <span class="ag-pick-cta-left">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M12 2v4M12 18v4M2 12h4M18 12h4"></path>
-            </svg>
-            <div>
-              <div class="ag-pick-cta-title">${escapeHtml(msg.pickCtaTitle)}</div>
-              <div class="ag-pick-cta-sub">${escapeHtml(msg.pickCtaSub)}</div>
-            </div>
-          </span>
-          <kbd class="ag-shortcut-kbd">Alt+Shift+G</kbd>
-        </button>
-
-        <div class="ag-status-banner" data-part="status-banner" role="alert"></div>
-
-        <section class="ag-section" aria-label="Output Format">
+        <section class="ag-rule-section" aria-label="Output Format">
           <div class="ag-section-row">
             <span class="ag-label">${escapeHtml(msg.formatSectionTitle)}</span>
           </div>
@@ -203,19 +239,12 @@ export async function initPopupApp(
             ).join('')}
           </div>
           <div class="ag-format-explain" data-part="format-explain">
-            <div class="ag-format-explain-top">
-              <span class="ag-format-explain-title" data-part="format-title">${escapeHtml(activeFmtCopy.fullTitle)}</span>
-              ${
-                activeFmtCopy.badge
-                  ? `<span class="ag-rec-badge">${escapeHtml(activeFmtCopy.badge)}</span>`
-                  : ''
-              }
-            </div>
-            <div class="ag-format-explain-sub" data-part="format-subtitle">${escapeHtml(activeFmtCopy.subtitle)}</div>
+            <span class="ag-sr-only" data-part="format-title">${escapeHtml(activeFmtCopy.fullTitle)}</span>
+            <span class="ag-format-explain-sub" data-part="format-subtitle">${escapeHtml(activeFmtCopy.subtitle)}</span>
           </div>
         </section>
 
-        <section class="ag-section" aria-label="Token Budget">
+        <section class="ag-rule-section" aria-label="Token Budget">
           <div class="ag-section-row">
             <span class="ag-label">${escapeHtml(msg.budgetSectionTitle)}</span>
             <div class="ag-budget-readout">
@@ -243,17 +272,18 @@ export async function initPopupApp(
               value="${settings.maxTokens}"
               ${settings.unlimitedTokens ? 'disabled' : ''}
             />
+            <!-- Mathematically Linear Scale Ticks across [400, 6000] -->
             <div class="ag-slider-ticks">
-              <span>400</span>
-              <span>2,000</span>
-              <span>4,000</span>
-              <span>6,000</span>
+              <span class="ag-tick ag-tick-start">400</span>
+              <span class="ag-tick" style="left: 28.57%;">2,000</span>
+              <span class="ag-tick" style="left: 64.29%;">4,000</span>
+              <span class="ag-tick ag-tick-end">6,000</span>
             </div>
           </div>
         </section>
 
-        <div class="ag-toggles-grid">
-          <label class="ag-toggle-card">
+        <section class="ag-rule-section ag-toggles-grid" aria-label="Extraction Options">
+          <label class="ag-toggle-row">
             <div>
               <div class="ag-toggle-title">${escapeHtml(msg.compactSvgTitle)}</div>
               <div class="ag-toggle-sub">${escapeHtml(msg.compactSvgSub)}</div>
@@ -264,7 +294,7 @@ export async function initPopupApp(
             </span>
           </label>
 
-          <label class="ag-toggle-card">
+          <label class="ag-toggle-row">
             <div>
               <div class="ag-toggle-title">${escapeHtml(msg.includeHoverTitle)}</div>
               <div class="ag-toggle-sub">${escapeHtml(msg.includeHoverSub)}</div>
@@ -274,9 +304,9 @@ export async function initPopupApp(
               <span class="ag-switch-track"></span>
             </span>
           </label>
-        </div>
+        </section>
 
-        <section class="ag-section" aria-label="Recent Grabs">
+        <section class="ag-rule-section ag-history-section" aria-label="Recent Grabs">
           <div class="ag-history-header">
             <div class="ag-history-title-group">
               <span class="ag-label">${escapeHtml(msg.historySectionTitle)}</span>
@@ -435,11 +465,8 @@ export async function initPopupApp(
       }
 
       formatExplainEl.innerHTML = `
-        <div class="ag-format-explain-top">
-          <span class="ag-format-explain-title" data-part="format-title">${escapeHtml(fmtCopy.fullTitle)}</span>
-          ${fmtCopy.badge ? `<span class="ag-rec-badge">${escapeHtml(fmtCopy.badge)}</span>` : ''}
-        </div>
-        <div class="ag-format-explain-sub" data-part="format-subtitle">${escapeHtml(fmtCopy.subtitle)}</div>
+        <span class="ag-sr-only" data-part="format-title">${escapeHtml(fmtCopy.fullTitle)}</span>
+        <span class="ag-format-explain-sub" data-part="format-subtitle">${escapeHtml(fmtCopy.subtitle)}</span>
       `;
 
       budgetValueEl.textContent = msg.formatBudgetValue(settings.maxTokens, settings.unlimitedTokens);

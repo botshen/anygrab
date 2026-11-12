@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Copy, Sparkles, Wand2 } from 'lucide-react';
+import { ArrowRight, Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import type { ActiveTab } from '../data/types';
 import { getWorkflowsCopy, type SiteLocale } from '../i18n';
@@ -24,30 +24,25 @@ export function WorkflowsView({ locale, onNavigate }: WorkflowsViewProps) {
   };
 
   return (
-    <section aria-label="AI Workflows Guide" className="space-y-8 py-2">
-      {/* Header Banner */}
-      <div className="rounded-3xl border border-indigo-500/25 bg-gradient-to-r from-indigo-950/40 via-zinc-900/80 to-zinc-900/60 p-6 sm:p-8">
-        <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-3 py-1 text-xs font-bold text-indigo-300">
-          <Wand2 className="h-3.5 w-3.5" />
-          <span>
-            {isZh
-              ? '零黑话手把手实战教程 · 直接抄作业'
-              : 'Hands-On AI Coding Workflows · Ready-to-Copy Prompts'}
-          </span>
+    <section aria-label="AI Workflows Guide" className="space-y-10">
+      {/* Clean Editorial Header */}
+      <div className="space-y-2 border-b border-[var(--ag-border)] pb-6">
+        <div className="font-mono text-[11px] font-semibold tracking-wider text-[var(--ag-accent)] uppercase">
+          PRACTICAL AI WORKFLOWS
         </div>
-        <h1 className="mt-3 text-2xl font-extrabold text-white sm:text-3xl">
+        <h1 className="text-2xl leading-[1.3] font-extrabold tracking-[-0.02em] text-[#141413] sm:text-3xl">
           {isZh
             ? '3 种配合【反重力 Antigravity & Codex】的神仙玩法'
-            : '3 Killer Workflows with Antigravity, Codex & Cursor'}
+            : '3 Practical Workflows with Antigravity, Codex & Cursor'}
         </h1>
-        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-zinc-300">
+        <p className="max-w-3xl text-sm leading-[1.7] text-[var(--ag-text-secondary)]">
           {isZh
-            ? '很多人装了插件不知道下一步该对 AI 说什么。下面为你整理好了最常用的 3 大实战场景，每张卡片都配好了「一键复制配套提问话术」，直接复制粘进反重力或 Codex 就能出活！'
-            : 'Not sure what to ask your coding agent after grabbing a webpage? Pick any of the 3 battle-tested workflows below — each comes with a 1-click ready-to-paste prompt for Antigravity, Codex, or Cursor.'}
+            ? '不知道抓完网页之后该对 AI 说什么？下面整理好了最常用的 3 种真实开发场景，每个场景都配有一键复制的提问话术，直接粘贴进反重力或 Codex 即可开工。'
+            : 'Not sure what to ask your coding agent after grabbing a webpage? Pick any of the 3 workflows below — each comes with a ready-to-paste companion prompt for Antigravity, Codex, or Cursor.'}
         </p>
       </div>
 
-      {/* 3 Workflow Cards */}
+      {/* 3 Editorial Workflow Sheets */}
       <div className="space-y-6">
         {cards.map((card, index) => {
           const isCopied = copiedId === card.id;
@@ -55,74 +50,67 @@ export function WorkflowsView({ locale, onNavigate }: WorkflowsViewProps) {
             <article
               key={card.id}
               data-workflow-id={card.id}
-              className="rounded-2xl border border-white/[0.08] bg-zinc-900/65 p-6 shadow-lg transition hover:border-indigo-500/35 sm:p-7"
+              className="rounded-[12px] border border-[var(--ag-border)] bg-white p-6 sm:p-7"
             >
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-950/60 px-3 py-1 text-xs font-bold text-indigo-300">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-mono text-xs font-bold text-[var(--ag-accent)]">
                   {card.badge}
                 </span>
-                <span className="font-mono text-xs text-zinc-500">
-                  STEP-BY-STEP #{index + 1}
+                <span className="ag-tabular font-mono text-xs text-[var(--ag-text-muted)]">
+                  0{index + 1} / 03
                 </span>
               </div>
 
-              <h2 className="mt-3 text-lg font-extrabold text-white sm:text-xl">
+              <h2 className="mt-2 text-lg leading-[1.38] font-extrabold text-[#141413] sm:text-xl">
                 {card.title}
               </h2>
-              <p className="mt-1.5 text-xs leading-relaxed text-zinc-400 sm:text-sm">
+              <p className="mt-1.5 text-[13.5px] leading-[1.68] text-[var(--ag-text-secondary)]">
                 {card.scenario}
               </p>
 
-              {/* Step-by-Step Numbered Boxes */}
-              <ol className="mt-5 grid gap-3 md:grid-cols-3">
+              {/* 3-Step Columns */}
+              <ol className="mt-5 grid gap-4 md:grid-cols-3">
                 {card.steps.map((stepText, stepIdx) => (
                   <li
                     key={stepIdx}
-                    className="rounded-xl border border-white/[0.06] bg-zinc-950/80 p-4 text-xs leading-relaxed text-zinc-200"
+                    className="rounded-[8px] border border-[var(--ag-border)] bg-[#FAF9F5] p-4 text-[13px] leading-[1.65] text-[#141413]"
                   >
-                    <div className="mb-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-indigo-600/30 font-mono text-xs font-bold text-indigo-300 border border-indigo-500/30">
-                      {stepIdx + 1}
+                    <div className="ag-tabular mb-1.5 font-mono text-[11px] font-bold text-[var(--ag-text-muted)]">
+                      STEP 0{stepIdx + 1}
                     </div>
                     <p>{stepText}</p>
                   </li>
                 ))}
               </ol>
 
-              {/* Ready-to-Copy Prompt Box */}
-              <div className="mt-5 rounded-xl border border-emerald-500/25 bg-[#070b0e] p-4">
-                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-300">
-                    <Sparkles className="h-3.5 w-3.5" />
-                    <span>{card.promptLabel}</span>
-                  </span>
+              {/* Carbon Terminal Box for Companion Prompt */}
+              <div className="mt-5 overflow-hidden rounded-[8px] bg-[var(--ag-bg-stage)] text-[#EEEDE8]">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 bg-[var(--ag-bg-stage-elevated)] px-4 py-2.5">
+                  <span className="text-xs font-medium text-[#C9C6BA]">{card.promptLabel}</span>
 
                   <button
                     type="button"
                     data-action="copy-workflow-prompt"
                     onClick={() => handleCopyPrompt(card.id, card.promptToCopy)}
-                    className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-emerald-500"
+                    className="inline-flex items-center gap-1.5 rounded-[5px] bg-[var(--ag-accent)] px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90"
                   >
                     {isCopied ? (
                       <>
                         <Check className="h-3.5 w-3.5" />
                         <span>
-                          {isZh
-                            ? '已复制话术！快去反重力 / Codex 粘贴'
-                            : 'Prompt Copied!'}
+                          {isZh ? '已复制话术！快去反重力 / Codex 粘贴' : 'Prompt Copied!'}
                         </span>
                       </>
                     ) : (
                       <>
                         <Copy className="h-3.5 w-3.5" />
-                        <span>
-                          {isZh ? '一键复制配套提问话术' : 'Copy Companion Prompt'}
-                        </span>
+                        <span>{isZh ? '一键复制提问话术' : 'Copy Companion Prompt'}</span>
                       </>
                     )}
                   </button>
                 </div>
 
-                <p className="rounded-lg border border-white/[0.06] bg-zinc-950/90 p-3 font-mono text-xs leading-relaxed text-zinc-200">
+                <p className="p-4 font-mono text-xs leading-[1.7] text-[#EEEDE8]">
                   {card.promptToCopy}
                 </p>
               </div>
@@ -131,7 +119,7 @@ export function WorkflowsView({ locale, onNavigate }: WorkflowsViewProps) {
                 <button
                   type="button"
                   onClick={() => onNavigate(card.targetTab)}
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-300 transition hover:text-indigo-200"
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#141413] transition hover:text-[var(--ag-accent)]"
                 >
                   <span>{card.actionLabel}</span>
                   <ArrowRight className="h-3.5 w-3.5" />

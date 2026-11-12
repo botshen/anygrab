@@ -32,8 +32,8 @@ const SHADOW_STYLES = `
   height: 100vh !important;
   z-index: 2147483647 !important;
   pointer-events: none !important;
-  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Inter", "Segoe UI", Roboto, sans-serif !important;
-  line-height: 1.4 !important;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif !important;
+  line-height: 1.45 !important;
   -webkit-font-smoothing: antialiased !important;
 }
 
@@ -64,12 +64,12 @@ const SHADOW_STYLES = `
   left: 0;
   width: 0;
   height: 0;
-  border: 2px solid #6366f1;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(56, 189, 248, 0.08) 100%);
+  border: 2px solid #D94E28;
+  background: rgba(217, 78, 40, 0.07);
   box-shadow:
-    0 0 0 1px rgba(255, 255, 255, 0.22) inset,
-    0 8px 28px rgba(99, 102, 241, 0.24);
-  border-radius: 5px;
+    0 0 0 1px rgba(255, 255, 255, 0.55) inset,
+    0 8px 24px rgba(20, 20, 19, 0.16);
+  border-radius: 4px;
   pointer-events: none;
   opacity: 0;
   transition:
@@ -94,18 +94,19 @@ const SHADOW_STYLES = `
   gap: 6px;
   max-width: min(92vw, 520px);
   padding: 4px 10px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.96) 0%, rgba(30, 27, 75, 0.96) 100%);
-  border: 1px solid rgba(129, 140, 248, 0.52);
-  color: #f8fafc;
-  font-family: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Consolas, monospace;
+  border-radius: 5px;
+  background: #141413;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #FAF9F6;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-variant-numeric: tabular-nums;
   font-size: 11.5px;
   font-weight: 500;
   letter-spacing: -0.01em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  box-shadow: 0 10px 26px rgba(2, 6, 23, 0.52);
+  box-shadow: 0 8px 20px rgba(20, 20, 19, 0.28);
   pointer-events: none;
   opacity: 0;
   transition: opacity 90ms ease;
@@ -115,9 +116,8 @@ const SHADOW_STYLES = `
   content: "";
   width: 6px;
   height: 6px;
-  border-radius: 999px;
-  background: #818cf8;
-  box-shadow: 0 0 8px #818cf8;
+  border-radius: 1.5px;
+  background: #D94E28;
   flex-shrink: 0;
 }
 
@@ -133,17 +133,15 @@ const SHADOW_STYLES = `
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 8px 13px;
-  border-radius: 14px;
-  background: rgba(9, 9, 14, 0.94);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  gap: 8px;
+  padding: 7px 11px;
+  border-radius: 10px;
+  background: rgba(20, 20, 19, 0.96);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow:
-    0 20px 48px rgba(0, 0, 0, 0.58),
-    0 0 0 1px rgba(99, 102, 241, 0.24);
-  color: #e4e4e7;
+  box-shadow: 0 16px 40px rgba(20, 20, 19, 0.42);
+  color: #E5E4DF;
   font-size: 12px;
   pointer-events: auto;
   user-select: none;
@@ -161,71 +159,76 @@ const SHADOW_STYLES = `
   align-items: center;
   gap: 6px;
   padding-right: 8px;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
   font-weight: 600;
-  color: #ffffff;
+  color: #FAF9F6;
   font-size: 12px;
   letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 
 .ag-brand-dot {
   width: 8px;
   height: 8px;
-  border-radius: 3px;
-  background: linear-gradient(135deg, #6366f1 0%, #38bdf8 100%);
-  box-shadow: 0 0 10px rgba(99, 102, 241, 0.65);
+  border-radius: 2px;
+  background: #D94E28;
+  flex-shrink: 0;
 }
 
 .ag-formats {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   padding: 3px;
-  border-radius: 9px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 7px;
+  background: #1F1F1D;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .ag-format-btn {
   appearance: none;
   border: none;
   background: transparent;
-  color: #a1a1aa;
+  color: #A8A69E;
   font-family: inherit;
   font-size: 11.5px;
   font-weight: 500;
   padding: 4px 9px;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
-  transition: all 120ms ease;
+  white-space: nowrap;
+  transition: background 120ms ease, color 120ms ease;
 }
 
 .ag-format-btn:hover {
-  color: #f4f4f5;
+  color: #FAF9F6;
   background: rgba(255, 255, 255, 0.06);
 }
 
 .ag-format-btn[data-active="true"] {
-  color: #ffffff;
-  background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
-  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.45);
+  color: #FFFFFF;
+  background: #D94E28;
+  font-weight: 600;
+  box-shadow: none;
 }
 
 .ag-budget-pill {
   padding: 3px 8px;
-  border-radius: 999px;
-  background: rgba(99, 102, 241, 0.14);
-  border: 1px solid rgba(129, 140, 248, 0.28);
-  color: #c7d2fe;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  border-radius: 5px;
+  background: #242422;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #E5E4DF;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
   font-size: 11px;
+  white-space: nowrap;
 }
 
 .ag-hints {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  color: #d4d4d8;
+  gap: 6px;
+  color: #D6D5CE;
   font-size: 11.5px;
   padding-left: 2px;
   flex-wrap: wrap;
@@ -237,51 +240,54 @@ const SHADOW_STYLES = `
   gap: 3px;
   padding: 2px 6px;
   border-radius: 5px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #1F1F1D;
+  border: 1px solid rgba(255, 255, 255, 0.09);
   font-size: 11px;
+  white-space: nowrap;
 }
 
 .ag-locale-btn {
   appearance: none;
-  border: 1px solid rgba(56, 189, 248, 0.42);
-  background: rgba(56, 189, 248, 0.14);
-  color: #bae6fd;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: #242422;
+  color: #FAF9F6;
   font-family: inherit;
   font-size: 11px;
   font-weight: 600;
   padding: 4px 8px;
-  border-radius: 7px;
+  border-radius: 5px;
   cursor: pointer;
-  transition: all 120ms ease;
+  white-space: nowrap;
+  transition: background 120ms ease, border-color 120ms ease;
 }
 
 .ag-locale-btn:hover {
-  background: rgba(56, 189, 248, 0.26);
-  color: #ffffff;
+  background: #2F2F2C;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
 }
 
 .ag-close-btn {
   appearance: none;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  color: #a1a1aa;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: #242422;
+  color: #A8A69E;
   width: 24px;
   height: 24px;
-  border-radius: 7px;
+  border-radius: 5px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   font-size: 14px;
   line-height: 1;
-  transition: all 120ms ease;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
 }
 
 .ag-close-btn:hover {
-  color: #ffffff;
-  background: rgba(239, 68, 68, 0.22);
-  border-color: rgba(239, 68, 68, 0.45);
+  color: #FFFFFF;
+  background: #D94E28;
+  border-color: #D94E28;
 }
 
 .ag-toast {
@@ -293,18 +299,15 @@ const SHADOW_STYLES = `
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 11px 15px;
-  border-radius: 12px;
-  background: rgba(9, 9, 14, 0.96);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(52, 211, 153, 0.48);
-  box-shadow:
-    0 18px 42px rgba(0, 0, 0, 0.55),
-    0 0 0 1px rgba(16, 185, 129, 0.18);
-  color: #f8fafc;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #141413;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 14px 34px rgba(20, 20, 19, 0.36);
+  color: #FAF9F6;
   font-size: 12.5px;
   font-weight: 500;
+  line-height: 1.5;
   pointer-events: none;
   opacity: 0;
   transform: translateY(-8px);
@@ -319,10 +322,9 @@ const SHADOW_STYLES = `
 .ag-toast-icon {
   width: 20px;
   height: 20px;
-  border-radius: 999px;
-  background: rgba(16, 185, 129, 0.2);
-  border: 1px solid rgba(52, 211, 153, 0.5);
-  color: #34d399;
+  border-radius: 5px;
+  background: #15803D;
+  color: #FFFFFF;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -462,7 +464,8 @@ export function mountShadowPickerHost(
 
   const toastIcon = doc.createElement('span');
   toastIcon.className = 'ag-toast-icon';
-  toastIcon.textContent = '✓';
+  toastIcon.innerHTML =
+    '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5L10 17.5L19 7.5"/></svg>';
 
   const toastTextEl = doc.createElement('span');
   toastTextEl.setAttribute('data-part', 'toast-text');

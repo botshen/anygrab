@@ -90,95 +90,59 @@ function sdRoundedBox(nx, ny, halfW, halfH, radius) {
 }
 
 /**
- * Evaluates normalized subpixel color [r, g, b, a] (0..255) for AnyGrab's brand icon:
- * - Deep violet -> indigo -> electric cyan squircle background
- * - Crisp white selection viewfinder corner brackets
- * - Center 4-point AI prism star representing instant DOM-to-context distillation
+ * Evaluates normalized subpixel color [r, g, b, a] (0..255) for AnyGrab's Optical Reticle brand mark:
+ * - Matte carbon (#141413) rounded-square body
+ * - Crisp archival off-white (#FAF9F5) corner reticle L-brackets
+ * - International signal vermilion (#D94E28) center square target
  */
 function sampleBrandPixel(nx, ny) {
-  // Squircle body
-  const bgDist = sdRoundedBox(nx, ny, 0.455, 0.455, 0.215);
+  // Rounded square body matching rx="7" on 32x32 viewBox (~0.21875 radius)
+  const bgDist = sdRoundedBox(nx, ny, 0.468, 0.468, 0.215);
   if (bgDist > 0.004) {
     return [0, 0, 0, 0];
   }
 
-  // Diagonal gradient: #4338ca (top-left) -> #6366f1 (mid) -> #8b5cf6 / #0ea5e9 accent (bottom-right)
-  const diag = clamp01((nx * 0.62 + ny * 0.68) / 1.15);
-  let r, g, b;
-  if (diag < 0.55) {
-    const t = diag / 0.55;
-    r = lerp(67, 99, t);
-    g = lerp(56, 102, t);
-    b = lerp(202, 241, t);
-  } else {
-    const t = (diag - 0.55) / 0.45;
-    r = lerp(99, 56, t);
-    g = lerp(102, 189, t);
-    b = lerp(241, 248, t);
+  // Matte carbon #141413 base with subtle top edge sheen (#1F1F1D)
+  const topSheen = clamp01(1 - ny * 1.4) * 0.28;
+  let r = lerp(20, 31, topSheen);
+  let g = lerp(20, 31, topSheen);
+  let b = lerp(19, 29, topSheen);
+
+  // Subtle 1px inner border rim
+  if (bgDist > -0.032 && bgDist <= 0) {
+    const rim = (1 - Math.abs(bgDist + 0.016) / 0.016) * 0.12;
+    r = lerp(r, 250, rim);
+    g = lerp(g, 249, rim);
+    b = lerp(b, 245, rim);
   }
 
-  // Subtle top-left glow + violet warmth at top-right
-  const glowTop = Math.max(0, 1 - Math.hypot(nx - 0.26, ny - 0.2) * 1.65);
-  r = clamp01((r + glowTop * 46) / 255) * 255;
-  g = clamp01((g + glowTop * 42) / 255) * 255;
-  b = clamp01((b + glowTop * 55) / 255) * 255;
-
-  const violetGlow = Math.max(0, 1 - Math.hypot(nx - 0.78, ny - 0.24) * 1.9);
-  r = lerp(r, 168, violetGlow * 0.42);
-  g = lerp(g, 85, violetGlow * 0.28);
-  b = lerp(b, 247, violetGlow * 0.42);
-
-  // Subtle inner glass rim highlight
-  if (bgDist > -0.028 && bgDist <= 0) {
-    const rim = (1 - Math.abs(bgDist + 0.014) / 0.014) * (1 - ny * 0.55) * 0.32;
-    r = lerp(r, 255, rim);
-    g = lerp(g, 255, rim);
-    b = lerp(b, 255, rim);
-  }
-
-  // Foreground geometric motif:
-  // 1) Four viewfinder corner L-brackets
+  // 1) Four crisp corner L-brackets (#FAF9F5)
   const ax = Math.abs(nx - 0.5);
   const ay = Math.abs(ny - 0.5);
-  const outer = 0.285;
-  const stroke = 0.064;
+  const outer = 0.268;
+  const stroke = 0.068;
   const inner = outer - stroke;
-  const armMin = 0.115;
+  const armMin = 0.108;
 
   const inBracketBand =
     ax <= outer &&
     ay <= outer &&
     ((ax >= inner && ay >= armMin) || (ay >= inner && ax >= armMin));
 
-  // Round outer corners of the L-brackets slightly
-  let fgMask = 0;
   if (inBracketBand) {
-    const cornerDist = Math.hypot(Math.max(ax - (outer - 0.032), 0), Math.max(ay - (outer - 0.032), 0));
-    if (cornerDist <= 0.034) {
-      fgMask = 1;
+    const cornerDist = Math.hypot(
+      Math.max(ax - (outer - 0.024), 0),
+      Math.max(ay - (outer - 0.024), 0),
+    );
+    if (cornerDist <= 0.026) {
+      return [250, 249, 245, 255];
     }
   }
 
-  // 2) Center 4-point AI sparkle / prism target
-  // Concave astroid curve: (|dx|/s)^0.68 + (|dy|/s)^0.68 <= 1
-  const starRadius = 0.15;
-  const sx = ax / starRadius;
-  const sy = ay / starRadius;
-  if (sx <= 1 && sy <= 1) {
-    const astroid = Math.pow(sx, 0.68) + Math.pow(sy, 0.68);
-    if (astroid <= 1.0) {
-      fgMask = Math.max(fgMask, 1);
-    }
-  }
-
-  if (fgMask > 0) {
-    // Pure luminous white with subtle ice-blue tint near bottom
-    const fgR = lerp(255, 240, ny * 0.18);
-    const fgG = lerp(255, 249, ny * 0.12);
-    const fgB = 255;
-    r = lerp(r, fgR, fgMask);
-    g = lerp(g, fgG, fgMask);
-    b = lerp(b, fgB, fgMask);
+  // 2) Center vermilion reticle square (#D94E28 -> rgb(217, 78, 40))
+  const centerDist = sdRoundedBox(nx, ny, 0.082, 0.082, 0.032);
+  if (centerDist <= 0) {
+    return [217, 78, 40, 255];
   }
 
   return [Math.round(r), Math.round(g), Math.round(b), 255];

@@ -32,9 +32,16 @@ export function App() {
     document.documentElement.lang = locale;
     document.title =
       locale === 'zh-CN'
-        ? 'AnyGrab 官方网站 — 点一下网页就能喂给反重力 / Codex 1:1 复刻界面与表格'
+        ? 'AnyGrab 官方网站 — 看中任何网页组件，点一下就能喂给反重力 / Codex 1:1 复刻'
         : 'AnyGrab Official Site — Grab Clean UI, Tailwind & Tables for Coding Agents';
   }, [locale]);
+
+  const handleTabChange = (nextTab: ActiveTab) => {
+    setActiveTab(nextTab);
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(null, '', nextTab === 'overview' ? '#' : `#${nextTab}`);
+    }
+  };
 
   const handleLocaleChange = (nextLocale: SiteLocale) => {
     setLocale(nextLocale);
@@ -43,26 +50,26 @@ export function App() {
 
   const handleOpenPresetFromLeaderboard = (presetId: string) => {
     setSelectedPresetId(presetId);
-    setActiveTab('playground');
+    handleTabChange('playground');
   };
 
   const isZh = locale === 'zh-CN';
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#09090b] text-zinc-100">
+    <div className="flex min-h-screen flex-col bg-[var(--ag-bg-canvas)] text-[var(--ag-text-primary)]">
       <NavbarHero
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         locale={locale}
         onLocaleChange={handleLocaleChange}
       />
 
-      <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-6 sm:px-6">
+      <main className="mx-auto w-full max-w-[1320px] flex-1 px-4 py-8 sm:px-8 sm:py-10">
         {activeTab === 'overview' && (
-          <OverviewView locale={locale} onNavigate={setActiveTab} />
+          <OverviewView locale={locale} onNavigate={handleTabChange} />
         )}
         {activeTab === 'workflows' && (
-          <WorkflowsView locale={locale} onNavigate={setActiveTab} />
+          <WorkflowsView locale={locale} onNavigate={handleTabChange} />
         )}
         {activeTab === 'playground' && (
           <LivePlayground
@@ -80,17 +87,20 @@ export function App() {
         {activeTab === 'quickstart' && <QuickStartView locale={locale} />}
       </main>
 
-      <footer className="border-t border-white/[0.06] bg-zinc-950/90 py-5 text-xs text-zinc-500">
-        <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 sm:px-6">
-          <span>
+      <footer className="border-t border-[var(--ag-border)] bg-[var(--ag-bg-canvas)] py-6 text-xs leading-[1.6] text-[var(--ag-text-muted)]">
+        <div className="mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-3 px-4 sm:px-8">
+          <div className="flex items-center gap-2.5">
+            <span className="inline-block h-2 w-2 rounded-[2px] bg-[var(--ag-accent)]" />
+            <span>
+              {isZh
+                ? 'AnyGrab & AnyGrab-Bench — MIT 免费开源 · 毫秒级本地网页 UI 提纯引擎'
+                : 'AnyGrab & AnyGrab-Bench — MIT Open Source · Sub-5ms Deterministic UI Context Engine'}
+            </span>
+          </div>
+          <span className="font-mono text-[11px] text-[var(--ag-text-secondary)]">
             {isZh
-              ? 'AnyGrab 官方网站 & AnyGrab-Bench — MIT 免费开源 · 专为 AI 编程打造的毫秒级网页提纯引擎'
-              : 'AnyGrab Official Website & AnyGrab-Bench — MIT Open Source · Deterministic Sub-5ms UI Context Engine'}
-          </span>
-          <span className="font-mono text-[11px] text-zinc-400">
-            {isZh
-              ? '0 大模型调用 · 100% 本地隐私执行 · 完美支持 反重力 Antigravity / Codex / Cursor'
-              : '0 LLM Calls · 100% Local Execution · Built for Antigravity, Codex & Cursor'}
+              ? '0 大模型费用 · 100% 本地执行 · 支持 反重力 Antigravity / Codex / Cursor / Claude Code'
+              : '0 LLM Calls · 100% Local Execution · Antigravity · Codex · Cursor · Claude Code'}
           </span>
         </div>
       </footer>

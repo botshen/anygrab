@@ -34,7 +34,7 @@ describe('Clipboard, Storage Ring Buffer & Cross-Origin :hover Style Resolver', 
 
     const zhText = formatGrabToastSummary('prompt', 12400, 620, 95.0, 'zh-CN');
     expect(zhText).toBe(
-      '✅ 已复制！已为你剔除 95% 网页垃圾代码 — 现在切到【反重力 / Codex】直接按 Cmd+V 粘贴回车即可！',
+      '已复制！已为你剔除 95% 网页垃圾代码 — 现在切到【反重力 / Codex】直接按 Cmd+V 粘贴回车即可！',
     );
   });
 

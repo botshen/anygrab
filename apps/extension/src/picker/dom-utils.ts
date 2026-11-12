@@ -281,7 +281,7 @@ export function estimateElementDistilledTokens(
 
 /**
  * Formats the top-right success toast message with clear AI workflow guidance:
- * - `zh-CN`: `✅ 已复制！已为你剔除 95% 网页垃圾代码 — 现在切到【反重力 / Codex】直接按 Cmd+V 粘贴回车即可！`
+ * - `zh-CN`: `已复制！已为你剔除 95% 网页垃圾代码 — 现在切到【反重力 / Codex】直接按 Cmd+V 粘贴回车即可！`
  * - `en`:    `Copied JSX · 12,400 → 460 tokens (-96.3%) — Paste (Cmd+V) into Antigravity / Codex!`
  */
 export function formatGrabToastSummary(
@@ -296,7 +296,7 @@ export function formatGrabToastSummary(
   if (locale === 'zh-CN') {
     const savedPct =
       normalizedRatio > 0 ? Math.min(99, Math.max(1, Math.round(normalizedRatio))) : 90;
-    return `✅ 已复制！已为你剔除 ${savedPct}% 网页垃圾代码 — 现在切到【反重力 / Codex】直接按 Cmd+V 粘贴回车即可！`;
+    return `已复制！已为你剔除 ${savedPct}% 网页垃圾代码 — 现在切到【反重力 / Codex】直接按 Cmd+V 粘贴回车即可！`;
   }
 
   const label = FORMAT_SHORT_LABELS[format] ?? format.toUpperCase();

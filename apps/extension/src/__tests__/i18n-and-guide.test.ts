@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnyGrabPicker } from '../content';
 import { initGuideApp } from '../guide';
@@ -5,6 +8,8 @@ import { initPopupApp } from '../popup';
 import { detectDefaultLocale } from '../shared/i18n';
 import { loadSettings, resetMemoryStorageForTests, saveSettings } from '../shared/storage';
 import { HOST_ID } from '../shared/types';
+
+const extRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 
 describe('Bilingual i18n (zh-CN / en), Plain-Language Popup & Built-In Practice Arena (guide.html)', () => {
   let clipboardSpy: ReturnType<typeof vi.fn>;
@@ -151,6 +156,60 @@ describe('Bilingual i18n (zh-CN / en), Plain-Language Popup & Built-In Practice 
       );
     } finally {
       picker.stop();
+    }
+  });
+
+  it('enforces DESIGN.md Archival Paper & Vermilion Reticle tokens with zero emojis or purple gradients', () => {
+    const popupHtml = readFileSync(resolve(extRoot, 'public/popup.html'), 'utf8');
+    const guideHtml = readFileSync(resolve(extRoot, 'public/guide.html'), 'utf8');
+    const i18nSrc = readFileSync(resolve(extRoot, 'src/shared/i18n.ts'), 'utf8');
+    const popupSrc = readFileSync(resolve(extRoot, 'src/popup.ts'), 'utf8');
+    const guideSrc = readFileSync(resolve(extRoot, 'src/guide.ts'), 'utf8');
+    const shadowSrc = readFileSync(resolve(extRoot, 'src/picker/shadow-ui.ts'), 'utf8');
+
+    const requiredCssVars = [
+      '--ag-bg-canvas: #F5F4EF',
+      '--ag-bg-surface: #FFFFFF',
+      '--ag-bg-subtle: #ECEAE3',
+      '--ag-bg-stage: #141413',
+      '--ag-bg-stage-elevated: #1F1F1D',
+      '--ag-border: #DFDDD4',
+      '--ag-border-strong: #C7C4B8',
+      '--ag-text-primary: #141413',
+      '--ag-text-secondary: #52514C',
+      '--ag-text-muted: #78766F',
+      '--ag-accent: #D94E28',
+      '--ag-accent-soft: rgba(217, 78, 40, 0.09)',
+      '--ag-success: #15803D',
+      '--ag-font-sans:',
+      '--ag-font-mono:',
+      '--ag-radius-lg: 12px',
+      '--ag-radius-md: 8px',
+      '--ag-radius-sm: 5px',
+    ];
+
+    for (const token of requiredCssVars) {
+      expect(popupHtml).toContain(token);
+      expect(guideHtml).toContain(token);
+    }
+
+    expect(shadowSrc).toContain('border: 2px solid #D94E28;');
+
+    const bannedEmojiRe = /[📘🌐✨🎯💡🎨⚡📊👆👉🎉🔥⚙✅]/u;
+    const bannedPurpleRe = /#(6366f1|4f46e5|4338ca|7c3aed|8b5cf6|312e81)/i;
+
+    for (const [name, content] of [
+      ['popup.html', popupHtml],
+      ['guide.html', guideHtml],
+      ['i18n.ts', i18nSrc],
+      ['popup.ts', popupSrc],
+      ['guide.ts', guideSrc],
+      ['shadow-ui.ts', shadowSrc],
+    ] as const) {
+      expect(content, `${name} must contain zero decorative emojis`).not.toMatch(bannedEmojiRe);
+      expect(content, `${name} must contain zero indigo/purple hex codes`).not.toMatch(
+        bannedPurpleRe,
+      );
     }
   });
 });

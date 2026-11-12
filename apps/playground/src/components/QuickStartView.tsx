@@ -1,4 +1,4 @@
-import { Check, Code2, Copy, Cpu, Globe, Plug, Sparkles, Terminal } from 'lucide-react';
+import { Check, Copy } from 'lucide-react';
 import { useState } from 'react';
 import type { SiteLocale } from '../i18n';
 
@@ -65,10 +65,10 @@ args = ["-y", "@anygrab/mcp"]`,
   },
 };
 
-const CLI_SNIPPET_ZH = `# 1. 抓取任意公开网页并直接复制到 Mac 剪贴板（限制 1200 字数上限）
+const CLI_SNIPPET_ZH = `# 1. 抓取任意公开网页并复制到 Mac 剪贴板（限制 1200 字数上限）
 npx anygrab https://ui.shadcn.com/pricing --budget 1200 | pbcopy
 
-# 2. 只扒取网页主内容区，直接转成 React 组件代码保存成文件
+# 2. 只抓取网页主内容区，直接转成 React 组件代码保存成文件
 npx anygrab https://example.com -s "main section" -f jsx -o HeroSection.tsx
 
 # 3. 只提取目标网站的配色色板、字体和圆角设计规范
@@ -95,8 +95,8 @@ const result = grab(document.querySelector('#pricing-tier-pro')!, {
   styleResolver: (el, pseudo) => window.getComputedStyle(el, pseudo),
 });
 
-console.log(result.output);              // Ready-to-paste Chinese/English AI prompt
-console.log(result.designTokens.colors); // ['#6366f1', '#0f172a', ...]`;
+console.log(result.output);              // Ready-to-paste AI prompt
+console.log(result.designTokens.colors); // ['#141413', '#D94E28']`;
 
 function CopyCodeBlock({
   code,
@@ -120,28 +120,28 @@ function CopyCodeBlock({
   };
 
   return (
-    <div className="overflow-hidden rounded-xl border border-white/[0.08] bg-[#070709]">
-      <div className="flex items-center justify-between border-b border-white/[0.06] bg-zinc-900/80 px-3.5 py-2 text-xs text-zinc-400">
+    <div className="overflow-hidden rounded-[8px] bg-[var(--ag-bg-stage)] text-[#EEEDE8]">
+      <div className="flex items-center justify-between border-b border-white/10 bg-[var(--ag-bg-stage-elevated)] px-3.5 py-2 text-xs text-[#A3A198]">
         <span className="font-mono">{label}</span>
         <button
           type="button"
           onClick={onCopy}
-          className="inline-flex items-center gap-1.5 rounded-md border border-white/[0.08] bg-zinc-800 px-2.5 py-1 text-[11px] font-medium text-zinc-200 transition hover:bg-indigo-600 hover:text-white"
+          className="inline-flex items-center gap-1.5 rounded-[5px] bg-[#2C2C29] px-2.5 py-1 text-[11px] font-medium text-[#FAF9F5] transition hover:bg-[var(--ag-accent)]"
         >
           {copied ? (
             <>
-              <Check className="h-3.5 w-3.5 text-emerald-400" />
+              <Check className="h-3 w-3 text-[#4ADE80]" />
               <span>{isZh ? '已复制' : 'Copied'}</span>
             </>
           ) : (
             <>
-              <Copy className="h-3.5 w-3.5" />
-              <span>{isZh ? '一键复制' : 'Copy'}</span>
+              <Copy className="h-3 w-3" />
+              <span>{isZh ? '复制' : 'Copy'}</span>
             </>
           )}
         </button>
       </div>
-      <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-zinc-200">
+      <pre className="overflow-x-auto p-4 font-mono text-xs leading-[1.65] whitespace-pre-wrap break-words text-[#EEEDE8]">
         <code>{code}</code>
       </pre>
     </div>
@@ -169,55 +169,51 @@ export function QuickStartView({ locale }: QuickStartViewProps) {
   };
 
   return (
-    <section aria-label="Quick Start and MCP Setup" className="grid gap-6 lg:grid-cols-2">
-      {/* 1. Super Foolproof Chrome Extension 3-Step Visual Guide */}
-      <div className="space-y-4 rounded-2xl border-2 border-emerald-500/35 bg-zinc-900/70 p-5 sm:p-6">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/20 text-emerald-300">
-            <Globe className="h-5 w-5" />
+    <section aria-label="Quick Start and MCP Setup" className="grid gap-x-10 gap-y-12 pt-2 lg:grid-cols-2">
+      {/* 1. Chrome MV3 3-Step Installation — Open Archival Layout (Zero Outer White Box Nesting) */}
+      <div className="space-y-4 border-t-2 border-[var(--ag-accent)] pt-5">
+        <div>
+          <div className="font-mono text-[11px] font-bold text-[var(--ag-accent)] uppercase">
+            01 · BROWSER EXTENSION
           </div>
-          <div>
-            <h2 className="text-base font-extrabold text-white sm:text-lg">
-              {isZh
-                ? '1. 傻瓜式 3 步安装 Chrome 浏览器插件（最推荐！）'
-                : '1. Chrome MV3 Live Element Picker (3-Step Local Setup)'}
-            </h2>
-            <p className="text-xs text-zinc-400">
-              {isZh
-                ? '支持 Chrome / Edge / Arc / 豆包 / 夸克等所有 Chromium 内核浏览器，自带中文界面与新手练习靶场！'
-                : 'Works on Chrome, Edge, Arc & Brave — includes built-in interactive 30s practice range!'}
-            </p>
-          </div>
+          <h2 className="mt-1 text-lg leading-[1.35] font-extrabold text-[#141413]">
+            {isZh
+              ? '傻瓜式 3 步安装 Chrome 浏览器插件（最推荐）'
+              : 'Chrome MV3 Live Element Picker (3-Step Local Setup)'}
+          </h2>
+          <p className="mt-1 text-xs leading-[1.6] text-[var(--ag-text-secondary)]">
+            {isZh
+              ? '兼容 Chrome / Edge / Arc 等所有 Chromium 内核浏览器，内置中英双语界面与 30 秒练习靶场。'
+              : 'Works on Chrome, Edge, Arc & Brave — includes built-in 30s interactive practice arena.'}
+          </p>
         </div>
 
-        <ol className="space-y-3 text-xs">
-          <li className="rounded-xl border border-white/[0.07] bg-zinc-950/85 p-4">
-            <div className="font-bold text-white">
-              {isZh
-                ? '第 ① 步：确认插件文件夹已生成'
-                : 'Step 1 · Locate the pre-built extension folder'}
+        <ol className="divide-y divide-[var(--ag-border)] overflow-hidden rounded-[8px] border border-[var(--ag-border)] bg-white text-[13px] leading-[1.65]">
+          <li className="p-4">
+            <div className="font-bold text-[#141413]">
+              {isZh ? '第 1 步：确认插件构建目录已生成' : 'Step 1 · Build the extension directory'}
             </div>
-            <p className="mt-1.5 leading-relaxed text-zinc-300">
+            <p className="mt-1 text-[var(--ag-text-secondary)]">
               {isZh ? (
                 <>
-                  项目里的{' '}
-                  <code className="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-emerald-300">
+                  项目内的{' '}
+                  <code className="rounded-[4px] bg-[var(--ag-bg-subtle)] px-1.5 py-0.5 font-mono text-xs text-[#141413]">
                     apps/extension/dist
                   </code>{' '}
-                  目录就是打包好的插件文件夹！（如果你刚拉下代码，在根目录跑一次{' '}
-                  <code className="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-indigo-300">
+                  文件夹就是打包好的插件目录（首次拉取代码可在根目录运行{' '}
+                  <code className="rounded-[4px] bg-[var(--ag-bg-subtle)] px-1.5 py-0.5 font-mono text-xs text-[#141413]">
                     pnpm build
                   </code>{' '}
-                  即可生成）。
+                  生成）。
                 </>
               ) : (
                 <>
                   Run{' '}
-                  <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-indigo-300">
+                  <code className="rounded-[4px] bg-[var(--ag-bg-subtle)] px-1.5 py-0.5 font-mono text-xs text-[#141413]">
                     pnpm build
                   </code>{' '}
-                  at the repo root to build{' '}
-                  <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-zinc-200">
+                  at the repo root to generate{' '}
+                  <code className="rounded-[4px] bg-[var(--ag-bg-subtle)] px-1.5 py-0.5 font-mono text-xs text-[#141413]">
                     apps/extension/dist
                   </code>
                   .
@@ -226,35 +222,39 @@ export function QuickStartView({ locale }: QuickStartViewProps) {
             </p>
           </li>
 
-          <li className="rounded-xl border border-white/[0.07] bg-zinc-950/85 p-4">
+          <li className="p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="font-bold text-white">
+              <span className="font-bold text-[#141413]">
                 {isZh
-                  ? '第 ② 步：打开浏览器扩展管理页，开启「开发者模式」'
+                  ? '第 2 步：打开扩展管理页并开启「开发者模式」'
                   : 'Step 2 · Open chrome://extensions & enable Developer mode'}
               </span>
               <button
                 type="button"
                 onClick={handleCopyChromeUrl}
-                className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-[11px] font-semibold text-emerald-300 transition hover:bg-emerald-600 hover:text-white"
+                className="inline-flex items-center gap-1 rounded-[5px] border border-[var(--ag-border-strong)] bg-[var(--ag-bg-canvas)] px-2.5 py-1 text-[11px] font-semibold text-[#141413] transition hover:bg-[var(--ag-bg-subtle)]"
               >
-                {copiedExtUrl ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                <span>{isZh ? '复制 chrome://extensions' : 'Copy URL'}</span>
+                {copiedExtUrl ? (
+                  <Check className="h-3 w-3 text-[var(--ag-success)]" />
+                ) : (
+                  <Copy className="h-3 w-3" />
+                )}
+                <span>{isZh ? '复制地址' : 'Copy URL'}</span>
               </button>
             </div>
-            <p className="mt-1.5 leading-relaxed text-zinc-300">
+            <p className="mt-1 text-[var(--ag-text-secondary)]">
               {isZh ? (
                 <>
-                  新建一个浏览器标签页，在地址栏粘贴{' '}
-                  <code className="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-emerald-300">
+                  在浏览器地址栏输入{' '}
+                  <code className="rounded-[4px] bg-[var(--ag-bg-subtle)] px-1.5 py-0.5 font-mono text-xs text-[#141413]">
                     chrome://extensions
                   </code>{' '}
-                  并回车，然后把页面<strong>右上角的「开发者模式 (Developer mode)」开关打开</strong>。
+                  回车，打开右上角的<strong>「开发者模式 (Developer mode)」</strong>开关。
                 </>
               ) : (
                 <>
-                  Navigate to{' '}
-                  <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-emerald-300">
+                  Visit{' '}
+                  <code className="rounded-[4px] bg-[var(--ag-bg-subtle)] px-1.5 py-0.5 font-mono text-xs text-[#141413]">
                     chrome://extensions
                   </code>{' '}
                   and toggle <strong>Developer mode</strong> ON in the top-right corner.
@@ -263,64 +263,58 @@ export function QuickStartView({ locale }: QuickStartViewProps) {
             </p>
           </li>
 
-          <li className="rounded-xl border border-white/[0.07] bg-zinc-950/85 p-4">
-            <div className="font-bold text-white">
+          <li className="p-4">
+            <div className="font-bold text-[#141413]">
               {isZh
-                ? '第 ③ 步：点击「加载已解压的扩展程序」选中 dist 文件夹！'
+                ? '第 3 步：点击「加载已解压的扩展程序」选中 dist 目录'
                 : 'Step 3 · Click "Load unpacked" & select apps/extension/dist'}
             </div>
-            <p className="mt-1.5 leading-relaxed text-zinc-300">
+            <p className="mt-1 text-[var(--ag-text-secondary)]">
               {isZh ? (
                 <>
-                  点击页面左上角出现的<strong>「加载已解压的扩展程序 (Load unpacked)」</strong>按钮，在弹窗里选中{' '}
-                  <code className="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-zinc-100">
+                  点击左上角<strong>「加载已解压的扩展程序」</strong>，选择{' '}
+                  <code className="rounded-[4px] bg-[var(--ag-bg-subtle)] px-1.5 py-0.5 font-mono text-xs text-[#141413]">
                     apps/extension/dist
                   </code>{' '}
-                  文件夹就装好啦！
+                  即可。装好后点击右上角插件图标里的「30 秒练习靶场」即可立刻体验点选。
                 </>
               ) : (
                 <>
-                  Click <strong>Load unpacked</strong> in the top-left and choose{' '}
-                  <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-zinc-100">
+                  Click <strong>Load unpacked</strong> and choose{' '}
+                  <code className="rounded-[4px] bg-[var(--ag-bg-subtle)] px-1.5 py-0.5 font-mono text-xs text-[#141413]">
                     apps/extension/dist
                   </code>
-                  . Press <kbd className="rounded bg-zinc-800 px-1.5 py-0.5 font-mono">Alt+Shift+G</kbd> on any page to start grabbing!
+                  . Open the popup and launch the 30s Practice Arena to try it live.
                 </>
               )}
             </p>
-            <div className="mt-2.5 flex items-center gap-1.5 rounded-lg border border-indigo-500/25 bg-indigo-950/40 px-3 py-2 text-[11px] text-indigo-200">
-              <Sparkles className="h-3.5 w-3.5 shrink-0 text-indigo-400" />
-              <span>
-                {isZh
-                  ? '新手福利：装好后点开浏览器右上角插件图标，点击【📘 怎么用？30 秒练习靶场】就能边看边练！'
-                  : 'Pro Tip: Open the extension popup and click "30s Interactive Guide & Practice Range" to test it hands-on!'}
-              </span>
-            </div>
           </li>
         </ol>
       </div>
 
-      {/* 2. MCP Server Setup */}
-      <div className="space-y-4 rounded-2xl border border-indigo-500/25 bg-zinc-900/65 p-5 sm:p-6">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-300">
-            <Plug className="h-5 w-5" />
+      {/* 2. MCP Server Setup — Open Archival Layout */}
+      <div className="space-y-4 border-t-2 border-[#141413] pt-5">
+        <div>
+          <div className="font-mono text-[11px] font-bold text-[#141413] uppercase">
+            02 · STDIO MCP SERVER
           </div>
-          <div>
-            <h2 className="text-base font-extrabold text-white sm:text-lg">
-              {isZh
-                ? '2. 把 AnyGrab MCP 装进反重力 / Codex（全自动扒网页）'
-                : '2. Connect Stdio MCP Server (@anygrab/mcp)'}
-            </h2>
-            <p className="text-xs text-zinc-400">
-              {isZh
-                ? '配置一次后，在聊天框直接发网址就能让 AI 自己去抓取网页与提取色板！'
-                : 'Give Antigravity, Codex, Cursor, or Claude Code native URL & design-token distillation tools.'}
-            </p>
-          </div>
+          <h2 className="mt-1 text-lg leading-[1.35] font-extrabold text-[#141413]">
+            {isZh
+              ? '把 AnyGrab MCP 装进反重力 / Codex（全自动抓网页）'
+              : 'Connect Stdio MCP Server (@anygrab/mcp)'}
+          </h2>
+          <p className="mt-1 text-xs leading-[1.6] text-[var(--ag-text-secondary)]">
+            {isZh
+              ? '配置一次后，在聊天框直接发公开网址即可让 AI 自动抓取页面结构与设计色板。'
+              : 'Give Antigravity, Codex, Cursor, or Claude Code native URL & design-token distillation tools.'}
+          </p>
         </div>
 
-        <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="MCP Client Tabs">
+        <div
+          className="inline-flex flex-wrap gap-1 rounded-[8px] border border-[var(--ag-border)] bg-[var(--ag-bg-subtle)] p-0.5"
+          role="tablist"
+          aria-label="MCP Client Tabs"
+        >
           {(Object.keys(MCP_CONFIGS) as McpClientKey[]).map((key) => (
             <button
               key={key}
@@ -328,10 +322,10 @@ export function QuickStartView({ locale }: QuickStartViewProps) {
               role="tab"
               aria-selected={mcpClient === key}
               onClick={() => setMcpClient(key)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+              className={`rounded-[5px] px-3 py-1.5 text-xs font-semibold transition ${
                 mcpClient === key
-                  ? 'bg-indigo-600 text-white'
-                  : 'border border-white/[0.06] bg-zinc-950 text-zinc-400 hover:text-zinc-200'
+                  ? 'bg-white text-[#141413] shadow-[0_1px_2px_rgba(20,20,19,0.08)]'
+                  : 'text-[var(--ag-text-secondary)] hover:text-[#141413]'
               }`}
             >
               {MCP_CONFIGS[key].label}
@@ -339,7 +333,7 @@ export function QuickStartView({ locale }: QuickStartViewProps) {
           ))}
         </div>
 
-        <p className="text-xs text-zinc-300">
+        <p className="text-xs leading-[1.6] text-[var(--ag-text-secondary)]">
           {isZh ? activeMcp.whereHintZh : activeMcp.whereHintEn}
         </p>
 
@@ -349,52 +343,44 @@ export function QuickStartView({ locale }: QuickStartViewProps) {
           isZh={isZh}
         />
 
-        <div className="grid gap-2 pt-1 sm:grid-cols-3">
-          <div className="rounded-xl border border-white/[0.06] bg-zinc-950/80 p-3">
-            <code className="font-mono text-xs font-bold text-indigo-300">grab_url</code>
-            <p className="mt-1 text-[11px] text-zinc-400">
-              {isZh
-                ? '自动下载公开网址 + 外部样式表并提纯给 AI'
-                : 'Fetches public URL + inlines external CSS & distills.'}
+        <div className="grid gap-3 border-t border-[var(--ag-border)] pt-3 sm:grid-cols-3">
+          <div>
+            <code className="font-mono text-xs font-bold text-[#141413]">grab_url</code>
+            <p className="mt-0.5 text-[11.5px] leading-[1.55] text-[var(--ag-text-secondary)]">
+              {isZh ? '抓取公开网址并自动提纯' : 'Fetches public URL & distills.'}
             </p>
           </div>
-          <div className="rounded-xl border border-white/[0.06] bg-zinc-950/80 p-3">
-            <code className="font-mono text-xs font-bold text-violet-300">grab_html</code>
-            <p className="mt-1 text-[11px] text-zinc-400">
-              {isZh
-                ? '直接把杂乱 HTML 代码清洗成干净组件'
-                : 'Distills raw HTML + <style> into Prompt, JSX, or GFM.'}
+          <div>
+            <code className="font-mono text-xs font-bold text-[#141413]">grab_html</code>
+            <p className="mt-0.5 text-[11.5px] leading-[1.55] text-[var(--ag-text-secondary)]">
+              {isZh ? '清洗原始 HTML 为组件代码' : 'Cleans raw HTML into JSX/GFM.'}
             </p>
           </div>
-          <div className="rounded-xl border border-white/[0.06] bg-zinc-950/80 p-3">
-            <code className="font-mono text-xs font-bold text-emerald-300">
+          <div>
+            <code className="font-mono text-xs font-bold text-[#141413]">
               extract_design_tokens
             </code>
-            <p className="mt-1 text-[11px] text-zinc-400">
-              {isZh
-                ? '一键提取目标网站配色色板、字体与圆角'
-                : 'Extracts deduplicated colors, fonts, radii & shadows.'}
+            <p className="mt-0.5 text-[11.5px] leading-[1.55] text-[var(--ag-text-secondary)]">
+              {isZh ? '提取网站色板、字体与圆角' : 'Extracts colors, fonts & radii.'}
             </p>
           </div>
         </div>
       </div>
 
       {/* 3. CLI Examples */}
-      <div className="space-y-4 rounded-2xl border border-white/[0.08] bg-zinc-900/65 p-5 sm:p-6">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/20 text-amber-300">
-            <Terminal className="h-5 w-5" />
+      <div className="space-y-4 border-t border-[var(--ag-border-strong)] pt-6">
+        <div>
+          <div className="font-mono text-[11px] font-bold text-[var(--ag-text-muted)] uppercase">
+            03 · COMMAND LINE
           </div>
-          <div>
-            <h2 className="text-base font-bold text-white">
-              {isZh ? '3. 终端命令行用法 (npx anygrab)' : '3. CLI Workflows (npx anygrab)'}
-            </h2>
-            <p className="text-xs text-zinc-400">
-              {isZh
-                ? '免安装直接在终端里抓取网页并导出成文件或塞进剪贴板'
-                : 'Pipe clean UI structures, complex tables, or tokens directly into terminal agents.'}
-            </p>
-          </div>
+          <h2 className="mt-1 text-base font-bold text-[#141413]">
+            {isZh ? '终端命令行用法 (npx anygrab)' : 'CLI Workflows (npx anygrab)'}
+          </h2>
+          <p className="mt-0.5 text-xs leading-[1.6] text-[var(--ag-text-secondary)]">
+            {isZh
+              ? '免安装直接在终端抓取网页并导出文件或送入系统剪贴板。'
+              : 'Pipe clean UI structures, complex tables, or tokens directly into terminal agents.'}
+          </p>
         </div>
         <CopyCodeBlock
           code={isZh ? CLI_SNIPPET_ZH : CLI_SNIPPET_EN}
@@ -404,33 +390,21 @@ export function QuickStartView({ locale }: QuickStartViewProps) {
       </div>
 
       {/* 4. @anygrab/core TypeScript SDK */}
-      <div className="space-y-4 rounded-2xl border border-white/[0.08] bg-zinc-900/65 p-5 sm:p-6">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-500/20 text-violet-300">
-            <Code2 className="h-5 w-5" />
+      <div className="space-y-4 border-t border-[var(--ag-border-strong)] pt-6">
+        <div>
+          <div className="font-mono text-[11px] font-bold text-[var(--ag-text-muted)] uppercase">
+            04 · TYPESCRIPT SDK
           </div>
-          <div>
-            <h2 className="text-base font-bold text-white">
-              {isZh
-                ? '4. 开发者代码集成 (@anygrab/core SDK)'
-                : '4. Zero-Dependency @anygrab/core SDK'}
-            </h2>
-            <p className="text-xs text-zinc-400">
-              {isZh
-                ? '零第三方依赖，可嵌入你自己的爬虫、自动化脚本或 AI Agent 项目'
-                : 'Embed sub-5ms DOM distillation inside Browser-Use agents, Playwright scripts, or RAG crawlers.'}
-            </p>
-          </div>
+          <h2 className="mt-1 text-base font-bold text-[#141413]">
+            {isZh ? '开发者代码集成 (@anygrab/core)' : 'Zero-Dependency @anygrab/core SDK'}
+          </h2>
+          <p className="mt-0.5 text-xs leading-[1.6] text-[var(--ag-text-secondary)]">
+            {isZh
+              ? '零运行时依赖，可嵌入爬虫、Playwright 自动化脚本或自定义 AI Agent。'
+              : 'Embed sub-5ms DOM distillation inside Browser-Use agents, Playwright scripts, or crawlers.'}
+          </p>
         </div>
         <CopyCodeBlock code={SDK_SNIPPET} label="TypeScript · @anygrab/core" isZh={isZh} />
-        <div className="flex items-center gap-2 text-xs text-zinc-400">
-          <Cpu className="h-4 w-4 text-indigo-400" />
-          <span>
-            {isZh
-              ? '100% 纯本地运行 · 0 运行时依赖 · 支持 locale: "zh-CN" | "en" 双语输出'
-              : '100% pure ESM + CJS bundle · Zero runtime npm dependencies · Built-in bilingual prompt output.'}
-          </span>
-        </div>
       </div>
     </section>
   );

@@ -1,13 +1,4 @@
 import { VERSION } from '@anygrab/core';
-import {
-  BarChart3,
-  Download,
-  Home,
-  Languages,
-  Layers,
-  Sparkles,
-  Wand2,
-} from 'lucide-react';
 import type { ActiveTab } from '../data/types';
 import type { SiteLocale } from '../i18n';
 
@@ -29,69 +20,73 @@ export function NavbarHero({
   const navItems: Array<{
     id: ActiveTab;
     label: string;
-    badge?: string;
-    icon: typeof Home;
   }> = [
     {
       id: 'overview',
       label: isZh ? '产品首页' : 'Overview',
-      icon: Home,
     },
     {
       id: 'workflows',
-      label: isZh ? '配合 AI 实战教程' : 'AI Workflows',
-      badge: isZh ? '必看' : 'Guide',
-      icon: Wand2,
+      label: isZh ? '实战教程' : 'Workflows',
     },
     {
       id: 'playground',
-      label: isZh ? '在线免装体验台' : 'Live Playground',
-      icon: Sparkles,
+      label: isZh ? '在线体验台' : 'Playground',
     },
     {
       id: 'leaderboard',
-      label: isZh ? '性能跑分榜' : 'AnyGrab-Bench',
-      badge: '99.6',
-      icon: BarChart3,
+      label: isZh ? '性能跑分' : 'Benchmarks',
     },
     {
       id: 'quickstart',
-      label: isZh ? '下载插件 & 安装' : 'Download & MCP',
-      icon: Download,
+      label: isZh ? '下载与安装' : 'Install & MCP',
     },
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/[0.08] bg-[#09090b]/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-[1440px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        {/* Brand Identity */}
+    <header className="sticky top-0 z-40 border-b border-[var(--ag-border)] bg-[#F5F4EF]/94 backdrop-blur-md">
+      <div className="mx-auto flex max-w-[1320px] flex-wrap items-center justify-between gap-x-6 gap-y-1.5 px-4 pt-2 pb-0 sm:px-8 lg:h-[58px] lg:flex-nowrap lg:py-0">
+        {/* Brand Optical Reticle Mark */}
         <button
           type="button"
           onClick={() => onTabChange('overview')}
-          className="flex items-center gap-2.5 text-left transition hover:opacity-90"
+          className="flex items-center gap-2.5 text-left transition hover:opacity-80"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/25">
-            <Layers className="h-4 w-4 text-white" />
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-base font-extrabold tracking-tight text-white">AnyGrab</span>
-            <span className="rounded-md border border-indigo-500/30 bg-indigo-500/10 px-1.5 py-0.5 font-mono text-[11px] font-medium text-indigo-300">
-              v{VERSION}
+          <svg
+            width="26"
+            height="26"
+            viewBox="0 0 32 32"
+            fill="none"
+            aria-hidden="true"
+            className="shrink-0"
+          >
+            <rect width="32" height="32" rx="7" fill="#141413" />
+            <path
+              d="M8.5 12.5V8.5H12.5M19.5 8.5H23.5V12.5M23.5 19.5V23.5H19.5M12.5 23.5H8.5V19.5"
+              stroke="#FAF9F5"
+              strokeWidth="2.1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <rect x="13.5" y="13.5" width="5" height="5" rx="1" fill="#D94E28" />
+          </svg>
+          <div className="flex items-baseline gap-2">
+            <span className="text-[16px] font-bold tracking-[-0.025em] text-[#141413]">
+              AnyGrab
             </span>
-            <span className="hidden rounded-md border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-300 md:inline-flex">
-              {isZh ? '免费开源 MIT · 零大模型费用' : 'MIT Open Source · 0 LLM Cost'}
+            <span className="font-mono text-[11px] text-[var(--ag-text-muted)]">
+              v{VERSION}
             </span>
           </div>
         </button>
 
-        {/* Five Core Navigation Tabs */}
+        {/* Clean Underline Navigation Tabs (Zero Pill Clutter) */}
         <nav
           role="tablist"
           aria-label="Primary Website Navigation"
-          className="order-3 flex w-full items-center gap-1.5 overflow-x-auto pt-1 lg:order-2 lg:w-auto lg:pt-0"
+          className="ag-no-scrollbar order-3 -mx-4 flex w-[calc(100%+2rem)] items-center justify-between gap-2 overflow-x-auto border-t border-[var(--ag-border)]/70 px-4 sm:justify-start sm:gap-5 lg:order-2 lg:mx-0 lg:h-full lg:w-auto lg:gap-7 lg:border-t-0 lg:px-0"
         >
           {navItems.map((item) => {
-            const Icon = item.icon;
             const active = activeTab === item.id;
             return (
               <button
@@ -101,46 +96,39 @@ export function NavbarHero({
                 data-tab={item.id}
                 aria-selected={active}
                 onClick={() => onTabChange(item.id)}
-                className={`inline-flex shrink-0 items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-semibold transition sm:text-[13px] ${
+                className={`relative inline-flex h-[36px] shrink-0 items-center gap-1.5 text-[12.5px] transition sm:h-[42px] sm:text-[13px] lg:h-full ${
                   active
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/25'
-                    : 'border border-white/[0.06] bg-zinc-900/75 text-zinc-300 hover:bg-zinc-800 hover:text-white'
+                    ? 'font-semibold text-[#141413]'
+                    : 'font-medium text-[var(--ag-text-secondary)] hover:text-[#141413]'
                 }`}
               >
-                <Icon className="h-3.5 w-3.5" />
                 <span>{item.label}</span>
-                {item.badge && (
+                {active && (
                   <span
-                    className={`rounded-full px-1.5 py-0.2 font-mono text-[10px] font-bold ${
-                      active
-                        ? 'bg-white/20 text-white'
-                        : 'bg-emerald-500/15 text-emerald-300'
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
+                    aria-hidden="true"
+                    className="absolute inset-x-0 bottom-0 h-[2px] bg-[var(--ag-accent)]"
+                  />
                 )}
               </button>
             );
           })}
         </nav>
 
-        {/* One-Click Language Switcher (中文 / EN) */}
+        {/* Minimalist Neutral Language Switcher */}
         <div
           data-testid="locale-switcher"
           aria-label="Language Switcher"
-          className="order-2 inline-flex items-center gap-1 rounded-xl border border-white/[0.1] bg-zinc-900 p-1 lg:order-3"
+          className="order-2 inline-flex items-center rounded-[8px] border border-[var(--ag-border)] bg-[var(--ag-bg-subtle)] p-0.5 lg:order-3"
         >
-          <Languages className="ml-1.5 h-3.5 w-3.5 text-indigo-400" />
           <button
             type="button"
             data-locale="zh-CN"
             aria-pressed={isZh}
             onClick={() => onLocaleChange('zh-CN')}
-            className={`rounded-lg px-2.5 py-1 text-xs font-bold transition ${
+            className={`rounded-[5px] px-2.5 py-1 text-xs leading-none transition ${
               isZh
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'text-zinc-400 hover:text-zinc-200'
+                ? 'bg-white font-semibold text-[#141413] shadow-[0_1px_2px_rgba(20,20,19,0.08)]'
+                : 'font-medium text-[var(--ag-text-secondary)] hover:text-[#141413]'
             }`}
           >
             中文
@@ -150,10 +138,10 @@ export function NavbarHero({
             data-locale="en"
             aria-pressed={!isZh}
             onClick={() => onLocaleChange('en')}
-            className={`rounded-lg px-2.5 py-1 text-xs font-bold transition ${
+            className={`rounded-[5px] px-2.5 py-1 text-xs leading-none transition ${
               !isZh
-                ? 'bg-indigo-600 text-white shadow-xs'
-                : 'text-zinc-400 hover:text-zinc-200'
+                ? 'bg-white font-semibold text-[#141413] shadow-[0_1px_2px_rgba(20,20,19,0.08)]'
+                : 'font-medium text-[var(--ag-text-secondary)] hover:text-[#141413]'
             }`}
           >
             EN
