@@ -6,8 +6,10 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "icons": "node scripts/generate-icons.mjs",
+    "build": "node scripts/generate-icons.mjs && tsup",
+    "dev": "node scripts/generate-icons.mjs && tsup --watch",
+    "test": "vitest run --root ../.. apps/extension",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist *.tsbuildinfo"
   },

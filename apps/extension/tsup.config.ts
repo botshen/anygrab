@@ -20,6 +20,14 @@ export default defineConfig({
   async onSuccess() {
     const publicDir = resolve(extDir, 'public');
     const distDir = resolve(extDir, 'dist');
+    const iconsDir = resolve(publicDir, 'icons');
+
+    if (!existsSync(resolve(iconsDir, 'icon-128.png'))) {
+      // @ts-expect-error -- plain ESM Node script outside src/ rootDir
+      const { generateExtensionIcons } = await import('./scripts/generate-icons.mjs');
+      generateExtensionIcons(iconsDir);
+    }
+
     if (existsSync(publicDir)) {
       mkdirSync(distDir, { recursive: true });
       cpSync(publicDir, distDir, { recursive: true });
