@@ -454,11 +454,45 @@ function startFixtureHttpServer() {
 /* -------------------------------------------------------------------------- */
 
 async function verifyExtensionE2E() {
-  logSection('Gate 1: Real Chrome MV3 Extension E2E (Service Worker + Shadow DOM + Popup)');
+  logSection(
+    'Gate 1: Real Chrome MV3 Extension v0.2.0 E2E (Bilingual _locales + 30s Practice Arena + Shadow DOM + Popup)',
+  );
 
-  assert.ok(
-    fs.existsSync(path.join(EXT_DIST_DIR, 'manifest.json')),
-    `Missing extension dist manifest at ${EXT_DIST_DIR}`,
+  const manifestPath = path.join(EXT_DIST_DIR, 'manifest.json');
+  assert.ok(fs.existsSync(manifestPath), `Missing extension dist manifest at ${EXT_DIST_DIR}`);
+
+  const manifestJson = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  assert.equal(manifestJson.version, '0.2.0', 'Extension manifest version must be 0.2.0');
+  assert.equal(manifestJson.default_locale, 'en', 'Extension manifest must set default_locale="en"');
+  assert.equal(manifestJson.name, '__MSG_extName__', 'Extension manifest name must use __MSG_extName__');
+  assert.equal(
+    manifestJson.description,
+    '__MSG_extDescription__',
+    'Extension manifest description must use __MSG_extDescription__',
+  );
+
+  const zhLocalePath = path.join(EXT_DIST_DIR, '_locales', 'zh_CN', 'messages.json');
+  const enLocalePath = path.join(EXT_DIST_DIR, '_locales', 'en', 'messages.json');
+  assert.ok(fs.existsSync(zhLocalePath), 'Missing dist/_locales/zh_CN/messages.json');
+  assert.ok(fs.existsSync(enLocalePath), 'Missing dist/_locales/en/messages.json');
+  assert.ok(fs.existsSync(path.join(EXT_DIST_DIR, 'guide.html')), 'Missing dist/guide.html');
+  assert.ok(fs.existsSync(path.join(EXT_DIST_DIR, 'guide.js')), 'Missing dist/guide.js');
+
+  const zhMessages = JSON.parse(fs.readFileSync(zhLocalePath, 'utf8'));
+  const enMessages = JSON.parse(fs.readFileSync(enLocalePath, 'utf8'));
+  assert.match(
+    zhMessages?.extName?.message ?? '',
+    /AnyGrab.*AI 编程网页组件扒取神器/,
+    'zh_CN messages.json must provide Chinese extension name',
+  );
+  assert.match(
+    enMessages?.extName?.message ?? '',
+    /AnyGrab/i,
+    'en messages.json must provide English extension name',
+  );
+  logPass(
+    'Extension v0.2.0 manifest & `_locales/{zh_CN,en}` static bundle check',
+    `${zhMessages.extName.message}`,
   );
 
   const candidates = discoverCachedPlaywrightChromiumCandidates();
@@ -475,9 +509,11 @@ async function verifyExtensionE2E() {
       const ctx = await chromium.launchPersistentContext(tmpDir, {
         executablePath: exePath,
         headless: false,
+        locale: 'zh-CN',
         viewport: { width: 1280, height: 900 },
         args: [
           '--headless=new',
+          '--lang=zh-CN',
           `--disable-extensions-except=${EXT_DIST_DIR}`,
           `--load-extension=${EXT_DIST_DIR}`,
           '--no-first-run',
@@ -517,8 +553,11 @@ async function verifyExtensionE2E() {
   const fixtureServer = await startFixtureHttpServer();
   const consoleErrors = [];
   const pageErrors = [];
+  const trackedPages = new WeakSet();
 
   const attachErrorTrackers = (targetPage, label) => {
+    if (trackedPages.has(targetPage)) return;
+    trackedPages.add(targetPage);
     targetPage.on('console', (msg) => {
       if (msg.type() === 'error') {
         consoleErrors.push(`[${label} console.error] ${msg.text()}`);
@@ -529,42 +568,249 @@ async function verifyExtensionE2E() {
     });
   };
 
+  for (const existingPage of context.pages()) {
+    attachErrorTrackers(existingPage, 'initial-tab');
+  }
+  context.on('page', (newPage) => {
+    attachErrorTrackers(newPage, 'dynamic-tab');
+  });
+
   try {
     await context.grantPermissions(['clipboard-read', 'clipboard-write']);
 
-    // 1. Open Popup first to verify initial clean UI & enable `:hover` extraction
+    // 1. Open Popup: verify Chinese auto-detection, plain-language cards, `中文 / EN` toggle & `:hover` setting
     const popupPage = await context.newPage();
     attachErrorTrackers(popupPage, 'popup');
     await popupPage.goto(`chrome-extension://${extId}/popup.html`, {
       waitUntil: 'domcontentloaded',
     });
 
+    await popupPage.locator('#app[data-locale="zh-CN"]').waitFor({ state: 'visible' });
     await popupPage.locator('[data-action="pick-element"]').waitFor({ state: 'visible' });
+    await popupPage.locator('[data-action="open-guide"]').waitFor({ state: 'visible' });
+    await popupPage.locator('[data-action="open-website"]').waitFor({ state: 'visible' });
+
+    const formatExplainZh = (await popupPage.locator('[data-part="format-explain"]').textContent()) ?? '';
+    assert.match(
+      formatExplainZh,
+      /反重力|Codex/,
+      `Popup plain-language format explanation should mention Antigravity/Codex, got: ${formatExplainZh}`,
+    );
+
     const initialHistoryCount = await popupPage.locator('[data-part="history-count"]').textContent();
     assert.equal(initialHistoryCount?.trim(), '0', 'Initial popup history count should be 0');
 
-    // Toggle `Include :hover` ON so external/page `:hover` styles compile to `hover:*`
+    // Toggle Popup language: `zh-CN` -> `en` -> `zh-CN`
+    await popupPage.locator('[data-action="toggle-locale"]').click();
+    await popupPage.locator('#app[data-locale="en"]').waitFor({ state: 'visible' });
+    const formatExplainEn = (await popupPage.locator('[data-part="format-explain"]').textContent()) ?? '';
+    assert.match(formatExplainEn, /Antigravity|Codex/i);
+
+    await popupPage.locator('[data-action="toggle-locale"]').click();
+    await popupPage.locator('#app[data-locale="zh-CN"]').waitFor({ state: 'visible' });
+
+    // Enable `:hover` extraction via locale-agnostic label selector
     const includeHoverCheckbox = popupPage.locator('[data-control="include-hover"]');
     if (!(await includeHoverCheckbox.isChecked())) {
-      await popupPage.locator('label.ag-toggle-card', { hasText: 'Include :hover' }).click();
+      await popupPage.locator('label:has([data-control="include-hover"])').click();
     }
     assert.equal(await includeHoverCheckbox.isChecked(), true, 'Include :hover toggle should be checked');
-    logPass('Extension Popup initial render & settings persistence', '0 history, Include :hover ON');
+    logPass(
+      'Extension Popup bilingual UI (`zh-CN` ↔ `en`) & plain-language guidance',
+      '0 history, Include :hover ON',
+    );
 
-    // 2. Open complex target webpage & verify silent 0 DOM pollution before activation
+    const readLatestHistoryFromStorage = async (expectedCount) => {
+      const deadline = Date.now() + 5000;
+      while (Date.now() < deadline) {
+        const arr = await popupPage.evaluate(async () => {
+          const data = await chrome.storage.local.get('anygrab_history_v1');
+          return Array.isArray(data?.anygrab_history_v1) ? data.anygrab_history_v1 : [];
+        });
+        if (arr.length >= expectedCount) {
+          return arr[0];
+        }
+        await new Promise((r) => setTimeout(r, 50));
+      }
+      assert.fail(`Timed out waiting for chrome.storage.local history length >= ${expectedCount}`);
+    };
+
+    // 2. Verify Built-in 30s Interactive Tutorial & Practice Arena (`guide.html`)
+    const existingGuideTab = context
+      .pages()
+      .find((p) => p.url() === `chrome-extension://${extId}/guide.html`);
+    const guidePage = existingGuideTab ?? (await context.newPage());
+    attachErrorTrackers(guidePage, 'guide');
+    await guidePage.bringToFront();
+    await guidePage.goto(`chrome-extension://${extId}/guide.html`, {
+      waitUntil: 'domcontentloaded',
+    });
+
+    await guidePage.locator('#guide-app[data-locale="zh-CN"]').waitFor({ state: 'visible' });
+    assert.equal(await guidePage.locator('.ag-step-card').count(), 3, 'Guide must show 1-2-3 step cards');
+    assert.ok(
+      (await guidePage.locator('[data-action="copy-prompt-template"]').count()) >= 3,
+      'Guide must provide >= 3 ready-to-copy Antigravity/Codex companion prompts',
+    );
+    await guidePage.locator('#practice-target-card').waitFor({ state: 'visible' });
+    await guidePage.locator('#practice-target-table').waitFor({ state: 'visible' });
+
+    // Toggle Guide language `zh-CN` -> `en` -> `zh-CN`
+    await guidePage.locator('[data-action="guide-toggle-locale"]').click();
+    await guidePage.locator('#guide-app[data-locale="en"]').waitFor({ state: 'visible' });
+    await guidePage.locator('[data-action="guide-toggle-locale"]').click();
+    await guidePage.locator('#guide-app[data-locale="zh-CN"]').waitFor({ state: 'visible' });
+
+    // Test 1-click prompt template copy button
+    const firstTplBtn = guidePage.locator('[data-action="copy-prompt-template"]').first();
+    await firstTplBtn.click();
+    await guidePage.waitForFunction(
+      () =>
+        document
+          .querySelector('[data-action="copy-prompt-template"]')
+          ?.getAttribute('data-copied') === 'true',
+    );
+
+    // Launch real Shadow DOM picker inside Practice Arena & grab Target #1 (`#practice-target-card`)
+    await guidePage.locator('[data-action="arena-start-picker"]').click();
+    await guidePage
+      .locator('#__anygrab-host__[data-anygrab-active="true"][data-anygrab-locale="zh-CN"]')
+      .waitFor({ state: 'attached', timeout: 5000 });
+
+    const hudHintsZh = await guidePage.evaluate(
+      () =>
+        document
+          .getElementById('__anygrab-host__')
+          ?.shadowRoot?.querySelector('[data-part="hud-hints"]')?.textContent ?? '',
+    );
+    assert.match(hudHintsZh, /复制给 AI/, 'Shadow HUD in zh-CN must display plain-Chinese click hint');
+
+    // Test Shadow HUD runtime locale toggle (`zh-CN` -> `en` -> `zh-CN`)
+    await guidePage.locator('#__anygrab-host__ [data-action="toggle-locale"]').click();
+    await guidePage
+      .locator('#__anygrab-host__[data-anygrab-locale="en"]')
+      .waitFor({ state: 'attached' });
+    await guidePage.locator('#__anygrab-host__ [data-action="toggle-locale"]').click();
+    await guidePage
+      .locator('#__anygrab-host__[data-anygrab-locale="zh-CN"]')
+      .waitFor({ state: 'attached' });
+
+    // Select `#practice-target-card` in `prompt` format and grab via real hover + ArrowUp + Click!
+    await guidePage.evaluate(() => {
+      document.getElementById('practice-target-card')?.scrollIntoView({ block: 'center' });
+    });
+    const practiceTitleBox = await guidePage
+      .locator('#practice-target-card .pricing-tier-name')
+      .boundingBox();
+    assert.ok(practiceTitleBox, '#practice-target-card .pricing-tier-name bounding box must exist');
+    await guidePage.mouse.move(
+      practiceTitleBox.x + practiceTitleBox.width / 2,
+      practiceTitleBox.y + practiceTitleBox.height / 2,
+    );
+    await guidePage.waitForFunction(
+      () =>
+        document.getElementById('__anygrab-host__')?.getAttribute('data-anygrab-target') ===
+        'h3.pricing-tier-name',
+      null,
+      { timeout: 5000 },
+    );
+    await guidePage.keyboard.press('ArrowUp'); // div.pricing-top-row
+    await guidePage.keyboard.press('ArrowUp'); // article.practice-pricing-card
+    await guidePage.waitForFunction(
+      () =>
+        document.getElementById('__anygrab-host__')?.getAttribute('data-anygrab-target') ===
+        'article.practice-pricing-card',
+      null,
+      { timeout: 5000 },
+    );
+    await guidePage.mouse.click(
+      practiceTitleBox.x + practiceTitleBox.width / 2,
+      practiceTitleBox.y + practiceTitleBox.height / 2,
+    );
+
+    await guidePage
+      .locator('[data-part="arena-capture-box"][data-captured="true"]')
+      .waitFor({ state: 'visible', timeout: 5000 });
+    const arenaPreviewText =
+      (await guidePage.locator('[data-part="arena-output-preview"]').textContent()) ?? '';
+    assert.match(
+      arenaPreviewText,
+      /请 1:1 视觉与布局还原/,
+      'Practice arena live preview must render Chinese AI replication prompt',
+    );
+    assert.match(arenaPreviewText, /AI 团队旗舰版/);
+
+    const arenaToastZh = await guidePage.evaluate(
+      () =>
+        document
+          .getElementById('__anygrab-host__')
+          ?.shadowRoot?.querySelector('[data-part="toast-text"]')?.textContent ?? '',
+    );
+    assert.match(arenaToastZh, /已复制.*反重力 \/ Codex/);
+
+    const arenaHistory = await readLatestHistoryFromStorage(1);
+    assert.equal(arenaHistory.domain, 'AnyGrab Practice Arena');
+    assert.equal(arenaHistory.format, 'prompt');
+    logPass(
+      'Built-in `guide.html` Practice Target #1 (`#practice-target-card` Prompt)',
+      `${arenaToastZh}`,
+    );
+
+    // Also verify Practice Arena Target #2 (`#practice-target-table` merged table -> Markdown)
+    await guidePage.locator('[data-action="arena-start-picker"]').click();
+    await guidePage
+      .locator('#__anygrab-host__[data-anygrab-active="true"]')
+      .waitFor({ state: 'attached', timeout: 5000 });
+    await guidePage.evaluate(() => {
+      window.postMessage(
+        { source: 'anygrab-e2e', action: 'select', selector: '#practice-target-table' },
+        '*',
+      );
+    });
+    await guidePage.waitForFunction(
+      () =>
+        document.getElementById('__anygrab-host__')?.getAttribute('data-anygrab-target') ===
+        'table.practice-merged-table',
+      null,
+      { timeout: 5000 },
+    );
+    for (let guard = 0; guard < 4; guard++) {
+      const curFmt = await guidePage.locator('#__anygrab-host__').getAttribute('data-anygrab-format');
+      if (curFmt === 'markdown') break;
+      await guidePage.keyboard.press('Tab');
+    }
+    await guidePage.keyboard.press('Enter');
+    const arenaTableHistory = await readLatestHistoryFromStorage(2);
+    assert.equal(arenaTableHistory.format, 'markdown');
+    assert.match(arenaTableHistory.output, /亚太区 \(APAC\)/);
+    assert.match(arenaTableHistory.output, /¥42\.8M/);
+    const arenaTablePreview =
+      (await guidePage.locator('[data-part="arena-output-preview"]').textContent()) ?? '';
+    assert.match(arenaTablePreview, /亚太区 \(APAC\)/);
+
+    // Restore default `prompt` format in storage before moving to external page
+    await popupPage.evaluate(async () => {
+      const cur = await chrome.storage.local.get('anygrab_settings_v1');
+      await chrome.storage.local.set({
+        anygrab_settings_v1: { ...(cur?.anygrab_settings_v1 ?? {}), format: 'prompt' },
+      });
+    });
+    logPass(
+      'Built-in `guide.html` Practice Target #2 (`#practice-target-table` Markdown)',
+      'Merged financial table distilled & rendered in live arena box',
+    );
+
+    // 3. Open complex external webpage & verify silent 0 DOM pollution before activation
     const page = await context.newPage();
     attachErrorTrackers(page, 'content-page');
     await page.goto(fixtureServer.baseUrl, { waitUntil: 'networkidle' });
 
-    // Wait briefly for `document_idle` content script registration
-    await page.waitForFunction(() => Boolean(window.__ANYGRAB_CONTENT_BOOTSTRAPPED__ || true));
     await page.waitForTimeout(150);
-
     const hostCountBefore = await page.locator('#__anygrab-host__').count();
     assert.equal(hostCountBefore, 0, 'Expected 0 DOM nodes injected before picker activation');
     logPass('Silent content script idle state', '0 DOM pollution (#__anygrab-host__ absent)');
 
-    // 3. Trigger Picker via `Alt+Shift+G` shortcut & verify Open Shadow Root + non-empty Badge
+    // 4. Trigger Picker via `Alt+Shift+G` shortcut & verify Open Shadow Root + non-empty Badge
     await page.bringToFront();
     await page.keyboard.press('Alt+Shift+KeyG');
     await page.locator('#__anygrab-host__[data-anygrab-active="true"]').waitFor({
@@ -579,12 +825,14 @@ async function verifyExtensionE2E() {
         shadowMode: host?.shadowRoot?.mode ?? null,
         hudVisible: host?.shadowRoot?.querySelector('[data-part="hud"]') !== null,
         initialFormat: host?.getAttribute('data-anygrab-format'),
+        initialLocale: host?.getAttribute('data-anygrab-locale'),
       };
     });
     assert.equal(shadowCheck.exists, true);
     assert.equal(shadowCheck.shadowMode, 'open', 'Shadow Root must be open');
     assert.equal(shadowCheck.hudVisible, true, 'Floating HUD must mount in Shadow Root');
     assert.equal(shadowCheck.initialFormat, 'prompt');
+    assert.equal(shadowCheck.initialLocale, 'zh-CN');
 
     // Hover over `#pro-cta` button and verify highlight box + dimension/token capsule badge
     const ctaBox = await page.locator('#pro-cta').boundingBox();
@@ -623,7 +871,7 @@ async function verifyExtensionE2E() {
     assert.ok(overlayInspect.highlightWidth > 40 && overlayInspect.highlightHeight > 20);
     logPass('Open Shadow Root overlay & live telemetry badge', overlayInspect.badgeText);
 
-    // 4. Test ArrowUp / ArrowDown parent-child scope traversal
+    // 5. Test ArrowUp / ArrowDown parent-child scope traversal
     await page.keyboard.press('ArrowUp');
     const afterUp1 = await page.locator('#__anygrab-host__').getAttribute('data-anygrab-target');
     assert.equal(afterUp1, 'article.pro-card', 'ArrowUp #1 should expand from button.pro-cta to article.pro-card');
@@ -637,7 +885,7 @@ async function verifyExtensionE2E() {
     assert.equal(afterDown1, 'article.pro-card', 'ArrowDown should retrace breadcrumb stack back to article.pro-card');
     logPass('ArrowUp / ArrowDown AST scope traversal', 'button.pro-cta → article.pro-card → div.cards-grid → article.pro-card');
 
-    // 5. Test Tab format cycling (`prompt` -> `tailwind-html` -> `jsx` -> `markdown` -> `prompt` -> `tailwind-html` -> `jsx`)
+    // 6. Test Tab format cycling & switch HUD to English (`en`) to verify English JSX toast too
     const observedFormats = [];
     for (let i = 0; i < 4; i++) {
       await page.keyboard.press('Tab');
@@ -649,27 +897,14 @@ async function verifyExtensionE2E() {
       'Tab must cycle cleanly through all 4 formats',
     );
 
-    // Cycle twice more to land on `jsx` and grab `article#pro-card` via real click!
+    await page.locator('#__anygrab-host__ [data-action="toggle-locale"]').click();
+    await page.locator('#__anygrab-host__[data-anygrab-locale="en"]').waitFor({ state: 'attached' });
+
+    // Cycle twice to land on `jsx` and grab `article#pro-card` via real click!
     await page.keyboard.press('Tab'); // tailwind-html
     await page.keyboard.press('Tab'); // jsx
     assert.equal(await page.locator('#__anygrab-host__').getAttribute('data-anygrab-format'), 'jsx');
 
-    const readLatestHistoryFromStorage = async (expectedCount) => {
-      const deadline = Date.now() + 5000;
-      while (Date.now() < deadline) {
-        const arr = await popupPage.evaluate(async () => {
-          const data = await chrome.storage.local.get('anygrab_history_v1');
-          return Array.isArray(data?.anygrab_history_v1) ? data.anygrab_history_v1 : [];
-        });
-        if (arr.length >= expectedCount) {
-          return arr[0];
-        }
-        await new Promise((r) => setTimeout(r, 50));
-      }
-      assert.fail(`Timed out waiting for chrome.storage.local history length >= ${expectedCount}`);
-    };
-
-    // Click inside `#pro-cta` while parent `article#pro-card` is expanded via ArrowUp!
     await page.mouse.click(ctaBox.x + ctaBox.width / 2, ctaBox.y + ctaBox.height / 2);
 
     await page.waitForFunction(
@@ -682,13 +917,13 @@ async function verifyExtensionE2E() {
       { timeout: 5000 },
     );
 
-    const toastInfo1 = await page.evaluate(() => {
+    const toastInfo2 = await page.evaluate(() => {
       const host = document.getElementById('__anygrab-host__');
       const toastText = host?.shadowRoot?.querySelector('[data-part="toast-text"]')?.textContent ?? '';
       return { visible: true, toastText };
     });
 
-    const jsxHistory = await readLatestHistoryFromStorage(1);
+    const jsxHistory = await readLatestHistoryFromStorage(3);
     assert.equal(jsxHistory.format, 'jsx');
     assert.equal(jsxHistory.tagLabel, 'article.pro-card');
     assertValidJsxSyntax(jsxHistory.output, 'Extension JSX Grab');
@@ -698,19 +933,21 @@ async function verifyExtensionE2E() {
     assert.match(jsxHistory.output, /\bhover:bg-indigo-700\b/, 'JSX output must expand var(--accent-hover) into hover:bg-indigo-700');
     assert.match(jsxHistory.output, /data-icon="svg"/, 'Verbose SVG must be compacted');
     assert.doesNotMatch(jsxHistory.output, /css-19x82a|data-testid/, 'CSS-in-JS hashes & testids must be stripped');
-    assert.match(toastInfo1.toastText, /Copied JSX/i);
+    assert.match(toastInfo2.toastText, /Copied JSX.*Antigravity \/ Codex/i);
     logPass(
-      'Click grab #1 (React JSX + :hover + SVG compaction)',
-      `${toastInfo1.toastText} · TypeScript JSX validated`,
+      'Click grab #3 (React JSX + :hover + SVG compaction + English Toast)',
+      `${toastInfo2.toastText} · TypeScript JSX validated`,
     );
 
-    // 6. Grab #2: Merged `rowspan`/`colspan` table in `tailwind-html` format
-    await page.waitForTimeout(220); // Respect 160ms toggle debounce
+    // 7. Grab #4: Switch HUD back to `zh-CN`, grab merged `rowspan`/`colspan` table in `tailwind-html`
+    await page.waitForTimeout(220);
     await page.keyboard.press('Alt+Shift+KeyG');
     await page.locator('#__anygrab-host__[data-anygrab-active="true"]').waitFor({
       state: 'attached',
       timeout: 5000,
     });
+    await page.locator('#__anygrab-host__ [data-action="toggle-locale"]').click();
+    await page.locator('#__anygrab-host__[data-anygrab-locale="zh-CN"]').waitFor({ state: 'attached' });
 
     await page.evaluate(() => {
       window.postMessage({ source: 'anygrab-e2e', action: 'select', selector: '#merged-table' }, '*');
@@ -728,8 +965,8 @@ async function verifyExtensionE2E() {
     assert.equal(await page.locator('#__anygrab-host__').getAttribute('data-anygrab-format'), 'tailwind-html');
 
     await page.keyboard.press('Enter');
-    const htmlHistory = await readLatestHistoryFromStorage(2);
-    const toastText2 = await page.evaluate(
+    const htmlHistory = await readLatestHistoryFromStorage(4);
+    const toastText3 = await page.evaluate(
       () =>
         document
           .getElementById('__anygrab-host__')
@@ -741,9 +978,10 @@ async function verifyExtensionE2E() {
     assert.match(htmlHistory.output, /rowspan="2"/i, 'Merged table must preserve rowspan="2"');
     assert.match(htmlHistory.output, /colspan="2"/i, 'Merged table must preserve colspan="2"');
     assert.match(htmlHistory.output, /\$18\.6M/, 'Table cell figures must be intact');
-    logPass('Enter grab #2 (Tailwind HTML merged table)', toastText2);
+    assert.match(toastText3, /已复制.*反重力 \/ Codex/);
+    logPass('Enter grab #4 (Tailwind HTML merged table + Chinese Toast)', toastText3);
 
-    // 7. Grab #3: Full `#page-root` in `prompt` format
+    // 8. Grab #5: Full `#page-root` in `prompt` format with `locale === 'zh-CN'` -> Chinese Prompt!
     await page.waitForTimeout(220);
     await page.keyboard.press('Alt+Shift+KeyG');
     await page.locator('#__anygrab-host__[data-anygrab-active="true"]').waitFor({
@@ -764,32 +1002,42 @@ async function verifyExtensionE2E() {
       await page.keyboard.press('Tab');
     }
     await page.keyboard.press('Enter');
-    const promptHistory = await readLatestHistoryFromStorage(3);
-    const toastText3 = await page.evaluate(
+    const promptHistory = await readLatestHistoryFromStorage(5);
+    const toastText4 = await page.evaluate(
       () =>
         document
           .getElementById('__anygrab-host__')
           ?.shadowRoot?.querySelector('[data-part="toast-text"]')?.textContent ?? '',
     );
     assert.equal(promptHistory.format, 'prompt');
+    assert.match(
+      promptHistory.output,
+      /请 1:1 视觉与布局还原以下从网页提取的 UI 组件/,
+      'zh-CN prompt output must begin with plain-Chinese AI replication instruction',
+    );
+    assert.match(
+      promptHistory.output,
+      /## 设计规范（自动提取）/,
+      'zh-CN prompt output must include Chinese Design Tokens section',
+    );
     assert.ok(promptHistory.output.includes('North America'));
     assert.doesNotMatch(promptHistory.output, /Hidden Analytics Beacon|strip-me-immediately/);
-    logPass('Enter grab #3 (Structured AI Prompt)', toastText3);
+    logPass('Enter grab #5 (Chinese Structured AI Prompt)', toastText4);
 
-    // 8. Reload `popup.html` & verify history items, Copy button, Clear button, and 0 errors!
+    // 9. Reload `popup.html` & verify all 5 history items, one-click Copy, and 0 errors!
     await popupPage.bringToFront();
     await popupPage.reload({ waitUntil: 'domcontentloaded' });
     await popupPage.locator('.ag-history-item').first().waitFor({ state: 'visible' });
 
     const historyCountAfter = await popupPage.locator('[data-part="history-count"]').textContent();
-    assert.equal(historyCountAfter?.trim(), '3', 'Popup must display all 3 recent grabs');
+    assert.equal(historyCountAfter?.trim(), '5', 'Popup must display all 5 recent grabs');
 
     const copyBtn = popupPage.locator('[data-action="copy-item"]').first();
     await copyBtn.click();
     await popupPage.waitForFunction(
       () => document.querySelector('[data-action="copy-item"]')?.getAttribute('data-copied') === 'true',
     );
-    logPass('Popup Recent Grabs history & one-click Copy', '3 items rendered & copied cleanly');
+    logPass('Popup Recent Grabs history & one-click Copy', '5 items rendered & copied cleanly');
 
     assert.equal(
       consoleErrors.length,
@@ -801,13 +1049,16 @@ async function verifyExtensionE2E() {
       0,
       `Expected 0 Page Errors in Extension E2E, found:\n${pageErrors.join('\n')}`,
     );
-    logPass('Extension Console & Page Error Audit', '0 Console Errors · 0 Page Errors');
+    logPass('Extension Console & Page Error Audit', '0 Console Errors · 0 Page Errors across Popup, Guide & Content Page');
 
     reportSummary.gates.extension = {
       status: 'PASS',
+      version: manifestJson.version,
       executable: chosenExecutable,
       extensionId: extId,
-      grabsVerified: 3,
+      localesVerified: ['zh-CN', 'en'],
+      guideArenaVerified: true,
+      grabsVerified: 5,
       consoleErrors: 0,
       pageErrors: 0,
     };
@@ -821,15 +1072,17 @@ async function verifyExtensionE2E() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* Gate 2: Interactive Website `apps/playground/dist` Real Browser E2E        */
+/* Gate 2: Official Bilingual Website `apps/playground/dist` Real Browser E2E */
 /* -------------------------------------------------------------------------- */
 
 async function verifyPlaygroundE2E() {
-  logSection('Gate 2: Interactive Website `apps/playground/dist` Real Browser E2E');
+  logSection(
+    'Gate 2: Official Bilingual 5-Section Website `apps/playground/dist` Real Browser E2E (Chrome 157)',
+  );
 
   assert.ok(
     fs.existsSync(path.join(PLAYGROUND_DIST_DIR, 'index.html')),
-    `Missing built playground at ${PLAYGROUND_DIST_DIR}/index.html`,
+    `Missing built website at ${PLAYGROUND_DIST_DIR}/index.html`,
   );
 
   const mimeMap = {
@@ -876,7 +1129,11 @@ async function verifyPlaygroundE2E() {
   const pageErrors = [];
 
   try {
-    const page = await browser.newPage({ viewport: { width: 1440, height: 920 } });
+    const webContext = await browser.newContext({
+      locale: 'zh-CN',
+      viewport: { width: 1440, height: 920 },
+    });
+    const page = await webContext.newPage();
     page.on('console', (msg) => {
       if (msg.type() === 'error') {
         consoleErrors.push(msg.text());
@@ -888,26 +1145,72 @@ async function verifyPlaygroundE2E() {
 
     await page.goto(playgroundUrl, { waitUntil: 'networkidle' });
 
-    // 1. Verify initial preset (#1 SaaS Pricing) distilled output & compression ratio
+    // 1. Verify auto-detected `zh-CN` locale, 5 primary nav tabs & Section 1 (`Product Overview`)
+    const initialHtmlLang = await page.evaluate(() => document.documentElement.lang);
+    assert.equal(initialHtmlLang, 'zh-CN', 'Website must auto-detect zh-CN browser locale');
+
+    for (const tabKey of ['overview', 'workflows', 'playground', 'leaderboard', 'quickstart']) {
+      await page.locator(`nav[aria-label="Primary Website Navigation"] button[data-tab="${tabKey}"]`).waitFor({
+        state: 'visible',
+      });
+    }
+
+    const overviewSection = page.locator('section[aria-label="Product Overview"]');
+    await overviewSection.waitFor({ state: 'visible' });
+    const overviewText = await overviewSection.innerText();
+    assert.match(overviewText, /点一下就能喂给 AI 1:1 复刻/);
+    assert.match(overviewText, /反重力\s*\(Antigravity\)/);
+    assert.match(overviewText, /发截图/);
+    assert.match(overviewText, /F12 扒源码/);
+    logPass('Section 1 · Product Overview (`zh-CN` auto-detected)', 'Plain-Chinese Hero + 3 pain-point cards verified');
+
+    // 2. Section 2 (`AI Workflows Guide` — 3 Antigravity & Codex companion workflows)
+    await page.locator('button[data-tab="workflows"]').click();
+    const workflowsSection = page.locator('section[aria-label="AI Workflows Guide"]');
+    await workflowsSection.waitFor({ state: 'visible' });
+    assert.equal(
+      await workflowsSection.locator('article[data-workflow-id]').count(),
+      3,
+      'Workflows section must present all 3 Antigravity/Codex workflows',
+    );
+    const firstWfCopyBtn = workflowsSection.locator('button[data-action="copy-workflow-prompt"]').first();
+    await firstWfCopyBtn.click();
+    await page.waitForFunction(() =>
+      (document.querySelector('button[data-action="copy-workflow-prompt"]')?.textContent || '').includes('已复制'),
+    );
+    logPass('Section 2 · AI Workflows Guide', '3 Antigravity/Codex workflows & 1-click prompt copy verified');
+
+    // 3. Section 3 (`Live Distillation Playground` — bilingual prompt + budget folding + dual iframes)
+    await page.locator('button[data-tab="playground"]').click();
+    const playgroundSection = page.locator('section[aria-label="Live Distillation Playground"]');
+    await playgroundSection.waitFor({ state: 'visible' });
+
     const outputCodeLocator = page.locator('[aria-label="Distilled Output Code"]');
     await outputCodeLocator.waitFor({ state: 'visible' });
-    const initialCode = (await outputCodeLocator.textContent()) ?? '';
-    assert.ok(initialCode.length > 100, 'Initial Playground distilled code must be non-empty');
-    assert.doesNotMatch(initialCode, /css-19x82a/, 'Playground must run real @anygrab/core cleaner');
-    logPass('Live Playground initial load', `${initialCode.length} chars distilled on Preset #1`);
 
-    // 2. Switch presets (#2 Merged Financial Table & #6 Kanban 10 Cards)
-    await page.getByRole('button', { name: /#6\s+Kanban/i }).click();
+    // Verify `prompt` format in `zh-CN` calls `@anygrab/core` with `locale: 'zh-CN'`
+    await playgroundSection.locator('button[data-format="prompt"]').click();
+    const zhPromptCode = (await outputCodeLocator.textContent()) ?? '';
+    assert.match(
+      zhPromptCode,
+      /请 1:1 视觉与布局还原以下从网页提取的 UI 组件/,
+      'Playground in zh-CN must output Chinese AI replication prompt',
+    );
+    assert.match(zhPromptCode, /## 设计规范（自动提取）/);
+    assert.doesNotMatch(zhPromptCode, /css-19x82a/, 'Playground must run real @anygrab/core cleaner');
+
+    // Switch to `tailwind-html` & Preset #6 (Kanban 10 Cards)
+    await playgroundSection.locator('button[data-format="tailwind-html"]').click();
+    await playgroundSection.locator('button[data-preset-id]').nth(5).click();
     const kanbanCodeNoLimit = (await outputCodeLocator.textContent()) ?? '';
     assert.ok(kanbanCodeNoLimit.includes('ENG-401'), 'Preset #6 Kanban must load ENG-401');
     assert.ok(kanbanCodeNoLimit.includes('ENG-410'), 'Unbudgeted Kanban must show ENG-410');
 
-    // 3. Adjust Token Budget slider -> verify real-time code folding & compression ratio change
+    // Adjust Token Budget slider & quick budget `600` -> verify AST sibling folding & tag closure
     const slider = page.locator('[aria-label="Token Budget Slider"]');
     await slider.fill('500');
     await slider.dispatchEvent('change');
-    // Also click quick budget `400` or `600` to verify budget state reactivity
-    await page.getByRole('button', { name: '600', exact: true }).click();
+    await playgroundSection.getByRole('button', { name: '600', exact: true }).click();
 
     const kanbanCodeBudgeted = (await outputCodeLocator.textContent()) ?? '';
     assert.ok(
@@ -920,22 +1223,18 @@ async function verifyPlaygroundE2E() {
       'Kanban under 600-token budget must trigger AST sibling folding comment',
     );
     assertBalancedHtmlTags(kanbanCodeBudgeted, 'Playground Budget=600 Tailwind HTML');
-    logPass(
-      'Token Budget slider & real-time AST folding',
-      `${kanbanCodeNoLimit.length} → ${kanbanCodeBudgeted.length} chars with valid tag closure`,
-    );
 
-    // 4. Test Left (`Original Sandbox Preview`) & Right (`Tailwind Sandbox Preview`) iframes across presets!
-    await page.getByRole('button', { name: 'No Limit', exact: true }).click();
-    await page.getByRole('button', { name: /#1\s+SaaS/i }).click();
+    // Test Left (`Original Sandbox Preview`) & Right (`Tailwind Sandbox Preview`) iframes on Preset #1
+    await playgroundSection.locator('button[data-budget="unlimited"]').click();
+    await playgroundSection.locator('button[data-preset-id]').nth(0).click();
 
-    await page.getByRole('button', { name: /Original Sandbox Preview/i }).click();
+    await playgroundSection.locator('button[data-left-view="preview"]').click();
     const leftIframe = page.locator('iframe[title="Raw HTML Sandbox Preview"]');
     await leftIframe.waitFor({ state: 'visible' });
     const leftFrameContent = await leftIframe.contentFrame().locator('body').innerText();
     assert.match(leftFrameContent, /Pro Scale/i, 'Left raw sandbox iframe must render SaaS pricing content');
 
-    await page.getByRole('button', { name: /Tailwind Sandbox Preview/i }).click();
+    await playgroundSection.locator('button[data-right-view="preview"]').click();
     const rightIframe = page.locator('iframe[title="Distilled Tailwind Sandbox Preview"]');
     await rightIframe.waitFor({ state: 'visible' });
     const rightFrameContent = await rightIframe
@@ -943,61 +1242,95 @@ async function verifyPlaygroundE2E() {
       .locator('#ag-sandbox-root')
       .innerText();
     assert.match(rightFrameContent, /Pro Scale/i, 'Right Tailwind sandbox iframe must render distilled content');
-    await page.waitForTimeout(350);
-    logPass('Split-screen Original & Tailwind <iframe> sandboxes', 'Both iframes rendered visibly');
+    await page.waitForTimeout(300);
+    await playgroundSection.locator('button[data-right-view="code"]').click();
+    logPass(
+      'Section 3 · Live Distillation Playground',
+      `Chinese Prompt + ${kanbanCodeNoLimit.length}→${kanbanCodeBudgeted.length} budget folding + dual <iframe> sandboxes verified`,
+    );
 
-    // 5. Switch to `AnyGrab-Bench Leaderboard` view & verify real benchmark data
-    await page.getByRole('tab', { name: /AnyGrab-Bench Leaderboard/i }).click();
+    // 4. Section 4 (`AnyGrab-Bench Leaderboard` — plain-Chinese guide + 10 rows + `try-live` jump)
+    await page.locator('button[data-tab="leaderboard"]').click();
     const leaderboardSection = page.locator('section[aria-label="AnyGrab-Bench Leaderboard"]');
     await leaderboardSection.waitFor({ state: 'visible' });
     const leaderboardText = await leaderboardSection.innerText();
-    assert.match(leaderboardText, /10 Real Archetypes/i);
+    assert.match(leaderboardText, /一分钟大白话读懂这份跑分榜/);
+    assert.match(leaderboardText, /10 大真实场景/);
     assert.match(leaderboardText, /99\.6/, 'Leaderboard must display refreshed 99.6/100 fidelity score');
     assert.match(leaderboardText, /-85\.0%/, 'Leaderboard must display refreshed -85.0% budget compression');
 
-    // Click `Try Live` on row #2 (Merged-Header Financial Statement) to verify jump back to Playground
-    const tryLiveButtons = leaderboardSection.getByRole('button', { name: /Try Live/i });
+    const tryLiveButtons = leaderboardSection.locator('button[data-action="try-live"]');
     assert.equal(await tryLiveButtons.count(), 10, 'Leaderboard must list all 10 fixture rows');
     await tryLiveButtons.nth(1).click();
     await page.locator('section[aria-label="Live Distillation Playground"]').waitFor({ state: 'visible' });
-    logPass('AnyGrab-Bench Leaderboard view & Try Live jump', '10 fixtures + 99.6/100 fidelity verified');
+    logPass('Section 4 · AnyGrab-Bench Leaderboard & Try Live jump', '10 fixtures + 99.6/100 fidelity verified');
 
-    // 6. Switch to `Quick Start & MCP Setup` view & verify all 4 agent configs
-    await page.getByRole('tab', { name: /Quick Start & MCP Setup/i }).click();
+    // 5. Section 5 (`Quick Start and MCP Setup` — 3-step Chrome MV3 guide + 4 MCP client configs)
+    await page.locator('button[data-tab="quickstart"]').click();
     const quickStartSection = page.locator('section[aria-label="Quick Start and MCP Setup"]');
     await quickStartSection.waitFor({ state: 'visible' });
+    const qsInitialText = await quickStartSection.innerText();
+    assert.match(qsInitialText, /chrome:\/\/extensions/);
+    assert.match(qsInitialText, /apps\/extension\/dist/);
+    assert.match(qsInitialText, /30 秒练习靶场/);
 
-    for (const tabLabel of ['Antigravity', 'Claude Code', 'Cursor', 'Codex CLI']) {
+    for (const tabLabel of ['Antigravity', 'Codex CLI', 'Cursor', 'Claude Code']) {
       await quickStartSection.getByRole('tab', { name: tabLabel, exact: true }).click();
       const qsText = await quickStartSection.innerText();
       assert.match(qsText, /@anygrab\/mcp/, `Quick Start ${tabLabel} snippet must configure @anygrab/mcp`);
     }
-    logPass('Quick Start & MCP Setup view', 'Antigravity / Claude Code / Cursor / Codex snippets verified');
+    logPass('Section 5 · Download & MCP Setup', '3-step Chrome MV3 guide + 4 MCP client snippets verified');
+
+    // 6. Test Top-Bar Runtime Language Switcher (`zh-CN` -> `en` -> `zh-CN`)
+    const localeSwitcher = page.locator('[data-testid="locale-switcher"]');
+    await localeSwitcher.locator('button[data-locale="en"]').click();
+    assert.equal(await page.evaluate(() => document.documentElement.lang), 'en');
+
+    await page.locator('button[data-tab="overview"]').click();
+    const overviewEnText = await page.locator('section[aria-label="Product Overview"]').innerText();
+    assert.match(overviewEnText, /Grab it in 1 click for Coding Agents!/i);
+
+    await page.locator('button[data-tab="playground"]').click();
+    await page.locator('button[data-format="prompt"]').click();
+    const enPromptCode = (await page.locator('[aria-label="Distilled Output Code"]').textContent()) ?? '';
+    assert.match(enPromptCode, /# AnyGrab Distilled UI Context/);
+    assert.match(enPromptCode, /## Design Tokens/);
+
+    // Switch back to `zh-CN` and confirm Chinese prompt restores immediately
+    await localeSwitcher.locator('button[data-locale="zh-CN"]').click();
+    assert.equal(await page.evaluate(() => document.documentElement.lang), 'zh-CN');
+    const restoredZhPrompt = (await page.locator('[aria-label="Distilled Output Code"]').textContent()) ?? '';
+    assert.match(restoredZhPrompt, /请 1:1 视觉与布局还原/);
+    logPass('Official Website Runtime Language Switcher (`zh-CN` ↔ `en`)', 'UI copy + @anygrab/core prompt switched seamlessly');
 
     assert.equal(
       httpErrors.length,
       0,
-      `Expected 0 HTTP 4xx/5xx asset errors in Playground, found:\n${httpErrors.join('\n')}`,
+      `Expected 0 HTTP 4xx/5xx asset errors in Official Website, found:\n${httpErrors.join('\n')}`,
     );
     assert.equal(
       consoleErrors.length,
       0,
-      `Expected 0 Console Errors in Playground, found:\n${consoleErrors.join('\n')}`,
+      `Expected 0 Console Errors in Official Website, found:\n${consoleErrors.join('\n')}`,
     );
     assert.equal(
       pageErrors.length,
       0,
-      `Expected 0 Page Errors in Playground, found:\n${pageErrors.join('\n')}`,
+      `Expected 0 Page Errors in Official Website, found:\n${pageErrors.join('\n')}`,
     );
-    logPass('Playground Browser Health Audit', '0 Console Errors · 0 Page Errors · 0 HTTP 404s');
+    logPass('Official Website Browser Health Audit', '0 Console Errors · 0 Page Errors · 0 HTTP 404s');
 
     reportSummary.gates.playground = {
       status: 'PASS',
       executable: browserExe,
+      sectionsVerified: ['overview', 'workflows', 'playground', 'leaderboard', 'quickstart'],
+      localesVerified: ['zh-CN', 'en'],
       consoleErrors: 0,
       pageErrors: 0,
       httpErrors: 0,
     };
+
+    await webContext.close();
   } finally {
     await browser.close();
     await new Promise((r) => server.close(r));
@@ -1009,10 +1342,22 @@ async function verifyPlaygroundE2E() {
 /* -------------------------------------------------------------------------- */
 
 async function verifyCliAndMcpSubprocesses() {
-  logSection('Gate 3: CLI & Stdio MCP Server Real Subprocess Verification');
+  logSection('Gate 3: Core SDK, CLI & Stdio MCP Server Real Subprocess Verification');
 
   assert.ok(fs.existsSync(CLI_BIN_PATH), `Missing CLI bundle at ${CLI_BIN_PATH}`);
   assert.ok(fs.existsSync(MCP_BIN_PATH), `Missing MCP bundle at ${MCP_BIN_PATH}`);
+
+  // 0. Programmatic `@anygrab/core` bilingual `locale: 'zh-CN' | 'en'` SDK verification
+  const coreEntryUrl = pathToFileURL(path.join(REPO_ROOT, 'packages', 'core', 'dist', 'index.js')).href;
+  const { grab } = await import(coreEntryUrl);
+  const sampleHtml = `<div style="display:flex;gap:12px;padding:16px;border-radius:12px;background:#1e293b;color:#f8fafc"><h2>旗舰卡片</h2><span>¥99</span></div>`;
+  const zhGrabRes = grab(sampleHtml, { format: 'prompt', locale: 'zh-CN', maxTokens: 400 });
+  const enGrabRes = grab(sampleHtml, { format: 'prompt', locale: 'en', maxTokens: 400 });
+  assert.match(zhGrabRes.output, /请 1:1 视觉与布局还原以下从网页提取的 UI 组件/);
+  assert.match(zhGrabRes.output, /## 设计规范（自动提取）/);
+  assert.match(enGrabRes.output, /# AnyGrab Distilled UI Context/);
+  assert.match(enGrabRes.output, /## Design Tokens/);
+  logPass('`@anygrab/core` SDK bilingual `locale: "zh-CN" | "en"` check', 'Chinese & English prompts verified');
 
   const fixtureServer = await startFixtureHttpServer();
 
@@ -1212,20 +1557,25 @@ function collectRepoTextFiles(dir, out = []) {
   return out;
 }
 
+async function runWorkspaceToolchainChecks() {
+  logSection('Gate 0 / Toolchain: Workspace `typecheck`, `bench`, `build`, `test`');
+  for (const scriptName of ['typecheck', 'bench', 'build', 'test']) {
+    const res = await runProcess('pnpm', [scriptName], { cwd: REPO_ROOT, timeoutMs: 180_000 });
+    assert.equal(
+      res.code,
+      0,
+      `Workspace \`pnpm ${scriptName}\` failed (exit ${res.code}):\n${res.stdout}\n${res.stderr}`,
+    );
+    logPass(`Workspace \`pnpm ${scriptName}\``, 'exit code 0');
+  }
+}
+
 async function verifyOpenSourceCompliance({ skipRebuild = false } = {}) {
   logSection('Gate 4: 1,000-Star Open-Source Purity & Engineering Compliance Audit');
 
   // 1. Workspace `pnpm typecheck`, `pnpm bench`, `pnpm build`, `pnpm test`
   if (!skipRebuild) {
-    for (const scriptName of ['typecheck', 'bench', 'build', 'test']) {
-      const res = await runProcess('pnpm', [scriptName], { cwd: REPO_ROOT, timeoutMs: 180_000 });
-      assert.equal(
-        res.code,
-        0,
-        `Workspace \`pnpm ${scriptName}\` failed (exit ${res.code}):\n${res.stdout}\n${res.stderr}`,
-      );
-      logPass(`Workspace \`pnpm ${scriptName}\``, 'exit code 0');
-    }
+    await runWorkspaceToolchainChecks();
   }
 
   // 2. `@anygrab/core` strict zero runtime dependencies check
@@ -1408,10 +1758,10 @@ async function main() {
 
   const t0 = performance.now();
 
-  if (!onlyArg || onlyArg === 'audit') {
-    // When running full verification, run Gate 4's build/bench first OR last?
-    // Running Gate 4 last when `--only` is unset ensures E2E also runs after fresh `pnpm build` if we run build first,
-    // wait: let's run Gate 1, Gate 2, Gate 3, Gate 4 in order (or Gate 4 when `--only=audit`).
+  let alreadyRebuilt = false;
+  if (!onlyArg && !skipRebuild) {
+    await runWorkspaceToolchainChecks();
+    alreadyRebuilt = true;
   }
 
   if (!onlyArg || onlyArg === 'ext') {
@@ -1424,7 +1774,7 @@ async function main() {
     await verifyCliAndMcpSubprocesses();
   }
   if (!onlyArg || onlyArg === 'audit') {
-    await verifyOpenSourceCompliance({ skipRebuild });
+    await verifyOpenSourceCompliance({ skipRebuild: skipRebuild || alreadyRebuilt });
   }
 
   const elapsedSec = ((performance.now() - t0) / 1000).toFixed(2);
