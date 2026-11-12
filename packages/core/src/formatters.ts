@@ -1,7 +1,7 @@
 import type { DistilledComment, DistilledElement, DistilledNode } from './cleaner';
 import { escapeHtmlAttr, escapeHtmlText, VOID_HTML_TAGS } from './dom-adapter';
 import { renderTableToMarkdown } from './table-extractor';
-import type { DesignTokens } from './types';
+import type { DesignTokens, GrabLocale } from './types';
 
 const SELF_CLOSING_SVG_TAGS = new Set([
   'circle',
@@ -613,9 +613,14 @@ export interface FormatPromptParams {
   sourceUrl?: string;
   adapterName?: string;
   compactMode?: boolean;
+  locale?: GrabLocale;
 }
 
 export function formatPrompt(params: FormatPromptParams): string {
+  if (params.locale === 'zh-CN') {
+    return formatPromptZhCn(params);
+  }
+
   const sections: string[] = [];
 
   const metaLines: string[] = ['# AnyGrab Distilled UI Context'];
@@ -624,7 +629,7 @@ export function formatPrompt(params: FormatPromptParams): string {
   sections.push(metaLines.join('\n'));
 
   if (!params.compactMode) {
-    const tokenLines = summarizeDesignTokens(params.designTokens);
+    const tokenLines = summarizeDesignTokens(params.designTokens, 'en');
     if (tokenLines.length > 0) {
       sections.push(`## Design Tokens\n${tokenLines.join('\n')}`);
     }
@@ -635,22 +640,45 @@ export function formatPrompt(params: FormatPromptParams): string {
   return sections.join('\n\n');
 }
 
-function summarizeDesignTokens(tokens: DesignTokens): string[] {
+function formatPromptZhCn(params: FormatPromptParams): string {
+  const sections: string[] = [];
+
+  const metaLines: string[] = [
+    '请 1:1 视觉与布局还原以下从网页提取的 UI 组件（尽量使用 Tailwind CSS，严格保持色彩、间距、圆角、阴影与表格结构一致）：',
+  ];
+  if (params.sourceUrl) metaLines.push(`来源页面：${params.sourceUrl}`);
+  if (params.adapterName) metaLines.push(`适配规则：${params.adapterName}`);
+  sections.push(metaLines.join('\n'));
+
+  if (!params.compactMode) {
+    const tokenLines = summarizeDesignTokens(params.designTokens, 'zh-CN');
+    if (tokenLines.length > 0) {
+      sections.push(`## 设计规范（自动提取）\n${tokenLines.join('\n')}`);
+    }
+  }
+
+  sections.push(`## 提纯结构与样式代码（Tailwind HTML）\n\`\`\`html\n${params.tailwindHtml}\n\`\`\``);
+
+  return sections.join('\n\n');
+}
+
+function summarizeDesignTokens(tokens: DesignTokens, locale: GrabLocale): string[] {
+  const isZh = locale === 'zh-CN';
   const lines: string[] = [];
   if (tokens.colors.length > 0) {
-    lines.push(`- Colors: ${tokens.colors.slice(0, 8).join(', ')}`);
+    lines.push(`- ${isZh ? '核心配色' : 'Colors'}: ${tokens.colors.slice(0, 8).join(', ')}`);
   }
   if (tokens.fonts.length > 0) {
-    lines.push(`- Fonts: ${tokens.fonts.slice(0, 4).join(', ')}`);
+    lines.push(`- ${isZh ? '字体栈' : 'Fonts'}: ${tokens.fonts.slice(0, 4).join(', ')}`);
   }
   if (tokens.radii.length > 0) {
-    lines.push(`- Radii: ${tokens.radii.slice(0, 5).join(', ')}`);
+    lines.push(`- ${isZh ? '圆角尺寸' : 'Radii'}: ${tokens.radii.slice(0, 5).join(', ')}`);
   }
   if (tokens.spacings.length > 0) {
-    lines.push(`- Spacings: ${tokens.spacings.slice(0, 6).join(', ')}`);
+    lines.push(`- ${isZh ? '间距刻度' : 'Spacings'}: ${tokens.spacings.slice(0, 6).join(', ')}`);
   }
   if (tokens.shadows.length > 0) {
-    lines.push(`- Shadows: ${tokens.shadows.slice(0, 2).join(' | ')}`);
+    lines.push(`- ${isZh ? '阴影效果' : 'Shadows'}: ${tokens.shadows.slice(0, 2).join(' | ')}`);
   }
   return lines;
 }

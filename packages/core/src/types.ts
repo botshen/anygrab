@@ -8,6 +8,13 @@
 export type OutputFormat = 'prompt' | 'tailwind-html' | 'jsx' | 'markdown';
 
 /**
+ * Output UI/prompt language locale supported by AnyGrab.
+ * - `'en'`: English replication prompt (default)
+ * - `'zh-CN'`: Simplified Chinese zero-jargon replication prompt ready for Antigravity / Codex / Cursor
+ */
+export type GrabLocale = 'en' | 'zh-CN';
+
+/**
  * Input target accepted by AnyGrab's core distillation pipeline.
  * Supports live Browser DOM nodes, LinkeDOM / Happy-DOM nodes, or raw HTML strings.
  */
@@ -90,6 +97,8 @@ export interface GrabResult {
 export interface GrabOptions {
   /** Primary output format (`output` field). Default: `'prompt'` */
   format?: OutputFormat;
+  /** Language locale for generated AI replication prompt (`'en' | 'zh-CN'`). Default: `'en'` */
+  locale?: GrabLocale;
   /** Token budget ceiling (e.g., `1200`). Low-priority subtrees fold first to stay within budget. */
   maxTokens?: number;
   /** Replace verbose inline `<svg>` path data with compact semantic placeholders. Default: `true` */

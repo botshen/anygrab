@@ -31,6 +31,7 @@ import type {
   AnyGrabAdapter,
   DesignTokens,
   GrabInput,
+  GrabLocale,
   GrabMetrics,
   GrabOptions,
   GrabResult,
@@ -51,7 +52,7 @@ export {
   isObfuscatedClassName,
 };
 
-export const VERSION = '0.1.0';
+export const VERSION = '0.2.0';
 
 export const DEFAULT_GRAB_OPTIONS: Required<
   Pick<
@@ -192,6 +193,7 @@ function resolveActiveAdapter(
 export function grab(input: GrabInput, options: GrabOptions = {}): GrabResult {
   const start = typeof performance !== 'undefined' ? performance.now() : Date.now();
   const format: OutputFormat = options.format ?? DEFAULT_GRAB_OPTIONS.format;
+  const locale: GrabLocale = options.locale === 'zh-CN' ? 'zh-CN' : 'en';
   const warnings: string[] = [];
 
   // Pre-match URL-based or explicit adapter before DOM scoping so `rootSelector` applies cleanly
@@ -285,6 +287,7 @@ export function grab(input: GrabInput, options: GrabOptions = {}): GrabResult {
               sourceUrl: options.sourceUrl,
               adapterName: activeAdapter?.name,
               compactMode: compactMeta,
+              locale,
             }),
           );
         }
@@ -315,6 +318,7 @@ export function grab(input: GrabInput, options: GrabOptions = {}): GrabResult {
     sourceUrl: options.sourceUrl,
     adapterName: activeAdapter?.name,
     compactMode: compactPromptMeta,
+    locale,
   });
 
   if (activeAdapter?.postprocess) {

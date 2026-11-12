@@ -1,3 +1,4 @@
+// @vitest-environment happy-dom
 import { afterEach, describe, expect, it } from 'vitest';
 import {
   clearAdapters,
@@ -970,5 +971,76 @@ describe('6. tokens, formatters, built-in adapters & <5ms benchmark guarantee', 
     expect(last.output).toContain('grid-cols-3');
     expect(last.output).toContain('bg-indigo-500');
     expect(estimateTokens('中文测试 Token 估算')).toBeGreaterThan(3);
+  });
+
+  it('6.8 supports locale: "zh-CN" for zero-jargon Chinese AI replication prompts (and defaults to "en")', () => {
+    const pricingCard = `
+      <style>
+        .card {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          padding: 24px;
+          background: #0f172a;
+          color: #f8fafc;
+          font-family: 'Inter', sans-serif;
+          border-radius: 16px;
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+        .cta { background: #6366f1; color: #ffffff; padding: 10px 20px; border-radius: 8px; }
+      </style>
+      <section class="card">
+        <h2>专业版 · ¥99/月</h2>
+        <button class="cta">立即升级</button>
+      </section>
+    `;
+
+    const defaultEn = grab(pricingCard, {
+      format: 'prompt',
+      sourceUrl: 'https://example.com/pricing',
+    });
+    expect(defaultEn.output).toContain('# AnyGrab Distilled UI Context');
+    expect(defaultEn.output).toContain('## Design Tokens');
+    expect(defaultEn.output).toContain('- Colors:');
+
+    const zhPrompt = grab(pricingCard, {
+      format: 'prompt',
+      locale: 'zh-CN',
+      sourceUrl: 'https://example.com/pricing',
+    });
+    expect(zhPrompt.output).toContain(
+      '请 1:1 视觉与布局还原以下从网页提取的 UI 组件（尽量使用 Tailwind CSS，严格保持色彩、间距、圆角、阴影与表格结构一致）：',
+    );
+    expect(zhPrompt.output).toContain('来源页面：https://example.com/pricing');
+    expect(zhPrompt.output).toContain('适配规则：marketing-pricing');
+    expect(zhPrompt.output).toContain('## 设计规范（自动提取）');
+    expect(zhPrompt.output).toContain('- 核心配色:');
+    expect(zhPrompt.output).toContain('- 字体栈: Inter');
+    expect(zhPrompt.output).toContain('- 圆角尺寸:');
+    expect(zhPrompt.output).toContain('- 间距刻度:');
+    expect(zhPrompt.output).toContain('- 阴影效果:');
+    expect(zhPrompt.output).toContain('## 提纯结构与样式代码（Tailwind HTML）');
+    expect(zhPrompt.output).toContain('bg-slate-900');
+    expect(zhPrompt.output).toContain('bg-indigo-500');
+  });
+
+  it('6.9 enforces maxTokens budget accurately when locale is "zh-CN" without breaking HTML/JSX tags', () => {
+    const listHtml = `
+      <div class="p-6 bg-slate-900 text-white">
+        <h1>团队待办面板</h1>
+        <ul>
+          ${Array.from({ length: 12 }, (_, i) => `<li class="py-2">任务 #${i + 1}：重构前端样式与组件资产</li>`).join('')}
+        </ul>
+      </div>
+    `;
+    const budgetedZh = grab(listHtml, {
+      format: 'prompt',
+      locale: 'zh-CN',
+      maxTokens: 220,
+    });
+    expect(budgetedZh.metrics.outputTokens).toBeLessThanOrEqual(220);
+    expect(budgetedZh.output).toContain('请 1:1 视觉与布局还原以下从网页提取的 UI 组件');
+    assertBalancedHtmlTags(budgetedZh.tailwindHtml);
+    assertValidJsxSnippet(budgetedZh.jsx);
   });
 });
