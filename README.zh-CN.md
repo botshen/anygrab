@@ -151,7 +151,8 @@ flowchart LR
 import { grab } from '@anygrab/core';
 
 const result = grab(document.querySelector('#pricing-tier')!, {
-  format: 'jsx',            // 'prompt' | 'tailwind-html' | 'jsx' | 'markdown'
+  format: 'prompt',         // 'prompt' | 'tailwind-html' | 'jsx' | 'markdown'
+  locale: 'zh-CN',          // 'zh-CN' | 'en'（一键生成可直接粘贴进反重力 / Codex 的中文复刻指令！）
   maxTokens: 800,           // AST 显著性无损预算折叠（绝不暴力截断破坏闭合标签！）
   compactSvg: true,         // 将超长内联 <svg> 路径折叠为保留尺寸/颜色的语义占位
   preserveTables: true,     // 2D 虚拟网格矩阵还原复杂 rowspan/colspan 合并表格
@@ -212,32 +213,36 @@ args = ["-y", "@anygrab/mcp"]
 
 ---
 
-## Chrome MV3 可视化组件拾取扩展（`apps/extension`）
+## Chrome MV3 双语可视化拾取扩展（`apps/extension`）
 
 遵循极简合规权限原则（仅声明 `activeTab`, `scripting`, `storage`, `clipboardWrite`，**零 `<all_urls>` 权限**；未激活时对宿主页面 0 节点注入，激活时挂载于完全隔离的 Open Shadow Root `#__anygrab-host__`）：
 
+- **原生中英双语自动识别 + 一键切换（`中文 / EN`）**：内置标准 Chrome `_locales` 国际化包，自动匹配中文界面并将所有专业术语转化为零门槛大白话；支持在弹窗与页面悬浮拾取条（HUD）随时一键切换中英文，复制时自动联动输出 **`locale: 'zh-CN'` 中文 1:1 复刻提示词**，切到 **反重力 (Antigravity) / Codex / Cursor** 直接 `Cmd+V` 粘贴回车即可还原界面！
+- **内置全屏「30 秒新手实战教程 & 现场点选练习靶场」（`guide.html`）**：点击插件顶部的 **`📘 怎么用？30 秒练习靶场`** 即可打开图文并茂的 `1 → 2 → 3` 实战引导页，页内自带「高颜值渐变定价卡片」与「跨行跨列合并财务表」两大真实练习靶标及配套提问话术，零基础 30 秒立即上手！
+
+**3 步本地安装：**
 1. 构建全仓产物：`pnpm install && pnpm build`
 2. 在 Chrome / Edge / Arc / Brave 地址栏打开 `chrome://extensions`，开启右上角 **开发者模式（Developer mode）**。
 3. 点击 **加载已解压的扩展程序（Load unpacked）**，选择仓库内的 `apps/extension/dist` 目录。
 
 **快捷键交互流（`Alt+Shift+G`）：**
-- **鼠标悬停**：紫蓝选区高亮框 + 顶部 `<tag.class> · 宽高 px · ~N tokens` 实时标牌
-- **`ArrowUp` / `ArrowDown`**：向上扩选父级容器 / 向下回溯子节点
-- **`Tab`**：实时循环切换四种输出格式（`AI Prompt` → `Tailwind HTML` → `React JSX` → `Markdown`）
-- **`Click` 或 `Enter`**：毫秒级蒸馏并写入剪贴板，同时存入本地 `Recent Grabs` 最近 20 条历史记录
-- **`Escape`**：零残留干净卸载拾取浮层
+- **鼠标悬停**：紫蓝选区高亮框 + 顶部 `<tag.class> · 宽高 px · 约 ~N tokens` 实时标牌
+- **`ArrowUp` / `ArrowDown`**：向上扩大选框（选父级容器） / 向下缩小选框（回溯子节点）
+- **`Tab`**：实时循环切换四种输出格式（`AI 复刻指令` → `Tailwind 网页` → `React 组件` → `纯净文档表格`）
+- **`Click` 或 `Enter`**：毫秒级提纯写入剪贴板，弹出下一步粘贴指引 Toast，并存入本地最近历史
+- **`Escape`**：零残留干净退出拾取模式
 
 ---
 
-## 在线交互靶场与排行榜（`apps/playground`）
+## 双语官方网站、交互靶场与排行榜（`apps/playground`）
 
-本地一键启动零后端交互式 Playground 与 `AnyGrab-Bench` 可视化榜单：
+本地一键启动五大板块双语官方网站（**产品首页 Overview** · **配合 AI 实战教程 Workflows** · **在线免装体验台 Live Playground** · **AnyGrab-Bench 性能跑分榜** · **下载插件与 MCP 安装指南**）：
 
 ```bash
-pnpm --filter @anygrab/playground dev
+pnpm playground
 ```
 
-左侧粘贴任意脏乱 HTML+CSS 或切换 10 大酷刑预设，拖动 **Token 预算滑块（`200`–`4,000`）**，右侧实时同屏对比 **提纯代码**、**Tailwind 沙箱真实渲染画面** 与 **Design Tokens 色板色块**。
+支持顶栏 **`中文 / EN` 实时切换**，内置反重力 (Antigravity) / Codex / Cursor 三大实战场景一键复制话术；在体验台中左侧粘贴任意脏 HTML+CSS 或切换 10 大预设，拖动 **Token 预算滑块（`200`–`4,000`）**，右侧同屏实时对比 **中文/英文提纯指令**、**原始网页 vs Tailwind 沙箱双预览画面** 与 **Design Tokens 色板色块**。
 
 ---
 

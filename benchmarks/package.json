@@ -1,6 +1,6 @@
 {
   "name": "@anygrab/benchmarks",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "AnyGrab-Bench evaluation suite and comparison runner.",
   "type": "module",

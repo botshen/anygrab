@@ -54,7 +54,7 @@ describe('anygrab SDK exports & HTML/CSS loader', () => {
     expect(typeof estimateTokens).toBe('function');
     expect(typeof extractDesignTokens).toBe('function');
     expect(typeof registerAdapter).toBe('function');
-    expect(VERSION).toBe('0.1.0');
+    expect(VERSION).toBe('0.2.0');
   });
 
   it('normalizes HTML fragments starting with <style> without losing sibling elements', () => {

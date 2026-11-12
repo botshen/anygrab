@@ -4,7 +4,8 @@
 
 | Version | Supported |
 | :--- | :--- |
-| `0.1.x` | ✅ Active security updates |
+| `0.2.x` | ✅ Active security updates |
+| `0.1.x` | ✅ Security fixes |
 
 ## Security & Privacy Architecture Guarantees
 

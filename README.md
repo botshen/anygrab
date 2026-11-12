@@ -151,7 +151,8 @@ flowchart LR
 import { grab, extractDesignTokens } from '@anygrab/core';
 
 const result = grab(document.querySelector('#pricing-tier')!, {
-  format: 'jsx',            // 'prompt' | 'tailwind-html' | 'jsx' | 'markdown'
+  format: 'prompt',         // 'prompt' | 'tailwind-html' | 'jsx' | 'markdown'
+  locale: 'en',             // 'en' | 'zh-CN' (ready-to-paste bilingual AI replication prompts)
   maxTokens: 800,           // AST salience budget folding (never breaks closing tags!)
   compactSvg: true,         // Collapses multi-KB <svg> paths into semantic placeholders
   preserveTables: true,     // 2D virtual grid expansion for rowspan/colspan tables
@@ -222,6 +223,10 @@ args = ["-y", "@anygrab/mcp"]
 
 Inspect and grab any live component in **one click** with zero host-page CSS pollution (mounted inside an isolated Open Shadow Root `#__anygrab-host__`, requesting only `activeTab`, `scripting`, `storage`, `clipboardWrite` — **no `<all_urls>`**):
 
+- **Bilingual Out-of-the-Box (`中文 / EN`):** Ships with Chrome `_locales` (`en` + `zh_CN`), auto-detects browser language, and lets you switch `中 / EN` anytime from the Popup or floating HUD — generating localized AI prompts (`locale: 'zh-CN' | 'en'`) ready to paste straight into **Antigravity / Codex / Cursor**.
+- **Built-in 30-Second Interactive Practice Arena (`guide.html`):** Click **How to Use & Practice Arena** inside the Popup to open a self-contained visual tutorial with live Pricing Card & Merged Financial Table practice targets so anyone can master picking in 30 seconds.
+
+**3-Step Local Load:**
 1. Build the workspace: `pnpm install && pnpm build`
 2. Open `chrome://extensions` in Chrome / Arc / Brave / Edge and enable **Developer mode**.
 3. Click **Load unpacked** and select `/path/to/anygrab/apps/extension/dist`.
@@ -230,20 +235,20 @@ Inspect and grab any live component in **one click** with zero host-page CSS pol
 - `Hover`: Live indigo bounding box + `<tag.class> · W×H px · ~N tokens` pill
 - `ArrowUp` / `ArrowDown`: Expand selection to parent container or drill back down
 - `Tab`: Cycle output format (`AI Prompt` → `Tailwind HTML` → `React JSX` → `Markdown`)
-- `Click` or `Enter`: Distill & copy straight to clipboard + save to local `Recent Grabs` history
+- `Click` or `Enter`: Distill & copy straight to clipboard + actionable paste toast + local `Recent Grabs` history
 - `Escape`: Cleanly unmount Shadow Root with zero page residue
 
 ---
 
-## Interactive Playground & Leaderboard (`apps/playground`)
+## Bilingual Official Website, Playground & Leaderboard (`apps/playground`)
 
-Run the zero-backend Playground & `AnyGrab-Bench` explorer locally:
+Run the zero-backend 5-section Official Website (**Overview** · **AI Workflows** · **Live Playground** · **AnyGrab-Bench Leaderboard** · **Quick Start & Install**) locally:
 
 ```bash
-pnpm --filter @anygrab/playground dev
+pnpm playground
 ```
 
-Paste any dirty HTML+CSS on the left, drag the **Token Budget (`200`–`4,000`)** slider, toggle **Tailwind Live Sandbox Preview**, inspect extracted **Design Token Swatches**, and click **Copy for Antigravity / Claude / Cursor**.
+Switch seamlessly between **English / 简体中文**, copy battle-tested **Antigravity / Codex / Cursor** workflow prompts, paste dirty HTML+CSS on the left, drag the **Token Budget (`200`–`4,000`)** slider, compare **Original vs. Tailwind Live Sandbox Previews**, and inspect extracted **Design Token Swatches**.
 
 ---
 
