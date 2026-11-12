@@ -1,0 +1,24 @@
+{
+  "name": "@anygrab/benchmarks",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AnyGrab-Bench evaluation suite and comparison runner.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "bench": "tsx src/run.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "clean": "rm -rf dist *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@anygrab/core": "workspace:*",
+    "linkedom": "^0.18.15",
+    "turndown": "^7.2.5",
+    "turndown-plugin-gfm": "^1.0.2"
+  },
+  "devDependencies": {
+    "@types/turndown": "^5.0.6"
+  }
+}

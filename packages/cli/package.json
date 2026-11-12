@@ -1,0 +1,39 @@
+{
+  "name": "anygrab",
+  "version": "0.1.0",
+  "description": "CLI and Node.js SDK for AnyGrab — token-budget-aware DOM & UI context distillation.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "anygrab": "./dist/cli.js"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "clean": "rm -rf dist *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@anygrab/core": "workspace:*",
+    "linkedom": "^0.18.15"
+  }
+}

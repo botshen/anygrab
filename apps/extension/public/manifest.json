@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "AnyGrab — UI & Context Picker for AI Agents",
+  "version": "0.1.0",
+  "description": "Pick any webpage element and distill clean Tailwind HTML, JSX, Markdown, or token-budgeted AI prompts locally.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage",
+    "clipboardWrite"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "AnyGrab",
+    "default_popup": "popup.html"
+  }
+}
