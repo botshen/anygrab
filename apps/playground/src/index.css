@@ -1,25 +1,36 @@
 @import "tailwindcss";
 
+@property --ag-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
 :root {
-  color-scheme: light;
-  --ag-bg-canvas: #F5F4EF;
-  --ag-bg-surface: #FFFFFF;
-  --ag-bg-subtle: #ECEAE3;
-  --ag-bg-stage: #141413;
-  --ag-bg-stage-elevated: #1F1F1D;
-  --ag-border: #DFDDD4;
-  --ag-border-strong: #C7C4B8;
-  --ag-text-primary: #141413;
-  --ag-text-secondary: #52514C;
-  --ag-text-muted: #78766F;
-  --ag-accent: #D94E28;
-  --ag-accent-soft: rgba(217, 78, 40, 0.09);
-  --ag-success: #15803D;
+  color-scheme: dark;
+  --ag-bg-canvas: #08090C;
+  --ag-bg-elevated: #101217;
+  --ag-bg-surface: #171A22;
+  --ag-bg-stage: #0B0D12;
+  --ag-border: rgba(255, 255, 255, 0.08);
+  --ag-border-strong: rgba(255, 255, 255, 0.16);
+  --ag-text-primary: #F4F5F8;
+  --ag-text-secondary: #A1A7B5;
+  --ag-text-muted: #7C8292;
+  --ag-accent: #FF4D1C;
+  --ag-accent-soft: rgba(255, 77, 28, 0.12);
+  --ag-emerald: #10B981;
+  --ag-emerald-soft: rgba(16, 185, 129, 0.12);
   --ag-font-sans: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
   --ag-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --ag-radius-lg: 12px;
-  --ag-radius-md: 8px;
-  --ag-radius-sm: 5px;
+  --ag-radius-lg: 16px;
+  --ag-radius-md: 10px;
+  --ag-radius-sm: 6px;
+  --ag-spring: linear(
+    0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%, 0.938 16.7%, 1.017, 1.077,
+    1.107 24.3%, 1.112, 1.105 29.2%, 1.044 37.9%, 1.005 46.2%, 0.99 53.7%,
+    0.996 67.5%, 1.002 82.8%, 1
+  );
 }
 
 @layer base {
@@ -29,12 +40,14 @@
     color: var(--ag-text-primary);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: auto;
   }
 
   body {
     background-color: var(--ag-bg-canvas);
     color: var(--ag-text-primary);
-    line-height: 1.65;
+    line-height: 1.55;
+    overflow-x: hidden;
   }
 
   h1, h2, h3 {
@@ -47,7 +60,7 @@
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: #C7C4B8 transparent;
+    scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
   }
 
   *::-webkit-scrollbar {
@@ -60,9 +73,74 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: #C7C4B8;
+    background-color: rgba(255, 255, 255, 0.16);
     border-radius: 9999px;
   }
+}
+
+/* Subtle architectural noise grain overlay (purely static, zero GPU thrash) */
+.ag-grain-layer {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.55'/%3E%3C/svg%3E");
+  opacity: 0.028;
+}
+
+/* Obsidian hairline calibration grid (calibrated against darkroom concept #08090C -> #171B20) */
+.ag-grid-stage {
+  background-color: var(--ag-bg-stage);
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    radial-gradient(ellipse 68% 58% at 50% 42%, rgba(255, 77, 28, 0.075), rgba(8, 9, 12, 0));
+  background-size: 48px 48px, 48px 48px, 100% 100%;
+}
+
+/* @property conic laser shimmer strictly reserved for primary Hero CTA */
+.ag-laser-cta {
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(#12151C, #12151C) padding-box,
+    conic-gradient(
+      from var(--ag-angle),
+      rgba(255, 255, 255, 0.14) 0deg,
+      rgba(255, 77, 28, 0.95) 48deg,
+      rgba(255, 255, 255, 0.24) 96deg,
+      rgba(255, 255, 255, 0.08) 360deg
+    ) border-box;
+  animation: ag-laser-spin 4.2s linear infinite;
+  transition: transform 220ms var(--ag-spring), box-shadow 220ms ease;
+}
+
+.ag-laser-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 28px -6px rgba(255, 77, 28, 0.45);
+}
+
+@keyframes ag-laser-spin {
+  to {
+    --ag-angle: 360deg;
+  }
+}
+
+@keyframes ag-scan-sweep {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(420%);
+    opacity: 0;
+  }
+}
+
+.ag-scan-beam {
+  animation: ag-scan-sweep 2.4s cubic-bezier(0.32, 0.04, 0.2, 1) infinite;
 }
 
 .ag-tabular {
@@ -78,39 +156,18 @@
   scrollbar-width: none;
 }
 
-@keyframes ag-reticle-lock {
-  0% {
-    transform: scale(1.035);
-    opacity: 0.72;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes ag-code-cut {
-  0% {
-    opacity: 0.55;
-    transform: translateY(3px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.ag-reticle-snap {
-  animation: ag-reticle-lock 180ms cubic-bezier(0.18, 0.9, 0.25, 1) both;
-}
-
-.ag-code-cut {
-  animation: ag-code-cut 150ms cubic-bezier(0.2, 0.85, 0.3, 1) both;
+.ag-pill-glide {
+  transition:
+    transform 340ms var(--ag-spring),
+    width 340ms var(--ag-spring);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ag-reticle-snap,
-  .ag-code-cut {
+  .ag-laser-cta,
+  .ag-scan-beam {
     animation: none;
+  }
+  .ag-pill-glide {
+    transition: none;
   }
 }

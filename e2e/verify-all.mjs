@@ -1158,11 +1158,11 @@ async function verifyPlaygroundE2E() {
     const overviewSection = page.locator('section[aria-label="Product Overview"]');
     await overviewSection.waitFor({ state: 'visible' });
     const overviewText = await overviewSection.innerText();
-    assert.match(overviewText, /点一下就能喂给 AI 1:1 复刻/);
+    assert.match(overviewText, /点一下，扒走好界面/);
     assert.match(overviewText, /反重力\s*\(Antigravity\)/);
     assert.match(overviewText, /发截图/);
     assert.match(overviewText, /F12 扒源码/);
-    logPass('Section 1 · Product Overview (`zh-CN` auto-detected)', 'Plain-Chinese Hero + 3 pain-point cards verified');
+    logPass('Section 1 · Product Overview (`zh-CN` auto-detected)', 'Obsidian Hero + optical stage + 3D X-Ray peel verified');
 
     // 2. Section 2 (`AI Workflows Guide` — 3 Antigravity & Codex companion workflows)
     await page.locator('button[data-tab="workflows"]').click();
@@ -1249,12 +1249,12 @@ async function verifyPlaygroundE2E() {
       `Chinese Prompt + ${kanbanCodeNoLimit.length}→${kanbanCodeBudgeted.length} budget folding + dual <iframe> sandboxes verified`,
     );
 
-    // 4. Section 4 (`AnyGrab-Bench Leaderboard` — plain-Chinese guide + 10 rows + `try-live` jump)
+    // 4. Section 4 (`AnyGrab-Bench Leaderboard` — metrics + 10 rows + `try-live` jump)
     await page.locator('button[data-tab="leaderboard"]').click();
     const leaderboardSection = page.locator('section[aria-label="AnyGrab-Bench Leaderboard"]');
     await leaderboardSection.waitFor({ state: 'visible' });
     const leaderboardText = await leaderboardSection.innerText();
-    assert.match(leaderboardText, /一分钟大白话读懂这份跑分榜/);
+    assert.match(leaderboardText, /99\.6 分 · 压缩 85%/);
     assert.match(leaderboardText, /10 大真实场景/);
     assert.match(leaderboardText, /99\.6/, 'Leaderboard must display refreshed 99.6/100 fidelity score');
     assert.match(leaderboardText, /-85\.0%/, 'Leaderboard must display refreshed -85.0% budget compression');
@@ -1288,7 +1288,7 @@ async function verifyPlaygroundE2E() {
 
     await page.locator('button[data-tab="overview"]').click();
     const overviewEnText = await page.locator('section[aria-label="Product Overview"]').innerText();
-    assert.match(overviewEnText, /Grab it in 1 click for Coding Agents!/i);
+    assert.match(overviewEnText, /Point\. Click\. Ship Clean UI\./i);
 
     await page.locator('button[data-tab="playground"]').click();
     await page.locator('button[data-format="prompt"]').click();

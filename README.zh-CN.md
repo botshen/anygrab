@@ -220,10 +220,10 @@ args = ["-y", "@anygrab/mcp"]
 - **原生中英双语自动识别 + 一键切换（`中文 / EN`）**：内置标准 Chrome `_locales` 国际化包，自动匹配中文界面并将所有专业术语转化为零门槛大白话；支持在弹窗与页面悬浮拾取条（HUD）随时一键切换中英文，复制时自动联动输出 **`locale: 'zh-CN'` 中文 1:1 复刻提示词**，切到 **反重力 (Antigravity) / Codex / Cursor** 直接 `Cmd+V` 粘贴回车即可还原界面！
 - **内置全屏「30 秒新手实战教程 & 现场点选练习靶场」（`guide.html`）**：点击插件顶部的 **`📘 怎么用？30 秒练习靶场`** 即可打开图文并茂的 `1 → 2 → 3` 实战引导页，页内自带「高颜值渐变定价卡片」与「跨行跨列合并财务表」两大真实练习靶标及配套提问话术，零基础 30 秒立即上手！
 
-**3 步本地安装：**
+**3 步本地安装（也可前往 [GitHub Releases](https://github.com/botshen/anygrab/releases/latest) 直接下载免编译 `.zip` 插件包）：**
 1. 构建全仓产物：`pnpm install && pnpm build`
 2. 在 Chrome / Edge / Arc / Brave 地址栏打开 `chrome://extensions`，开启右上角 **开发者模式（Developer mode）**。
-3. 点击 **加载已解压的扩展程序（Load unpacked）**，选择仓库内的 `apps/extension/dist` 目录。
+3. 点击 **加载已解压的扩展程序（Load unpacked）**，务必点进仓库内层的 **`dist` 子目录**（即 `anygrab/apps/extension/dist`，不要选外层的 `apps/extension` 源码目录）。
 
 **快捷键交互流（`Alt+Shift+G`）：**
 - **鼠标悬停**：紫蓝选区高亮框 + 顶部 `<tag.class> · 宽高 px · 约 ~N tokens` 实时标牌

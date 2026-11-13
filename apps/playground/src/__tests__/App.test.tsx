@@ -118,12 +118,14 @@ describe('AnyGrab Bilingual Official Product Website (v0.2.0)', () => {
     });
 
     // Overview section is active by default with all 5 core navigation tabs
-    const tabs = container.querySelectorAll('button[role="tab"]');
+    const tabs = container.querySelectorAll(
+      'nav[aria-label="Primary Website Navigation"] button[role="tab"]',
+    );
     expect(tabs.length).toBe(5);
     expect(document.documentElement.lang).toBe('zh-CN');
-    expect(container.textContent).toContain('点一下就能喂给 AI 1:1 复刻');
-    expect(container.textContent).toContain('传统痛点 ① · 发截图');
-    expect(container.textContent).toContain('第 1 步：在任意网页点选你要的组件');
+    expect(container.textContent).toContain('点一下，扒走好界面');
+    expect(container.textContent).toContain('发截图');
+    expect(container.textContent).toContain('滚轮透视 · 三层剥离');
     expect(container.textContent).toContain('npx anygrab');
 
     // Click EN switcher in top navbar
@@ -135,8 +137,8 @@ describe('AnyGrab Bilingual Official Product Website (v0.2.0)', () => {
 
     expect(document.documentElement.lang).toBe('en');
     expect(window.localStorage.getItem('anygrab_site_locale')).toBe('en');
-    expect(container.textContent).toContain('Grab it in 1 click for Coding Agents!');
-    expect(container.textContent).toContain('Old Way 1 · Screenshots');
+    expect(container.textContent).toContain('Point. Click. Ship Clean UI.');
+    expect(container.textContent).toContain('Screenshots');
 
     // Toggle back to 中文
     const zhBtn = container.querySelector<HTMLButtonElement>('button[data-locale="zh-CN"]');
@@ -144,7 +146,7 @@ describe('AnyGrab Bilingual Official Product Website (v0.2.0)', () => {
       zhBtn!.click();
     });
     expect(document.documentElement.lang).toBe('zh-CN');
-    expect(container.textContent).toContain('点一下就能喂给 AI 1:1 复刻');
+    expect(container.textContent).toContain('点一下，扒走好界面');
   });
 
   it('renders AI Workflows Guide with 3 Antigravity & Codex workflows and 1-click prompt copy', () => {
@@ -160,7 +162,7 @@ describe('AnyGrab Bilingual Official Product Website (v0.2.0)', () => {
     });
 
     expect(container.querySelector('section[aria-label="AI Workflows Guide"]')).not.toBeNull();
-    expect(container.textContent).toContain('3 种配合【反重力 Antigravity & Codex】的神仙玩法');
+    expect(container.textContent).toContain('三套 AI 零废话配方');
 
     const copyBtns = container.querySelectorAll<HTMLButtonElement>(
       'button[data-action="copy-workflow-prompt"]',
@@ -170,7 +172,7 @@ describe('AnyGrab Bilingual Official Product Website (v0.2.0)', () => {
     act(() => {
       copyBtns[0].click();
     });
-    expect(container.textContent).toContain('已复制话术！快去反重力 / Codex 粘贴');
+    expect(container.textContent).toContain('已复制');
   });
 
   it('passes active locale into @anygrab/core grab() in Live Playground and supports dual sandbox previews', () => {
@@ -259,7 +261,7 @@ describe('AnyGrab Bilingual Official Product Website (v0.2.0)', () => {
       leaderboardTab!.click();
     });
 
-    expect(container.textContent).toContain('一分钟大白话读懂这份跑分榜');
+    expect(container.textContent).toContain('99.6 分 · 压缩 85%');
     expect(container.textContent).toContain('99.6');
     expect(container.textContent).toContain('-85.0%');
 
@@ -288,9 +290,10 @@ describe('AnyGrab Bilingual Official Product Website (v0.2.0)', () => {
       quickStartTab!.click();
     });
 
-    expect(container.textContent).toContain('傻瓜式 3 步安装 Chrome 浏览器插件');
+    expect(container.textContent).toContain('30 秒装好即用');
     expect(container.textContent).toContain('chrome://extensions');
     expect(container.textContent).toContain('apps/extension/dist');
+    expect(container.textContent).toContain('30 秒练习靶场');
     expect(container.textContent).toContain('Antigravity');
     expect(container.textContent).toContain('grab_url');
 

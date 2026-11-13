@@ -226,10 +226,10 @@ Inspect and grab any live component in **one click** with zero host-page CSS pol
 - **Bilingual Out-of-the-Box (`中文 / EN`):** Ships with Chrome `_locales` (`en` + `zh_CN`), auto-detects browser language, and lets you switch `中 / EN` anytime from the Popup or floating HUD — generating localized AI prompts (`locale: 'zh-CN' | 'en'`) ready to paste straight into **Antigravity / Codex / Cursor**.
 - **Built-in 30-Second Interactive Practice Arena (`guide.html`):** Click **How to Use & Practice Arena** inside the Popup to open a self-contained visual tutorial with live Pricing Card & Merged Financial Table practice targets so anyone can master picking in 30 seconds.
 
-**3-Step Local Load:**
+**3-Step Local Load (or download prebuilt `.zip` from [GitHub Releases](https://github.com/botshen/anygrab/releases/latest)):**
 1. Build the workspace: `pnpm install && pnpm build`
 2. Open `chrome://extensions` in Chrome / Arc / Brave / Edge and enable **Developer mode**.
-3. Click **Load unpacked** and select `/path/to/anygrab/apps/extension/dist`.
+3. Click **Load unpacked** and select the **`dist` subfolder** (`anygrab/apps/extension/dist`, **not** the outer `apps/extension` folder).
 
 **Keyboard HUD Workflow (`Alt+Shift+G`):**
 - `Hover`: Live indigo bounding box + `<tag.class> · W×H px · ~N tokens` pill

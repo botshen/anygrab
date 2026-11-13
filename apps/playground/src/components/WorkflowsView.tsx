@@ -24,102 +24,91 @@ export function WorkflowsView({ locale, onNavigate }: WorkflowsViewProps) {
   };
 
   return (
-    <section aria-label="AI Workflows Guide" className="space-y-10">
-      {/* Clean Editorial Header */}
-      <div className="space-y-2 border-b border-[var(--ag-border)] pb-6">
-        <div className="font-mono text-[11px] font-semibold tracking-wider text-[var(--ag-accent)] uppercase">
-          PRACTICAL AI WORKFLOWS
+    <section
+      id="workflows"
+      aria-label="AI Workflows Guide"
+      className="mx-auto max-w-[1160px] min-w-0 space-y-6 pt-4"
+    >
+      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
+        <div>
+          <div className="font-mono text-[11px] font-semibold tracking-wider text-[var(--ag-accent)] uppercase">
+            04 · AGENT RECIPES
+          </div>
+          <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#F4F5F8] sm:text-3xl">
+            {isZh ? '三套 AI 零废话配方' : '3 Zero-Fluff Agent Recipes'}
+          </h2>
         </div>
-        <h1 className="text-2xl leading-[1.3] font-extrabold tracking-[-0.02em] text-[#141413] sm:text-3xl">
-          {isZh
-            ? '3 种配合【反重力 Antigravity & Codex】的神仙玩法'
-            : '3 Practical Workflows with Antigravity, Codex & Cursor'}
-        </h1>
-        <p className="max-w-3xl text-sm leading-[1.7] text-[var(--ag-text-secondary)]">
-          {isZh
-            ? '不知道抓完网页之后该对 AI 说什么？下面整理好了最常用的 3 种真实开发场景，每个场景都配有一键复制的提问话术，直接粘贴进反重力或 Codex 即可开工。'
-            : 'Not sure what to ask your coding agent after grabbing a webpage? Pick any of the 3 workflows below — each comes with a ready-to-paste companion prompt for Antigravity, Codex, or Cursor.'}
-        </p>
+
+        <span className="font-mono text-xs text-[#7C8292]">
+          Antigravity · Codex · Cursor · Claude Code
+        </span>
       </div>
 
-      {/* 3 Editorial Workflow Sheets */}
-      <div className="space-y-6">
-        {cards.map((card, index) => {
+      {/* Open Canvas Editorial 3-Column Strip (Breaks outer card-box repetition) */}
+      <div className="grid divide-y divide-white/8 border-b border-white/8 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+        {cards.map((card) => {
           const isCopied = copiedId === card.id;
           return (
             <article
               key={card.id}
               data-workflow-id={card.id}
-              className="rounded-[12px] border border-[var(--ag-border)] bg-white p-6 sm:p-7"
+              className="flex flex-col justify-between gap-4 py-6 lg:px-6 lg:first:pl-0 lg:last:pr-0"
             >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="font-mono text-xs font-bold text-[var(--ag-accent)]">
+              <div>
+                <span className="font-mono text-[11px] font-bold text-[var(--ag-accent)]">
                   {card.badge}
                 </span>
-                <span className="ag-tabular font-mono text-xs text-[var(--ag-text-muted)]">
-                  0{index + 1} / 03
-                </span>
-              </div>
 
-              <h2 className="mt-2 text-lg leading-[1.38] font-extrabold text-[#141413] sm:text-xl">
-                {card.title}
-              </h2>
-              <p className="mt-1.5 text-[13.5px] leading-[1.68] text-[var(--ag-text-secondary)]">
-                {card.scenario}
-              </p>
+                <h3 className="mt-2 text-lg font-extrabold tracking-tight text-[#F4F5F8]">
+                  {card.title}
+                </h3>
 
-              {/* 3-Step Columns */}
-              <ol className="mt-5 grid gap-4 md:grid-cols-3">
-                {card.steps.map((stepText, stepIdx) => (
-                  <li
-                    key={stepIdx}
-                    className="rounded-[8px] border border-[var(--ag-border)] bg-[#FAF9F5] p-4 text-[13px] leading-[1.65] text-[#141413]"
-                  >
-                    <div className="ag-tabular mb-1.5 font-mono text-[11px] font-bold text-[var(--ag-text-muted)]">
-                      STEP 0{stepIdx + 1}
-                    </div>
-                    <p>{stepText}</p>
-                  </li>
-                ))}
-              </ol>
-
-              {/* Carbon Terminal Box for Companion Prompt */}
-              <div className="mt-5 overflow-hidden rounded-[8px] bg-[var(--ag-bg-stage)] text-[#EEEDE8]">
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/10 bg-[var(--ag-bg-stage-elevated)] px-4 py-2.5">
-                  <span className="text-xs font-medium text-[#C9C6BA]">{card.promptLabel}</span>
-
-                  <button
-                    type="button"
-                    data-action="copy-workflow-prompt"
-                    onClick={() => handleCopyPrompt(card.id, card.promptToCopy)}
-                    className="inline-flex items-center gap-1.5 rounded-[5px] bg-[var(--ag-accent)] px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90"
-                  >
-                    {isCopied ? (
-                      <>
-                        <Check className="h-3.5 w-3.5" />
-                        <span>
-                          {isZh ? '已复制话术！快去反重力 / Codex 粘贴' : 'Prompt Copied!'}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="h-3.5 w-3.5" />
-                        <span>{isZh ? '一键复制提问话术' : 'Copy Companion Prompt'}</span>
-                      </>
-                    )}
-                  </button>
+                {/* Compact Flow Strip */}
+                <div className="mt-3 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-[#A1A7B5]">
+                  {card.flowNodes.map((node, i) => (
+                    <span key={node} className="inline-flex items-center gap-1.5">
+                      <span className="text-[#F4F5F8]">{node}</span>
+                      {i < 2 && <span className="text-[#7C8292]">→</span>}
+                    </span>
+                  ))}
                 </div>
 
-                <p className="p-4 font-mono text-xs leading-[1.7] text-[#EEEDE8]">
-                  {card.promptToCopy}
-                </p>
+                {/* Crisp 1-Line Copyable Command Strip */}
+                <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-[#101217]">
+                  <div className="flex items-center justify-between border-b border-white/8 px-3 py-2">
+                    <span className="font-mono text-[11px] text-[#7C8292]">
+                      {card.promptLabel}
+                    </span>
+                    <button
+                      type="button"
+                      data-action="copy-workflow-prompt"
+                      onClick={() => handleCopyPrompt(card.id, card.promptToCopy)}
+                      className="inline-flex items-center gap-1 rounded-md bg-[#FF4D1C] px-2.5 py-1 text-[11px] font-semibold text-white transition hover:brightness-110"
+                    >
+                      {isCopied ? (
+                        <>
+                          <Check className="h-3 w-3" />
+                          <span>{isZh ? '已复制' : 'Copied'}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-3 w-3" />
+                          <span>{isZh ? '复制' : 'Copy'}</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                  <p className="p-3 font-mono text-[11.5px] leading-[1.6] text-[#D8DCE6]">
+                    {card.promptToCopy}
+                  </p>
+                </div>
               </div>
 
-              <div className="mt-4 flex justify-end">
+              <div className="flex justify-end">
                 <button
                   type="button"
                   onClick={() => onNavigate(card.targetTab)}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#141413] transition hover:text-[var(--ag-accent)]"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#A1A7B5] transition hover:text-[#F4F5F8]"
                 >
                   <span>{card.actionLabel}</span>
                   <ArrowRight className="h-3.5 w-3.5" />
