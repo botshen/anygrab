@@ -10,7 +10,7 @@ const MAX_STYLESHEETS = 24;
 const MAX_CSS_BYTES = 4 * 1024 * 1024;
 
 const DEFAULT_USER_AGENT =
-  'Mozilla/5.0 (compatible; AnyGrab/0.1; +https://github.com/botshen/anygrab)';
+  'Mozilla/5.0 (compatible; AnyGrab/0.2; +https://github.com/botshen/anygrab)';
 
 /**
  * Extended options for Node.js HTML, file, and URL loading in `anygrab`.

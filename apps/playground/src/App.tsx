@@ -97,11 +97,21 @@ export function App() {
                 : 'AnyGrab & AnyGrab-Bench — MIT Open Source · Sub-5ms Deterministic UI Context Engine'}
             </span>
           </div>
-          <span className="font-mono text-[11px] text-[var(--ag-text-secondary)]">
-            {isZh
-              ? '0 大模型费用 · 100% 本地执行 · 支持 反重力 Antigravity / Codex / Cursor / Claude Code'
-              : '0 LLM Calls · 100% Local Execution · Antigravity · Codex · Cursor · Claude Code'}
-          </span>
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] text-[var(--ag-text-secondary)]">
+            <span>
+              {isZh
+                ? '0 大模型费用 · 100% 本地执行 · 支持 反重力 Antigravity / Codex / Cursor / Claude Code'
+                : '0 LLM Calls · 100% Local Execution · Antigravity · Codex · Cursor · Claude Code'}
+            </span>
+            <a
+              href="https://github.com/botshen/anygrab"
+              target="_blank"
+              rel="noreferrer"
+              className="font-semibold text-[#141413] underline decoration-[var(--ag-border-strong)] underline-offset-3 transition hover:text-[var(--ag-accent)]"
+            >
+              GitHub ↗
+            </a>
+          </div>
         </div>
       </footer>
     </div>

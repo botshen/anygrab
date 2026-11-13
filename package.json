@@ -6,6 +6,14 @@
   "description": "Token-budget-aware DOM & UI context distillation engine for AI Coding Agents, Browser-Use, and RAG.",
   "license": "MIT",
   "author": "botshen & AnyGrab Contributors",
+  "homepage": "https://botshen.github.io/anygrab/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/botshen/anygrab.git"
+  },
+  "bugs": {
+    "url": "https://github.com/botshen/anygrab/issues"
+  },
   "packageManager": "pnpm@10.32.0",
   "engines": {
     "node": ">=20.0.0"

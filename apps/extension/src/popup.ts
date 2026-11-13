@@ -215,7 +215,7 @@ export async function initPopupApp(
             class="ag-site-input"
             data-control="website-url"
             value="${escapeHtml(settings.websiteUrl)}"
-            placeholder="http://localhost:4173"
+            placeholder="https://botshen.github.io/anygrab/"
           />
           <button type="button" class="ag-site-save" data-action="save-website-url">
             ${escapeHtml(msg.websiteSaveBtn)}

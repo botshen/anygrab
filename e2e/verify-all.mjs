@@ -1539,7 +1539,7 @@ async function verifyCliAndMcpSubprocesses() {
 /* -------------------------------------------------------------------------- */
 
 function collectRepoTextFiles(dir, out = []) {
-  const ignoredDirs = new Set(['.git', 'node_modules', 'dist', '.turbo', 'coverage]);
+  const ignoredDirs = new Set(['.git', 'node_modules', 'dist', '.turbo', 'coverage']);
   const binaryExts = new Set(['.png', '.ico', '.jpg', '.jpeg', '.webp', '.woff', '.woff2', '.ttf']);
 
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {

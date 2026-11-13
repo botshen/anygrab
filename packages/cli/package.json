@@ -4,6 +4,16 @@
   "description": "CLI and Node.js SDK for AnyGrab — token-budget-aware DOM & UI context distillation.",
   "type": "module",
   "license": "MIT",
+  "author": "botshen & AnyGrab Contributors",
+  "homepage": "https://github.com/botshen/anygrab#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/botshen/anygrab.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/botshen/anygrab/issues"
+  },
   "bin": {
     "anygrab": "./dist/cli.js"
   },

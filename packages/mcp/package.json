@@ -4,6 +4,16 @@
   "description": "Model Context Protocol (MCP) server for AnyGrab DOM & UI context distillation.",
   "type": "module",
   "license": "MIT",
+  "author": "botshen & AnyGrab Contributors",
+  "homepage": "https://github.com/botshen/anygrab#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/botshen/anygrab.git",
+    "directory": "packages/mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/botshen/anygrab/issues"
+  },
   "bin": {
     "anygrab-mcp": "./dist/index.js"
   },

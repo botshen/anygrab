@@ -6,7 +6,7 @@ const MAX_STYLESHEETS = 24;
 const MAX_CSS_BYTES = 4 * 1024 * 1024;
 
 const DEFAULT_USER_AGENT =
-  'Mozilla/5.0 (compatible; AnyGrab-MCP/0.1; +https://github.com/botshen/anygrab)';
+  'Mozilla/5.0 (compatible; AnyGrab-MCP/0.2; +https://github.com/botshen/anygrab)';
 
 export interface McpLoaderOptions {
   fetchTimeoutMs?: number;

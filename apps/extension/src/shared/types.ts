@@ -13,7 +13,7 @@ export const MAX_HISTORY_ITEMS = 20;
 export const MIN_TOKEN_BUDGET = 400;
 export const MAX_TOKEN_BUDGET = 6000;
 export const DEFAULT_TOKEN_BUDGET = 1600;
-export const DEFAULT_WEBSITE_URL = 'http://localhost:4173';
+export const DEFAULT_WEBSITE_URL = 'https://botshen.github.io/anygrab/';
 
 export const FORMAT_CYCLE: readonly OutputFormat[] = [
   'prompt',
