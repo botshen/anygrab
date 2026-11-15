@@ -1,10 +1,11 @@
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { deflateSync } from 'node:zlib';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEFAULT_ICONS_DIR = resolve(__dirname, '../public/icons');
+const MASTER_ICONS_DIR = resolve(__dirname, './master-icons');
 const ICON_SIZES = [16, 32, 48, 128];
 
 /** Precomputed IEEE 802.3 CRC-32 lookup table for PNG chunks */
@@ -201,9 +202,16 @@ export function generateExtensionIcons(outputDir = DEFAULT_ICONS_DIR) {
   const generated = [];
   for (const size of ICON_SIZES) {
     const filePath = resolve(outputDir, `icon-${size}.png`);
-    const pngBuffer = renderBrandIconPng(size);
-    writeFileSync(filePath, pngBuffer);
-    generated.push({ size, filePath, bytes: pngBuffer.length });
+    const masterPath = resolve(MASTER_ICONS_DIR, `icon-${size}.png`);
+    if (existsSync(masterPath)) {
+      cpSync(masterPath, filePath);
+      const bytes = readFileSync(filePath).length;
+      generated.push({ size, filePath, bytes });
+    } else {
+      const pngBuffer = renderBrandIconPng(size);
+      writeFileSync(filePath, pngBuffer);
+      generated.push({ size, filePath, bytes: pngBuffer.length });
+    }
   }
   return generated;
 }

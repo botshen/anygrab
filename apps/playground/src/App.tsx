@@ -160,6 +160,14 @@ export function App() {
 
             <div className="flex items-center gap-5">
               <a
+                href="./privacy.html"
+                target="_blank"
+                rel="noreferrer"
+                className="text-[#A1A7B5] transition hover:text-[#F4F5F8]"
+              >
+                {isZh ? '隐私政策' : 'Privacy'}
+              </a>
+              <a
                 href="https://github.com/botshen/anygrab/releases/latest"
                 target="_blank"
                 rel="noreferrer"

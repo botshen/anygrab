@@ -4,6 +4,7 @@ import type { GrabExecutionOutcome } from './picker/picker-controller';
 import { copyTextToClipboard } from './shared/clipboard';
 import { getMessages, toggleLocale } from './shared/i18n';
 import { loadSettings, saveSettings } from './shared/storage';
+import { GITHUB_REPO_URL } from './shared/types';
 
 export interface GuideControllerOptions {
   openTabUrl?: (url: string) => void;
@@ -99,6 +100,10 @@ export async function initGuideApp(
           </div>
 
           <div class="ag-nav-actions">
+            <button type="button" class="ag-btn-outline" data-action="guide-open-github">
+              <span>${escapeHtml(g.openGithubBtn)}</span>
+              ${EXTERNAL_SITE_SVG}
+            </button>
             <button type="button" class="ag-btn-outline" data-action="guide-open-website">
               <span>${escapeHtml(g.openWebsiteBtn)}</span>
               ${EXTERNAL_SITE_SVG}
@@ -329,6 +334,13 @@ export async function initGuideApp(
     siteBtn.addEventListener('click', () => {
       openWebsite(settings.websiteUrl);
     });
+
+    const githubBtn = root.querySelector<HTMLButtonElement>('[data-action="guide-open-github"]');
+    if (githubBtn) {
+      githubBtn.addEventListener('click', () => {
+        openWebsite(GITHUB_REPO_URL);
+      });
+    }
 
     const launchArenaPicker = () => {
       const arenaEl = doc.getElementById('practice-arena');

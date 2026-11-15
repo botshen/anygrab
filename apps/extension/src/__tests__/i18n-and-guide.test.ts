@@ -59,6 +59,18 @@ describe('Bilingual i18n (zh-CN / en), Plain-Language Popup & Built-In Practice 
       expect(openUrlSpy).toHaveBeenCalledWith('chrome-extension://test-id/guide.html');
     });
 
+    // Click GitHub open-source button opens GitHub repository
+    popupRoot.querySelector<HTMLButtonElement>('[data-action="open-github"]')!.click();
+    await vi.waitFor(() => {
+      expect(openUrlSpy).toHaveBeenCalledWith('https://github.com/botshen/anygrab');
+    });
+
+    // Click Privacy link opens Privacy Policy page
+    popupRoot.querySelector<HTMLButtonElement>('[data-action="open-privacy"]')!.click();
+    await vi.waitFor(() => {
+      expect(openUrlSpy).toHaveBeenCalledWith('https://botshen.github.io/anygrab/privacy.html');
+    });
+
     // Click `中文 / EN` button in Popup -> switches to English and persists
     popupRoot.querySelector<HTMLButtonElement>('[data-action="toggle-locale"]')!.click();
     await vi.waitFor(async () => {

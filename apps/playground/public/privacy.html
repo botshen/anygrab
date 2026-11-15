@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy / 隐私政策 — AnyGrab</title>
+    <meta
+      name="description"
+      content="Privacy Policy for AnyGrab Chrome Extension — 100% local DOM & UI context distillation with zero data collection, open-sourced under MIT."
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg-canvas: #08090c;
+        --bg-surface: #101217;
+        --border-subtle: rgba(255, 255, 255, 0.09);
+        --text-primary: #f4f5f8;
+        --text-secondary: #a1a7b5;
+        --text-muted: #7c8292;
+        --accent: #ff4d1c;
+        --emerald: #10b981;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background: var(--bg-canvas);
+        color: var(--text-primary);
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+        line-height: 1.7;
+        padding: 40px 20px 80px;
+        -webkit-font-smoothing: antialiased;
+      }
+      .shell {
+        max-width: 840px;
+        margin: 0 auto;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--border-subtle);
+        margin-bottom: 32px;
+      }
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--text-primary);
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 18px;
+        letter-spacing: -0.02em;
+      }
+      .brand-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        background: var(--accent);
+      }
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 13px;
+      }
+      .nav-links a {
+        color: var(--text-secondary);
+        text-decoration: none;
+      }
+      .nav-links a:hover {
+        color: var(--text-primary);
+      }
+      .badge {
+        display: inline-block;
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+        color: var(--emerald);
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid rgba(16, 185, 129, 0.28);
+        padding: 3px 10px;
+        border-radius: 6px;
+        margin-bottom: 14px;
+      }
+      h1 {
+        font-size: clamp(26px, 4vw, 34px);
+        font-weight: 800;
+        letter-spacing: -0.025em;
+        margin-bottom: 8px;
+      }
+      .meta {
+        font-size: 13.5px;
+        color: var(--text-muted);
+        margin-bottom: 28px;
+      }
+      .card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: 14px;
+        padding: 28px;
+        margin-bottom: 24px;
+      }
+      h2 {
+        font-size: 19px;
+        font-weight: 700;
+        margin-bottom: 14px;
+        color: var(--text-primary);
+      }
+      h3 {
+        font-size: 15px;
+        font-weight: 650;
+        margin-top: 18px;
+        margin-bottom: 6px;
+        color: var(--text-primary);
+      }
+      p, li {
+        font-size: 14.5px;
+        color: var(--text-secondary);
+      }
+      ul {
+        padding-left: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      strong {
+        color: var(--text-primary);
+      }
+      a {
+        color: var(--accent);
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12.5px;
+        color: var(--text-primary);
+        background: rgba(255, 255, 255, 0.06);
+        padding: 1px 6px;
+        border-radius: 4px;
+      }
+      footer {
+        margin-top: 36px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-subtle);
+        font-size: 13px;
+        color: var(--text-muted);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header>
+        <a class="brand" href="./">
+          <span class="brand-dot" aria-hidden="true"></span>
+          <span>AnyGrab</span>
+        </a>
+        <nav class="nav-links" aria-label="Links">
+          <a href="#en">English</a>
+          <a href="#zh">简体中文</a>
+          <a href="./">Official Website</a>
+          <a href="https://github.com/botshen/anygrab" target="_blank" rel="noreferrer">GitHub (MIT)</a>
+        </nav>
+      </header>
+
+      <span class="badge">100% LOCAL EXECUTION · ZERO DATA COLLECTION · MIT OPEN SOURCE</span>
+      <h1>Privacy Policy / 隐私政策</h1>
+      <p class="meta">Effective Date / 生效日期: November 15, 2026 · Applies to AnyGrab Chrome Extension, CLI, MCP &amp; Web Playground</p>
+
+      <section id="en" class="card" lang="en">
+        <h2>English — Privacy Policy</h2>
+
+        <h3>1. Zero Data Collection Commitment</h3>
+        <p>
+          <strong>AnyGrab</strong> is a 100% local, open-source webpage DOM and UI context distillation tool licensed under the MIT License. AnyGrab does <strong>not</strong> collect, transmit, store on external servers, sell, rent, or share any personal data, browsing history, webpage content, cookies, credentials, IP addresses, or analytics telemetry.
+        </p>
+
+        <h3>2. Browser Extension Permissions</h3>
+        <ul>
+          <li>
+            <strong><code>activeTab</code>, <code>scripting</code> &amp; <code>content_scripts</code>:</strong> Used solely when you explicitly activate the element picker (toolbar click or <code>Alt+Shift+G</code>) to highlight elements, read local computed styles (<code>getComputedStyle</code>), fetch public page stylesheets with <code>credentials: 'omit'</code> for hover class synthesis, and distill the selected DOM subtree in browser memory.
+          </li>
+          <li>
+            <strong><code>clipboardWrite</code>:</strong> Used only when you click a target element in picker mode or click a Copy button in the extension UI to place the distilled prompt or code onto your local clipboard.
+          </li>
+          <li>
+            <strong><code>storage</code> (<code>chrome.storage.local</code>):</strong> Stores your UI preferences (language, output format, token budget) and up to 20 recent grabs locally on your own device. You can wipe all stored history anytime via the <strong>Clear</strong> button in the popup or by uninstalling the extension.
+          </li>
+        </ul>
+
+        <h3>3. Third-Party Sharing &amp; Limited Use Compliance</h3>
+        <p>
+          AnyGrab runs without remote servers or external LLM API calls. No user data is ever transferred to third parties, used for advertising, or used to determine creditworthiness. The use of information received from Google/Chrome APIs strictly adheres to the Chrome Web Store User Data Policy, including the Limited Use requirements.
+        </p>
+
+        <h3>4. Open Source &amp; Contact</h3>
+        <p>
+          Full source code is publicly auditable at <a href="https://github.com/botshen/anygrab" target="_blank" rel="noreferrer">https://github.com/botshen/anygrab</a>. For questions, open an issue at <a href="https://github.com/botshen/anygrab/issues" target="_blank" rel="noreferrer">github.com/botshen/anygrab/issues</a>.
+        </p>
+      </section>
+
+      <section id="zh" class="card" lang="zh-CN">
+        <h2>简体中文 — 隐私政策</h2>
+
+        <h3>1. 零数据收集与纯本地运行承诺</h3>
+        <p>
+          <strong>AnyGrab</strong> 是一款遵循 MIT 开源协议、<strong>100% 在本地浏览器运行</strong>的网页 DOM 与 UI 上下文提纯工具。我们<strong>绝不</strong>收集、上传、在任何远程服务器存储、出售或向第三方共享您的个人信息、浏览历史、网页内容、Cookie、账号凭证或使用统计数据。
+        </p>
+
+        <h3>2. 浏览器扩展权限用途说明</h3>
+        <ul>
+          <li>
+            <strong><code>activeTab</code>、<code>scripting</code> 与 <code>content_scripts</code>：</strong>仅当您主动点击扩展图标或按下快捷键 <code>Alt+Shift+G</code> 启动光学取景器时，用于在页面本地渲染 Shadow-DOM 选框、读取所选元素的计算样式（<code>getComputedStyle</code>），并在不携带任何身份凭证（<code>credentials: 'omit'</code>）的前提下读取页面引用的公开样式表以还原 <code>:hover</code> 交互类名。所有处理均在本地内存中完成。
+          </li>
+          <li>
+            <strong><code>clipboardWrite</code>（剪贴板写入）：</strong>仅当您点选网页目标元素或点击扩展面板内的「复制」按钮时，将提纯后的 AI Prompt、React JSX、Tailwind HTML 或 Markdown 写入本机剪贴板。
+          </li>
+          <li>
+            <strong><code>storage</code>（<code>chrome.storage.local</code>）：</strong>仅在您的设备本地保存语言、输出格式、Token 预算等偏好设置及最近最多 20 条本地提取记录。您可随时通过弹窗内的<strong>「清空」</strong>按钮或卸载扩展彻底删除所有本地数据。
+          </li>
+        </ul>
+
+        <h3>3. 第三方共享与合规声明</h3>
+        <p>
+          AnyGrab 不依赖任何后端服务器，不调用任何外部大模型接口，绝不会向任何第三方传输用户数据，严格遵守 Chrome Web Store 用户数据政策（包括有限使用要求）。
+        </p>
+
+        <h3>4. 开源透明与联系方式</h3>
+        <p>
+          完整源码公开在 GitHub：<a href="https://github.com/botshen/anygrab" target="_blank" rel="noreferrer">https://github.com/botshen/anygrab</a>。如有任何隐私与安全问题，请访问 <a href="https://github.com/botshen/anygrab/issues" target="_blank" rel="noreferrer">GitHub Issues</a> 反馈。
+        </p>
+      </section>
+
+      <footer>
+        <span>AnyGrab · MIT License · 100% Local Execution</span>
+        <span><a href="https://github.com/botshen/anygrab" target="_blank" rel="noreferrer">github.com/botshen/anygrab</a></span>
+      </footer>
+    </div>
+  </body>
+</html>

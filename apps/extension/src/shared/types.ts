@@ -14,6 +14,8 @@ export const MIN_TOKEN_BUDGET = 400;
 export const MAX_TOKEN_BUDGET = 6000;
 export const DEFAULT_TOKEN_BUDGET = 1600;
 export const DEFAULT_WEBSITE_URL = 'https://botshen.github.io/anygrab/';
+export const GITHUB_REPO_URL = 'https://github.com/botshen/anygrab';
+export const PRIVACY_POLICY_URL = 'https://botshen.github.io/anygrab/privacy.html';
 
 export const FORMAT_CYCLE: readonly OutputFormat[] = [
   'prompt',

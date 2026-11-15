@@ -16,7 +16,7 @@ export default defineConfig({
   outExtension: () => ({ js: '.js' }),
   noExternal: [/.*/],
   clean: true,
-  sourcemap: true,
+  sourcemap: false,
   target: 'es2022',
   async onSuccess() {
     const publicDir = resolve(extDir, 'public');

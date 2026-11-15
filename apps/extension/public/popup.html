@@ -803,6 +803,63 @@
         border-color: rgba(21, 128, 61, 0.35);
         color: var(--ag-success);
       }
+
+      .ag-gh-pill {
+        appearance: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 4px 8px;
+        border-radius: var(--ag-radius-md);
+        border: 1px solid var(--ag-border-strong);
+        background: var(--ag-bg-surface);
+        color: var(--ag-text-primary);
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1;
+        cursor: pointer;
+        transition: background 120ms ease, border-color 120ms ease;
+      }
+
+      .ag-gh-pill:hover {
+        background: var(--ag-bg-subtle);
+      }
+
+      .ag-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding-top: 9px;
+        border-top: 1px solid var(--ag-border);
+        font-family: var(--ag-font-mono);
+        font-size: 10.5px;
+        color: var(--ag-text-muted);
+      }
+
+      .ag-footer-links {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .ag-footer-link {
+        appearance: none;
+        border: none;
+        background: transparent;
+        padding: 0;
+        font-family: inherit;
+        font-size: 10.5px;
+        font-weight: 600;
+        color: var(--ag-text-secondary);
+        cursor: pointer;
+        transition: color 120ms ease;
+      }
+
+      .ag-footer-link:hover {
+        color: var(--ag-accent);
+      }
     </style>
   </head>
   <body>

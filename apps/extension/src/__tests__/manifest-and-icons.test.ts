@@ -15,6 +15,7 @@ describe('Extension Manifest V3, _locales & Generated Brand Icons', () => {
       default_locale?: string;
       name: string;
       description: string;
+      homepage_url?: string;
       version: string;
       permissions: string[];
       host_permissions?: string[];
@@ -28,6 +29,7 @@ describe('Extension Manifest V3, _locales & Generated Brand Icons', () => {
     expect(manifest.default_locale).toBe('en');
     expect(manifest.name).toBe('__MSG_extName__');
     expect(manifest.description).toBe('__MSG_extDescription__');
+    expect(manifest.homepage_url).toBe('https://github.com/botshen/anygrab');
     expect(manifest.version).toBe('0.2.0');
 
     expect([...manifest.permissions].sort()).toEqual(

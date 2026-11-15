@@ -33,6 +33,9 @@ export interface ExtensionI18nBundle {
   taglinePill: string;
   openGuideBtn: string;
   openWebsiteBtn: string;
+  openGithubBtn: string;
+  openGithubTitle: string;
+  privacyLinkLabel: string;
   websiteConfigLabel: string;
   websiteSaveBtn: string;
   pickCtaTitle: string;
@@ -68,6 +71,7 @@ export interface ExtensionI18nBundle {
     heroSubtitle: string;
     startPickerCta: string;
     openWebsiteBtn: string;
+    openGithubBtn: string;
     stepsSectionTitle: string;
     step1Title: string;
     step1Desc: string;
@@ -101,6 +105,9 @@ const ZH_CN: ExtensionI18nBundle = {
   taglinePill: '本地毫秒提纯',
   openGuideBtn: '怎么用？30 秒练习靶场',
   openWebsiteBtn: '打开官方网站',
+  openGithubBtn: 'GitHub 开源',
+  openGithubTitle: '查看 GitHub 开源仓库 (MIT)',
+  privacyLinkLabel: '隐私政策',
   websiteConfigLabel: '官网地址（本地或线上 URL）：',
   websiteSaveBtn: '保存',
   pickCtaTitle: '去当前网页点选元素',
@@ -176,6 +183,7 @@ const ZH_CN: ExtensionI18nBundle = {
       '直接复制 F12 源码动辄几万行乱码，瞬间撑爆上下文；只发截图，AI 又猜不准色号与间距。用 AnyGrab 点一下，本地毫秒级剔除 95% 冗余嵌套，直接粘贴进反重力 Antigravity、Codex 或 Cursor 即可精准还原。',
     startPickerCta: '启动光学选框 · 在下方靶标试手 (Alt+Shift+G)',
     openWebsiteBtn: '打开官方网站',
+    openGithubBtn: 'GitHub 开源',
     stepsSectionTitle: '三步完成从任意网页到高质量前端代码',
     step1Title: '点选网页任意目标区域',
     step1Desc:
@@ -230,6 +238,9 @@ const EN_US: ExtensionI18nBundle = {
   taglinePill: '0 LLM · <5ms',
   openGuideBtn: 'How to Use · 30s Practice',
   openWebsiteBtn: 'Official Website',
+  openGithubBtn: 'GitHub',
+  openGithubTitle: 'View Open-Source Repository on GitHub (MIT)',
+  privacyLinkLabel: 'Privacy',
   websiteConfigLabel: 'Website URL (local or hosted):',
   websiteSaveBtn: 'Save',
   pickCtaTitle: 'Pick Element on Page',
@@ -306,6 +317,7 @@ const EN_US: ExtensionI18nBundle = {
       'Copying raw DevTools DOM floods your AI context with 20,000+ noisy tokens, while screenshots force models to guess colors and spacing. AnyGrab strips 95% of wrapper bloat in <5ms locally, ready to paste into Antigravity, Codex, or Cursor.',
     startPickerCta: 'Launch Optical Reticle · Try Below (Alt+Shift+G)',
     openWebsiteBtn: 'Open Official Website',
+    openGithubBtn: 'GitHub (MIT)',
     stepsSectionTitle: 'Three Steps from Any Webpage to Production UI',
     step1Title: 'Point & Select Any Element',
     step1Desc:
