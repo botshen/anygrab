@@ -2,7 +2,7 @@ import { act } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { App } from '../App';
-import { detectInitialLocale } from '../i18n';
+import { detectInitialLocale, detectInitialTheme, GITHUB_REPO_URL } from '../i18n';
 import {
   buildAgentCopyPayload,
   buildRawSandboxDoc,
@@ -125,7 +125,7 @@ describe('AnyGrab Bilingual Official Product Website (v0.2.0)', () => {
     expect(document.documentElement.lang).toBe('zh-CN');
     expect(container.textContent).toContain('点一下，扒走好界面');
     expect(container.textContent).toContain('发截图');
-    expect(container.textContent).toContain('滚轮透视 · 三层剥离');
+    expect(container.textContent).toContain('F12 扒源码');
     expect(container.textContent).toContain('npx anygrab');
 
     // Click EN switcher in top navbar
@@ -313,5 +313,47 @@ describe('AnyGrab Bilingual Official Product Website (v0.2.0)', () => {
       claudeTab!.click();
     });
     expect(container.textContent).toContain('claude mcp add anygrab');
+  });
+
+  it('supports Light Mode by default, toggles cleanly between Light and Dark themes, and renders GitHub Star CTAs', () => {
+    expect(detectInitialTheme()).toBe('light');
+
+    act(() => {
+      root.render(<App />);
+    });
+
+    expect(document.documentElement.dataset.theme).toBe('light');
+
+    // Verify GitHub Open-Source Star CTAs in Navbar, Hero, and Footer
+    const navStar = container.querySelector<HTMLAnchorElement>('[data-testid="nav-github-star"]');
+    const heroStar = container.querySelector<HTMLAnchorElement>('[data-testid="hero-github-star"]');
+    const footerStar = container.querySelector<HTMLAnchorElement>(
+      '[data-testid="footer-github-star"]',
+    );
+
+    expect(navStar?.getAttribute('href')).toBe(GITHUB_REPO_URL);
+    expect(heroStar?.getAttribute('href')).toBe(GITHUB_REPO_URL);
+    expect(footerStar?.getAttribute('href')).toBe(GITHUB_REPO_URL);
+    expect(container.textContent).toContain('去 GitHub 点 Star');
+    expect(container.textContent).toContain('去 GitHub 给个 Star');
+
+    // Toggle Light -> Dark
+    const themeBtn = container.querySelector<HTMLButtonElement>('[data-testid="theme-switcher"]');
+    expect(themeBtn).not.toBeNull();
+    act(() => {
+      themeBtn!.click();
+    });
+
+    expect(document.documentElement.dataset.theme).toBe('dark');
+    expect(window.localStorage.getItem('anygrab_site_theme')).toBe('dark');
+    expect(detectInitialTheme()).toBe('dark');
+
+    // Toggle Dark -> Light
+    act(() => {
+      themeBtn!.click();
+    });
+
+    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(window.localStorage.getItem('anygrab_site_theme')).toBe('light');
   });
 });

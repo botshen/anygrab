@@ -1094,6 +1094,8 @@ async function verifyPlaygroundE2E() {
     '.svg': 'image/svg+xml',
     '.png': 'image/png',
     '.ico': 'image/x-icon',
+    '.woff2': 'font/woff2',
+    '.woff': 'font/woff',
   };
 
   const httpErrors = [];
@@ -1302,6 +1304,36 @@ async function verifyPlaygroundE2E() {
     const restoredZhPrompt = (await page.locator('[aria-label="Distilled Output Code"]').textContent()) ?? '';
     assert.match(restoredZhPrompt, /请 1:1 视觉与布局还原/);
     logPass('Official Website Runtime Language Switcher (`zh-CN` ↔ `en`)', 'UI copy + @anygrab/core prompt switched seamlessly');
+
+    // 7. Verify Light / Dark Theme Switcher & Open-Source GitHub Star CTAs
+    assert.equal(
+      await page.evaluate(() => document.documentElement.dataset.theme),
+      'light',
+      'Website must default to clean Light Mode when unset',
+    );
+    const themeSwitcher = page.locator('[data-testid="theme-switcher"]');
+    await themeSwitcher.click();
+    assert.equal(
+      await page.evaluate(() => document.documentElement.dataset.theme),
+      'dark',
+      'Theme switcher must toggle to Dark Mode',
+    );
+    await themeSwitcher.click();
+    assert.equal(
+      await page.evaluate(() => document.documentElement.dataset.theme),
+      'light',
+      'Theme switcher must toggle back to Light Mode',
+    );
+
+    for (const starTestId of ['nav-github-star', 'hero-github-star', 'footer-github-star']) {
+      const href = await page.locator(`[data-testid="${starTestId}"]`).getAttribute('href');
+      assert.equal(
+        href,
+        'https://github.com/botshen/anygrab',
+        `${starTestId} must point to open-source GitHub repository`,
+      );
+    }
+    logPass('Light / Dark Theme Switcher & Open-Source GitHub Star CTAs', 'Light ↔ Dark verified + 3 GitHub Star links active');
 
     assert.equal(
       httpErrors.length,

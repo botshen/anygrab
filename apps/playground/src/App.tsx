@@ -1,7 +1,6 @@
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import Lenis from 'lenis';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { VERSION } from '@anygrab/core';
+import { Star } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { LeaderboardView } from './components/LeaderboardView';
 import { LivePlayground } from './components/LivePlayground';
 import { NavbarHero } from './components/NavbarHero';
@@ -9,12 +8,15 @@ import { OverviewView } from './components/OverviewView';
 import { QuickStartView } from './components/QuickStartView';
 import { WorkflowsView } from './components/WorkflowsView';
 import { PLAYGROUND_PRESETS, type ActiveTab } from './data/types';
-import { detectInitialLocale, persistSiteLocale, type SiteLocale } from './i18n';
-import { isMotionCapableBrowser } from './utils/motion';
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import {
+  detectInitialLocale,
+  detectInitialTheme,
+  GITHUB_REPO_URL,
+  persistSiteLocale,
+  persistSiteTheme,
+  type SiteLocale,
+  type SiteTheme,
+} from './i18n';
 
 const VALID_SECTIONS: ActiveTab[] = [
   'overview',
@@ -32,56 +34,51 @@ function detectInitialTab(): ActiveTab {
 
 export function App() {
   const [locale, setLocale] = useState<SiteLocale>(() => detectInitialLocale());
+  const [theme, setTheme] = useState<SiteTheme>(() => detectInitialTheme());
   const [activeTab, setActiveTab] = useState<ActiveTab>(() => detectInitialTab());
   const [selectedPresetId, setSelectedPresetId] = useState<string>(PLAYGROUND_PRESETS[0].id);
-  const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
     document.documentElement.lang = locale;
     document.title =
       locale === 'zh-CN'
-        ? 'AnyGrab — 点一下，扒走好界面'
-        : 'AnyGrab — Point. Click. Ship Clean UI.';
+        ? 'AnyGrab: 点一下，扒走好界面'
+        : 'AnyGrab: Point. Click. Ship Clean UI.';
   }, [locale]);
 
-  // Lenis inertial smooth scroll synced to GSAP ticker + active section scroll tracking
   useEffect(() => {
-    if (!isMotionCapableBrowser()) return;
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+    const meta = document.getElementById('ag-theme-color');
+    if (meta) {
+      meta.setAttribute('content', theme === 'dark' ? '#0B0C0F' : '#F6F5F0');
+    }
+  }, [theme]);
 
-    const lenis = new Lenis({
-      duration: 1.05,
-      smoothWheel: true,
-    });
-    lenisRef.current = lenis;
+  // Passive IntersectionObserver for active navigation highlight (zero scroll-jacking)
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof IntersectionObserver === 'undefined') return;
 
-    lenis.on('scroll', ScrollTrigger.update);
-    const tick = (time: number) => {
-      lenis.raf(time * 1000);
-    };
-    gsap.ticker.add(tick);
-    gsap.ticker.lagSmoothing(0);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const id = entry.target.id as ActiveTab;
+            if (VALID_SECTIONS.includes(id)) {
+              setActiveTab(id);
+            }
+          }
+        }
+      },
+      { rootMargin: '-28% 0px -55% 0px', threshold: 0 },
+    );
 
-    const triggers: ScrollTrigger[] = [];
     for (const id of VALID_SECTIONS) {
       const el = document.getElementById(id);
-      if (!el) continue;
-      triggers.push(
-        ScrollTrigger.create({
-          trigger: el,
-          start: 'top 38%',
-          end: 'bottom 38%',
-          onEnter: () => setActiveTab(id),
-          onEnterBack: () => setActiveTab(id),
-        }),
-      );
+      if (el) observer.observe(el);
     }
 
-    return () => {
-      for (const st of triggers) st.kill();
-      gsap.ticker.remove(tick);
-      lenis.destroy();
-      lenisRef.current = null;
-    };
+    return () => observer.disconnect();
   }, []);
 
   const scrollToSection = useCallback((nextTab: ActiveTab) => {
@@ -90,18 +87,19 @@ export function App() {
     window.history.replaceState(null, '', nextTab === 'overview' ? '#' : `#${nextTab}`);
 
     const targetEl = document.getElementById(nextTab);
-    if (!targetEl) return;
-
-    if (lenisRef.current) {
-      lenisRef.current.scrollTo(targetEl, { offset: -86 });
-    } else if (typeof targetEl.scrollIntoView === 'function') {
-      targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (targetEl && typeof targetEl.scrollIntoView === 'function') {
+      targetEl.scrollIntoView({ behavior: 'auto', block: 'start' });
     }
   }, []);
 
   const handleLocaleChange = (nextLocale: SiteLocale) => {
     setLocale(nextLocale);
     persistSiteLocale(nextLocale);
+  };
+
+  const handleThemeChange = (nextTheme: SiteTheme) => {
+    setTheme(nextTheme);
+    persistSiteTheme(nextTheme);
   };
 
   const handleOpenPresetFromLeaderboard = (presetId: string) => {
@@ -112,21 +110,17 @@ export function App() {
   const isZh = locale === 'zh-CN';
 
   return (
-    <div className="relative flex min-h-screen flex-col bg-[var(--ag-bg-canvas)] text-[var(--ag-text-primary)]">
-      {/* Subtle architectural film grain layer */}
-      <div
-        aria-hidden="true"
-        className="ag-grain-layer pointer-events-none fixed inset-0 z-0"
-      />
-
+    <div className="flex min-h-screen flex-col bg-[var(--ag-bg)] text-[var(--ag-ink)]">
       <NavbarHero
         activeTab={activeTab}
         onTabChange={scrollToSection}
         locale={locale}
         onLocaleChange={handleLocaleChange}
+        theme={theme}
+        onThemeChange={handleThemeChange}
       />
 
-      <main className="relative z-10 w-full flex-1 space-y-20 px-4 pt-6 pb-20 sm:space-y-24 sm:px-8">
+      <main id="top-main" className="w-full flex-1">
         <OverviewView locale={locale} onNavigate={scrollToSection} />
 
         <LivePlayground
@@ -145,68 +139,84 @@ export function App() {
         <QuickStartView locale={locale} />
       </main>
 
-      {/* Architectural Monumental Wordmark Footer */}
-      <footer className="relative z-10 overflow-hidden border-t border-white/8 bg-[#08090C] pt-12 pb-8 leading-[1.65]">
-        <div className="mx-auto max-w-[1160px] px-4 sm:px-8">
-          <div className="flex flex-wrap items-center justify-between gap-4 font-mono text-xs leading-[1.65] text-[#7C8292]">
-            <div className="flex items-center gap-2.5">
-              <span className="inline-block h-2 w-2 shrink-0 rounded-[2px] bg-[var(--ag-accent)]" />
-              <span className="leading-[1.65]">
+      {/* Inverse Open-Source Star Callout + Directory Footer (tasteskill footer.closing) */}
+      <footer className="bg-[var(--ag-inv-bg)] py-14 text-[var(--ag-inv-ink)] sm:py-16">
+        <div className="ag-wrap space-y-10">
+          {/* Row 1: Open-Source Star Ask */}
+          <div className="grid items-center gap-6 border-b border-[var(--ag-inv-line)] pb-10 lg:grid-cols-12">
+            <div className="lg:col-span-8">
+              <h2 className="text-[clamp(1.6rem,2.4vw,2.4rem)] leading-[1.15] font-medium tracking-[-0.03em] text-[var(--ag-inv-ink)]">
                 {isZh
-                  ? 'AnyGrab · MIT 开源 · 100% 本地 AST 提纯 · 0 大模型开销'
-                  : 'AnyGrab · MIT Open Source · 100% Local AST · $0 API Cost'}
-              </span>
+                  ? 'MIT 完全开源。觉得好用，去 GitHub 点颗 Star 支持我们。'
+                  : 'Open source under MIT. If AnyGrab helps you ship, star us on GitHub.'}
+              </h2>
+              <p className="mt-2.5 max-w-[56ch] text-[15px] leading-[1.6] text-[var(--ag-inv-muted)]">
+                {isZh
+                  ? '零后端、零遥测、零依赖核心引擎，全部源码公开在 github.com/botshen/anygrab。'
+                  : 'Zero backend, zero telemetry, zero-dependency AST core at github.com/botshen/anygrab.'}
+              </p>
             </div>
 
-            <div className="flex items-center gap-5">
+            <div className="flex flex-wrap items-center gap-3 lg:col-span-4 lg:justify-end">
               <a
-                href="./privacy.html"
+                href={GITHUB_REPO_URL}
                 target="_blank"
                 rel="noreferrer"
-                className="text-[#A1A7B5] transition hover:text-[#F4F5F8]"
+                data-testid="footer-github-star"
+                className="ag-btn ag-btn-inverse w-full sm:w-auto"
               >
-                {isZh ? '隐私政策' : 'Privacy'}
-              </a>
-              <a
-                href="https://github.com/botshen/anygrab/releases/latest"
-                target="_blank"
-                rel="noreferrer"
-                className="text-[#A1A7B5] transition hover:text-[#F4F5F8]"
-              >
-                Releases v0.2.0
-              </a>
-              <a
-                href="https://github.com/botshen/anygrab"
-                target="_blank"
-                rel="noreferrer"
-                className="font-semibold text-[#F4F5F8] transition hover:text-[var(--ag-accent)]"
-              >
-                GitHub ↗
+                <Star className="h-4 w-4 fill-current text-[var(--ag-accent)]" />
+                <span>
+                  {isZh ? '去 GitHub 给个 Star' : 'Star botshen/anygrab'}
+                </span>
               </a>
             </div>
           </div>
 
-          {/* Oversized Architectural Outline Wordmark */}
-          <svg
-            viewBox="0 0 1160 150"
-            className="mt-8 w-full select-none"
-            aria-hidden="true"
-          >
-            <text
-              x="50%"
-              y="128"
-              textAnchor="middle"
-              fill="none"
-              stroke="rgba(255,255,255,0.08)"
-              strokeWidth="1.5"
-              fontFamily="Inter, -apple-system, sans-serif"
-              fontWeight="900"
-              fontSize="148"
-              letterSpacing="14"
-            >
-              ANYGRAB
-            </text>
-          </svg>
+          {/* Row 2: Legal & Open-Source Directory */}
+          <div className="flex flex-wrap items-center justify-between gap-4 text-[14px] text-[var(--ag-inv-muted)]">
+            <div className="flex items-center gap-2.5">
+              <span className="font-medium text-[var(--ag-inv-ink)]">AnyGrab</span>
+              <span>v{VERSION}</span>
+              <span>·</span>
+              <span>MIT License</span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-6">
+              <a
+                href={GITHUB_REPO_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[var(--ag-inv-ink)] transition-opacity hover:opacity-80"
+              >
+                {isZh ? 'GitHub 开源仓库' : 'GitHub Repository'}
+              </a>
+              <a
+                href={`${GITHUB_REPO_URL}/releases/latest`}
+                target="_blank"
+                rel="noreferrer"
+                className="transition-colors hover:text-[var(--ag-inv-ink)]"
+              >
+                Releases
+              </a>
+              <a
+                href={`${GITHUB_REPO_URL}/issues`}
+                target="_blank"
+                rel="noreferrer"
+                className="transition-colors hover:text-[var(--ag-inv-ink)]"
+              >
+                Issues
+              </a>
+              <a
+                href="./privacy.html"
+                target="_blank"
+                rel="noreferrer"
+                className="transition-colors hover:text-[var(--ag-inv-ink)]"
+              >
+                {isZh ? '隐私政策' : 'Privacy'}
+              </a>
+            </div>
+          </div>
         </div>
       </footer>
     </div>

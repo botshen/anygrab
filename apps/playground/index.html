@@ -1,20 +1,60 @@
 <!doctype html>
-<html lang="zh-CN" class="dark">
+<html lang="zh-CN" data-theme="light" data-type="software" data-radius="soft" data-ground="sage">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="page-type" content="software" />
+    <meta name="site-kind" content="software" />
+    <meta name="theme-color" content="#F6F5F0" id="ag-theme-color" />
     <meta
       name="description"
-      content="AnyGrab — 点一下，扒走好界面。4.2ms 本地 AST 光学剥离，剔除 90% 网页废码直喂 Antigravity / Codex / Cursor，MIT 开源。"
+      content="AnyGrab 是面向编码代理的 MIT 开源网页组件提取工具：4.2ms 本地提纯 Tailwind 与设计色板，直喂 Antigravity、Codex 与 Cursor。"
     />
+    <meta property="og:title" content="AnyGrab: 网页 UI 提纯工具，直喂编码代理" />
+    <meta
+      property="og:description"
+      content="点选任意网页元素，4.2ms 本地剥离 90% 废码，直出纯净 Tailwind、JSX 与设计色板。MIT 开源。"
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <style>
+      @font-face {
+        font-family: 'Host Grotesk';
+        font-style: normal;
+        font-weight: 400 600;
+        font-display: swap;
+        src: url('./fonts/host-grotesk-latin.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'JetBrains Mono';
+        font-style: normal;
+        font-weight: 400 500;
+        font-display: swap;
+        src: url('./fonts/jetbrains-mono-latin.woff2') format('woff2');
+      }
+    </style>
     <link
       rel="icon"
       type="image/svg+xml"
-      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2308090C' stroke='%23232730' stroke-width='1'/%3E%3Cpath d='M8 12.5V8.5H12.5M19.5 8.5H24V12.5M24 19.5V23.5H19.5M12.5 23.5H8V19.5' stroke='%23F4F5F8' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Crect x='13.5' y='13.5' width='5' height='5' rx='1' fill='%23FF4D1C'/%3E%3C/svg%3E"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23141413'/%3E%3Cpath d='M8.5 13V8.5H13M19 8.5H23.5V13M23.5 19V23.5H19M13 23.5H8.5V19' stroke='%23F6F5F0' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Ccircle cx='16' cy='16' r='2.8' fill='%23FF5629'/%3E%3C/svg%3E"
     />
-    <title>AnyGrab — 点一下，扒走好界面</title>
+    <title>AnyGrab: 点一下，扒走好界面</title>
+    <script>
+      (function () {
+        try {
+          var params = new URLSearchParams(window.location.search);
+          var q = params.get('theme');
+          var stored = window.localStorage && window.localStorage.getItem('anygrab_site_theme');
+          var theme = q === 'dark' || q === 'light' ? q : stored === 'dark' || stored === 'light' ? stored : 'light';
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.style.colorScheme = theme;
+          var meta = document.getElementById('ag-theme-color');
+          if (meta) meta.setAttribute('content', theme === 'dark' ? '#0B0C0F' : '#F6F5F0');
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body class="min-h-screen bg-[#08090C] text-[#F4F5F8] antialiased selection:bg-[#FF4D1C]/25 selection:text-[#F4F5F8]">
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

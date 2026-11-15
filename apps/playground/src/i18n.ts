@@ -1,6 +1,10 @@
 export type SiteLocale = 'zh-CN' | 'en';
+export type SiteTheme = 'light' | 'dark';
 
 const LOCALE_STORAGE_KEY = 'anygrab_site_locale';
+const THEME_STORAGE_KEY = 'anygrab_site_theme';
+
+export const GITHUB_REPO_URL = 'https://github.com/botshen/anygrab';
 
 export function detectInitialLocale(): SiteLocale {
   if (typeof window !== 'undefined') {
@@ -46,6 +50,38 @@ export function persistSiteLocale(locale: SiteLocale): void {
   }
 }
 
+export function detectInitialTheme(): SiteTheme {
+  if (typeof window !== 'undefined') {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get('theme')?.toLowerCase();
+      if (q === 'dark' || q === 'light') return q;
+    } catch {
+      // Ignore URL parsing errors
+    }
+
+    try {
+      const stored = window.localStorage?.getItem(THEME_STORAGE_KEY);
+      if (stored === 'dark' || stored === 'light') {
+        return stored;
+      }
+    } catch {
+      // Ignore restricted storage
+    }
+  }
+
+  return 'light';
+}
+
+export function persistSiteTheme(theme: SiteTheme): void {
+  if (typeof window === 'undefined') return;
+  try {
+    window.localStorage?.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    // Ignore restricted storage
+  }
+}
+
 export interface LocalizedPresetCopy {
   name: string;
   category: string;
@@ -54,86 +90,84 @@ export interface LocalizedPresetCopy {
 
 export const PRESET_ZH_MAP: Record<string, LocalizedPresetCopy> = {
   'saas-pricing': {
-    name: 'SaaS 定价卡片',
-    category: '营销页',
-    description: 'CSS-in-JS 乱码类名 + 13 个冗余 SVG',
+    name: 'SaaS 定价卡',
+    category: '定价页',
+    description: '剔除混淆类名与 13 处冗余 SVG',
   },
   'financial-report-table': {
-    name: '合并表头财务表',
+    name: '合并财务表',
     category: '复杂表格',
-    description: 'rowspan + colspan 多级合并零错位',
+    description: '多级合并表头，行列零错位',
   },
   'bento-analytics-dashboard': {
-    name: 'Bento 数据看板',
+    name: 'Bento 看板',
     category: '仪表盘',
-    description: '剥离 20 层无意义 div 嵌套空壳',
+    description: '折叠 20 层空壳嵌套容器',
   },
   'oauth-auth-modal': {
-    name: 'OAuth 登录弹窗',
-    category: '表单弹窗',
-    description: '清除隐藏蜜罐节点，保留表单语义',
+    name: 'OAuth 登录框',
+    category: '表单',
+    description: '清除隐藏节点，保留控件语义',
   },
   'api-docs-page': {
-    name: 'API 技术文档',
-    category: '开发文档',
-    description: '自动裁剪 18 条导航噪音保留正文',
+    name: 'API 文档页',
+    category: '技术文档',
+    description: '裁剪侧栏导航，仅留正文代码',
   },
   'kanban-sprint-board': {
-    name: '敏捷看板 (10卡)',
+    name: '敏捷看板',
     category: '项目管理',
-    description: '限流模式下智能折叠同类卡片',
+    description: '预算限流下自动折叠同类卡片',
   },
   'dark-ai-hero': {
-    name: '暗黑 AI 首屏',
+    name: 'AI 产品首屏',
     category: '落地页',
-    description: '剔除 8 层 aria-hidden 装饰光斑',
+    description: '剥离 8 层纯装饰背景节点',
   },
   'feature-matrix-20': {
-    name: '20 行对比矩阵',
-    category: '对比表',
-    description: '剔除单元格内联默认样式废话',
+    name: '20 行对比表',
+    category: '对比矩阵',
+    description: '清理单元格重复默认内联样式',
   },
   'multi-section-settings': {
-    name: '系统设置表单',
-    category: '后台设置',
-    description: '完整保留输入框、下拉与开关控件',
+    name: '系统设置页',
+    category: '后台表单',
+    description: '保留输入、下拉与开关状态',
   },
   'academic-paper-section': {
-    name: '论文实验表格',
-    category: '科研论文',
-    description: '定理公式 + 多维消融实验数据表',
+    name: '论文实验表',
+    category: '学术排版',
+    description: '保留公式结构与多维实验数据',
   },
 };
 
 export const METHOD_ZH_MAP: Record<string, { name: string; desc: string }> = {
   'raw-html': {
-    name: 'Raw HTML (F12 原码)',
-    desc: '含 script、SVG 路径与乱码类名',
+    name: 'F12 原始 HTML',
+    desc: '含脚本与混淆类名',
   },
   'naive-style-picker': {
     name: '普通样式抓取插件',
-    desc: '默认计算样式全量塞入，膨胀 +280%',
+    desc: '全量内联样式，膨胀 +280%',
   },
   'turndown-gfm': {
     name: 'Turndown 纯文本',
-    desc: '丢失全部色值、圆角与栅格布局',
+    desc: '丢失色值与栅格布局',
   },
   'anygrab-default': {
-    name: 'AnyGrab (无损提纯)',
-    desc: '纯净 Tailwind + 色板 · 表格 100%',
+    name: 'AnyGrab 无损提纯',
+    desc: 'Tailwind + 色板',
   },
   'anygrab-budget-600': {
-    name: 'AnyGrab (600 省流)',
-    desc: '智能折叠重复项 · 立省 85% 上下文',
+    name: 'AnyGrab 600 省流',
+    desc: '自动折叠同类项',
   },
 };
 
 export interface WorkflowCardCopy {
   id: string;
-  badge: string;
   title: string;
   flowNodes: [string, string, string];
-  promptLabel: string;
   promptToCopy: string;
   actionLabel: string;
   targetTab: 'playground' | 'quickstart';
@@ -144,32 +178,26 @@ export function getWorkflowsCopy(locale: SiteLocale): WorkflowCardCopy[] {
     return [
       {
         id: 'one-click-clone',
-        badge: '01 · 复刻界面',
-        title: '点选组件 → 1:1 复刻',
-        flowNodes: ['插件选框', 'Cmd+V 粘贴', '1:1 组件'],
-        promptLabel: '复制指令',
+        title: '点选组件，1:1 复刻',
+        flowNodes: ['点选目标', '粘贴上下文', '生成组件'],
         promptToCopy: '按以下 AnyGrab 上下文，生成 1:1 响应式 React + Tailwind 组件：',
-        actionLabel: '去实测台',
+        actionLabel: '打开沙盒实测',
         targetTab: 'playground',
       },
       {
         id: 'steal-design-system',
-        badge: '02 · 色板换肤',
-        title: '提取色板 → 无损换肤',
-        flowNodes: ['提炼色板', '注入 Token', '零逻辑改动'],
-        promptLabel: '换肤指令',
+        title: '提取色板，无损换肤',
+        flowNodes: ['提取色板', '锁定色值', '零逻辑改动'],
         promptToCopy: '仅用下方 Design Tokens 升级页面 Tailwind 样式，不动任何业务逻辑：',
-        actionLabel: '看色板',
+        actionLabel: '查看提取色板',
         targetTab: 'playground',
       },
       {
         id: 'auto-mcp-agent',
-        badge: '03 · MCP 托管',
-        title: '发条网址 → 自动抓取',
-        flowNodes: ['配置 MCP', '发公开 URL', '4ms 蒸馏'],
-        promptLabel: 'MCP 指令',
+        title: '接入 MCP，发网址即抓',
+        flowNodes: ['配置 MCP', '发送网址', '自动提纯'],
         promptToCopy: '调用 grab_url 抓取 https://ui.shadcn.com (maxTokens=1200) 提纯并复刻：',
-        actionLabel: '复制配置',
+        actionLabel: '获取 MCP 配置',
         targetTab: 'quickstart',
       },
     ];
@@ -178,32 +206,26 @@ export function getWorkflowsCopy(locale: SiteLocale): WorkflowCardCopy[] {
   return [
     {
       id: 'one-click-clone',
-      badge: '01 · CLONE UI',
-      title: 'Click Element → Ship 1:1',
-      flowNodes: ['Optical Pick', 'Paste Context', '1:1 Component'],
-      promptLabel: 'Prompt',
+      title: 'Click element, ship 1:1 UI',
+      flowNodes: ['Pick node', 'Paste context', 'Ship JSX'],
       promptToCopy: 'Build a responsive React + Tailwind component matching this AnyGrab context 1:1:',
-      actionLabel: 'Live Lab',
+      actionLabel: 'Open sandbox',
       targetTab: 'playground',
     },
     {
       id: 'steal-design-system',
-      badge: '02 · RESTYLE',
-      title: 'Extract Tokens → Restyle',
-      flowNodes: ['Grab Palette', 'Lock Tokens', 'Zero Logic Diff'],
-      promptLabel: 'Prompt',
+      title: 'Extract tokens, restyle safely',
+      flowNodes: ['Grab palette', 'Apply tokens', 'Keep logic'],
       promptToCopy: 'Restyle our Tailwind UI with these AnyGrab Design Tokens. Keep all logic untouched:',
-      actionLabel: 'Inspect Tokens',
+      actionLabel: 'Inspect tokens',
       targetTab: 'playground',
     },
     {
       id: 'auto-mcp-agent',
-      badge: '03 · MCP AGENT',
-      title: 'Send URL → Auto Distill',
-      flowNodes: ['3-Line MCP', 'Send URL', '4ms Distill'],
-      promptLabel: 'MCP Prompt',
+      title: 'Send URL via MCP server',
+      flowNodes: ['Add MCP', 'Send URL', 'Auto distill'],
       promptToCopy: 'Run anygrab grab_url on https://ui.shadcn.com (maxTokens: 1200) and clone its grid:',
-      actionLabel: 'Get MCP',
+      actionLabel: 'Copy MCP config',
       targetTab: 'quickstart',
     },
   ];

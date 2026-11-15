@@ -27,96 +27,79 @@ export function WorkflowsView({ locale, onNavigate }: WorkflowsViewProps) {
     <section
       id="workflows"
       aria-label="AI Workflows Guide"
-      className="mx-auto max-w-[1160px] min-w-0 space-y-6 pt-4"
+      className="bg-[var(--ag-bg-alt)] py-14 sm:py-20"
     >
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
-        <div>
-          <div className="font-mono text-[11px] font-semibold tracking-wider text-[var(--ag-accent)] uppercase">
-            04 · AGENT RECIPES
-          </div>
-          <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#F4F5F8] sm:text-3xl">
-            {isZh ? '三套 AI 零废话配方' : '3 Zero-Fluff Agent Recipes'}
-          </h2>
-        </div>
+      <div className="ag-wrap space-y-8">
+        <h2 className="text-[clamp(1.75rem,2.4vw,2.65rem)] leading-[1.12] font-medium tracking-[-0.032em] text-[var(--ag-ink)]">
+          {isZh ? '三套 AI 零废话配方。' : 'Three agent workflows.'}{' '}
+          <span className="text-[var(--ag-muted)]">
+            {isZh
+              ? '复制一句指令，直接喂给编码代理。'
+              : 'One prompt for Antigravity, Codex, or Cursor.'}
+          </span>
+        </h2>
 
-        <span className="font-mono text-xs text-[#7C8292]">
-          Antigravity · Codex · Cursor · Claude Code
-        </span>
-      </div>
+        <div className="grid gap-5 lg:grid-cols-3">
+          {cards.map((card) => {
+            const isCopied = copiedId === card.id;
+            return (
+              <article
+                key={card.id}
+                data-workflow-id={card.id}
+                className="ag-card-lift flex flex-col justify-between gap-5 rounded-[16px] border border-[var(--ag-line)] bg-[var(--ag-panel)] p-6"
+              >
+                <div>
+                  <h3 className="text-[20px] font-medium tracking-[-0.02em] text-[var(--ag-ink)]">
+                    {card.title}
+                  </h3>
 
-      {/* Open Canvas Editorial 3-Column Strip (Breaks outer card-box repetition) */}
-      <div className="grid divide-y divide-white/8 border-b border-white/8 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
-        {cards.map((card) => {
-          const isCopied = copiedId === card.id;
-          return (
-            <article
-              key={card.id}
-              data-workflow-id={card.id}
-              className="flex flex-col justify-between gap-4 py-6 lg:px-6 lg:first:pl-0 lg:last:pr-0"
-            >
-              <div>
-                <span className="font-mono text-[11px] font-bold text-[var(--ag-accent)]">
-                  {card.badge}
-                </span>
-
-                <h3 className="mt-2 text-lg font-extrabold tracking-tight text-[#F4F5F8]">
-                  {card.title}
-                </h3>
-
-                {/* Compact Flow Strip */}
-                <div className="mt-3 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-[#A1A7B5]">
-                  {card.flowNodes.map((node, i) => (
-                    <span key={node} className="inline-flex items-center gap-1.5">
-                      <span className="text-[#F4F5F8]">{node}</span>
-                      {i < 2 && <span className="text-[#7C8292]">→</span>}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Crisp 1-Line Copyable Command Strip */}
-                <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-[#101217]">
-                  <div className="flex items-center justify-between border-b border-white/8 px-3 py-2">
-                    <span className="font-mono text-[11px] text-[#7C8292]">
-                      {card.promptLabel}
-                    </span>
-                    <button
-                      type="button"
-                      data-action="copy-workflow-prompt"
-                      onClick={() => handleCopyPrompt(card.id, card.promptToCopy)}
-                      className="inline-flex items-center gap-1 rounded-md bg-[#FF4D1C] px-2.5 py-1 text-[11px] font-semibold text-white transition hover:brightness-110"
-                    >
-                      {isCopied ? (
-                        <>
-                          <Check className="h-3 w-3" />
-                          <span>{isZh ? '已复制' : 'Copied'}</span>
-                        </>
-                      ) : (
-                        <>
-                          <Copy className="h-3 w-3" />
-                          <span>{isZh ? '复制' : 'Copy'}</span>
-                        </>
-                      )}
-                    </button>
+                  <div className="mt-3 flex flex-wrap items-center gap-1.5 text-[13px] text-[var(--ag-muted)]">
+                    {card.flowNodes.map((node, i) => (
+                      <span key={node} className="inline-flex items-center gap-1.5">
+                        <span className="text-[var(--ag-ink-secondary)]">{node}</span>
+                        {i < 2 && <span aria-hidden="true">→</span>}
+                      </span>
+                    ))}
                   </div>
-                  <p className="p-3 font-mono text-[11.5px] leading-[1.6] text-[#D8DCE6]">
+
+                  <p className="mt-4 rounded-xl border border-[var(--ag-line)] bg-[var(--ag-code-bg)] p-3.5 font-mono text-[13px] leading-[1.6] text-[var(--ag-code-ink)]">
                     {card.promptToCopy}
                   </p>
                 </div>
-              </div>
 
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => onNavigate(card.targetTab)}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#A1A7B5] transition hover:text-[#F4F5F8]"
-                >
-                  <span>{card.actionLabel}</span>
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            </article>
-          );
-        })}
+                <div className="flex items-center justify-between gap-3 pt-1">
+                  <button
+                    type="button"
+                    data-action="copy-workflow-prompt"
+                    onClick={() => handleCopyPrompt(card.id, card.promptToCopy)}
+                    className="inline-flex min-h-[38px] items-center gap-1.5 rounded-full bg-[var(--ag-accent)] px-4 text-[13px] font-medium text-white transition-opacity hover:opacity-90"
+                  >
+                    {isCopied ? (
+                      <>
+                        <Check className="h-3.5 w-3.5" />
+                        <span>{isZh ? '已复制' : 'Copied'}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="h-3.5 w-3.5" />
+                        <span>{isZh ? '复制指令' : 'Copy prompt'}</span>
+                      </>
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(card.targetTab)}
+                    className="ag-link inline-flex items-center gap-1 text-[14px] font-medium text-[var(--ag-ink)]"
+                  >
+                    <span>{card.actionLabel}</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </article>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

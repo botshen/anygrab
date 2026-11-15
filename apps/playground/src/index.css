@@ -1,66 +1,142 @@
 @import "tailwindcss";
 
-@property --ag-angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
+/* --------------------------------------------------------------------------
+ * AnyGrab Official Website — tasteskill 2.5.1 Single Design System
+ * Pairing: Host Grotesk (500 display, 400/500 text) + JetBrains Mono
+ * Grades: Light ("Archival Paper", default) & Dark ("Evening Ink")
+ * -------------------------------------------------------------------------- */
+
+:root,
+html[data-theme="light"] {
+  color-scheme: light;
+  --ag-bg: #F6F5F0;
+  --ag-bg-alt: #ECEAE2;
+  --ag-panel: #FFFFFF;
+  --ag-panel-muted: #F2F0E8;
+  --ag-code-bg: #FAF9F5;
+  --ag-code-ink: #1D1D1B;
+  --ag-ink: #141413;
+  --ag-ink-secondary: #484641;
+  --ag-muted: #636059;
+  --ag-line: rgba(20, 20, 19, 0.12);
+  --ag-line-strong: rgba(20, 20, 19, 0.24);
+  --ag-accent: #C93E18;
+  --ag-accent-ink: #FFFFFF;
+  --ag-accent-soft: rgba(201, 62, 24, 0.10);
+  --ag-emerald: #0E7550;
+  --ag-emerald-soft: rgba(14, 117, 80, 0.10);
+  --ag-bar-neutral: #C9C6BC;
+  --ag-track: #E3E0D6;
+
+  /* Lit studio sage ground for Hero collage frame (tasteskill data-ground="sage") */
+  --ag-lit-bg: #D5DDD0;
+  --ag-lit-surface: #E5ECE0;
+  --ag-lit-glow: rgba(255, 255, 255, 0.72);
+  --ag-lit-warm: rgba(201, 62, 24, 0.11);
+  --ag-window-shadow: 0 0 0 1px rgba(20, 20, 19, 0.08), 0 18px 40px -20px rgba(20, 20, 19, 0.24);
+
+  /* Inverse closing band (footer.closing dark-band) */
+  --ag-inv-bg: #141413;
+  --ag-inv-surface: #1F1F1D;
+  --ag-inv-ink: #F6F5F0;
+  --ag-inv-muted: #A6A39B;
+  --ag-inv-line: rgba(246, 245, 240, 0.14);
+
+  /* Typography & Rhythm Tokens */
+  --ag-font-display: "Host Grotesk", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  --ag-font-sans: "Host Grotesk", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+  --ag-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --ag-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ag-ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-:root {
+html[data-theme="dark"] {
   color-scheme: dark;
-  --ag-bg-canvas: #08090C;
-  --ag-bg-elevated: #101217;
-  --ag-bg-surface: #171A22;
-  --ag-bg-stage: #0B0D12;
-  --ag-border: rgba(255, 255, 255, 0.08);
-  --ag-border-strong: rgba(255, 255, 255, 0.16);
-  --ag-text-primary: #F4F5F8;
-  --ag-text-secondary: #A1A7B5;
-  --ag-text-muted: #7C8292;
-  --ag-accent: #FF4D1C;
-  --ag-accent-soft: rgba(255, 77, 28, 0.12);
-  --ag-emerald: #10B981;
-  --ag-emerald-soft: rgba(16, 185, 129, 0.12);
-  --ag-font-sans: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", sans-serif;
-  --ag-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --ag-radius-lg: 16px;
-  --ag-radius-md: 10px;
-  --ag-radius-sm: 6px;
-  --ag-spring: linear(
-    0, 0.009, 0.035 2.1%, 0.141 4.4%, 0.723 12.9%, 0.938 16.7%, 1.017, 1.077,
-    1.107 24.3%, 1.112, 1.105 29.2%, 1.044 37.9%, 1.005 46.2%, 0.99 53.7%,
-    0.996 67.5%, 1.002 82.8%, 1
-  );
+  --ag-bg: #0B0C0F;
+  --ag-bg-alt: #111318;
+  --ag-panel: #161920;
+  --ag-panel-muted: #1D212A;
+  --ag-code-bg: #0D0F14;
+  --ag-code-ink: #E2E5EE;
+  --ag-ink: #F2F3F5;
+  --ag-ink-secondary: #B8BECB;
+  --ag-muted: #8E95A5;
+  --ag-line: rgba(255, 255, 255, 0.10);
+  --ag-line-strong: rgba(255, 255, 255, 0.22);
+  --ag-accent: #FF5629;
+  --ag-accent-ink: #FFFFFF;
+  --ag-accent-soft: rgba(255, 86, 41, 0.14);
+  --ag-emerald: #1AD196;
+  --ag-emerald-soft: rgba(26, 209, 150, 0.14);
+  --ag-bar-neutral: #3A4050;
+  --ag-track: #222632;
+
+  /* Evening studio ground for Hero collage frame */
+  --ag-lit-bg: #18201E;
+  --ag-lit-surface: #222E2B;
+  --ag-lit-glow: rgba(255, 255, 255, 0.06);
+  --ag-lit-warm: rgba(255, 86, 41, 0.16);
+  --ag-window-shadow: 0 0 0 1px rgba(255, 255, 255, 0.10), 0 22px 48px -20px rgba(0, 0, 0, 0.65);
+
+  /* Inverse closing band */
+  --ag-inv-bg: #141720;
+  --ag-inv-surface: #1B1F2B;
+  --ag-inv-ink: #F2F3F5;
+  --ag-inv-muted: #9BA2B2;
+  --ag-inv-line: rgba(255, 255, 255, 0.12);
 }
 
 @layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
   html {
+    margin: 0;
     font-family: var(--ag-font-sans);
-    background-color: var(--ag-bg-canvas);
-    color: var(--ag-text-primary);
+    background-color: var(--ag-bg);
+    color: var(--ag-ink);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     scroll-behavior: auto;
   }
 
   body {
-    background-color: var(--ag-bg-canvas);
-    color: var(--ag-text-primary);
-    line-height: 1.55;
+    margin: 0;
+    background-color: var(--ag-bg);
+    color: var(--ag-ink);
+    font-size: 16px;
+    line-height: 1.6;
     overflow-x: hidden;
+    transition: background-color 180ms var(--ag-ease), color 180ms var(--ag-ease);
   }
 
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
+    font-family: var(--ag-font-display);
+    font-weight: 500;
+    letter-spacing: -0.035em;
     text-wrap: balance;
+    margin: 0;
   }
 
-  code, pre, kbd {
+  code,
+  pre,
+  kbd {
     font-family: var(--ag-font-mono);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ag-accent);
+    outline-offset: 2px;
   }
 
   * {
     scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+    scrollbar-color: var(--ag-line-strong) transparent;
   }
 
   *::-webkit-scrollbar {
@@ -73,74 +149,179 @@
   }
 
   *::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.16);
+    background-color: var(--ag-line-strong);
     border-radius: 9999px;
   }
 }
 
-/* Subtle architectural noise grain overlay (purely static, zero GPU thrash) */
-.ag-grain-layer {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.55'/%3E%3C/svg%3E");
-  opacity: 0.028;
+/* Equal content edges (.wrap: 1280px max, 80px desktop / 48px tablet / 24px mobile) */
+.ag-wrap {
+  width: min(100% - 48px, 1280px);
+  margin-inline: auto;
 }
 
-/* Obsidian hairline calibration grid (calibrated against darkroom concept #08090C -> #171B20) */
-.ag-grid-stage {
-  background-color: var(--ag-bg-stage);
-  background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
-    radial-gradient(ellipse 68% 58% at 50% 42%, rgba(255, 77, 28, 0.075), rgba(8, 9, 12, 0));
-  background-size: 48px 48px, 48px 48px, 100% 100%;
+@media (min-width: 640px) {
+  .ag-wrap {
+    width: min(100% - 96px, 1280px);
+  }
 }
 
-/* @property conic laser shimmer strictly reserved for primary Hero CTA */
-.ag-laser-cta {
+@media (min-width: 1024px) {
+  .ag-wrap {
+    width: min(100% - 160px, 1280px);
+  }
+}
+
+/* Accessible skip link */
+.ag-skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 12px;
+  z-index: 60;
+  padding: 10px 16px;
+  border-radius: 9999px;
+  background: var(--ag-ink);
+  color: var(--ag-bg);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.ag-skip-link:focus {
+  left: 24px;
+}
+
+/* Lit studio sweep inside Hero collage art frame */
+.ag-hero-art {
   position: relative;
-  border: 1px solid transparent;
   background:
-    linear-gradient(#12151C, #12151C) padding-box,
-    conic-gradient(
-      from var(--ag-angle),
-      rgba(255, 255, 255, 0.14) 0deg,
-      rgba(255, 77, 28, 0.95) 48deg,
-      rgba(255, 255, 255, 0.24) 96deg,
-      rgba(255, 255, 255, 0.08) 360deg
-    ) border-box;
-  animation: ag-laser-spin 4.2s linear infinite;
-  transition: transform 220ms var(--ag-spring), box-shadow 220ms ease;
+    radial-gradient(72% 62% at 18% 12%, var(--ag-lit-glow), transparent 70%),
+    radial-gradient(62% 52% at 90% 100%, var(--ag-lit-warm), transparent 72%),
+    var(--ag-lit-bg);
+  border: 1px solid var(--ag-line);
 }
 
-.ag-laser-cta:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 0 28px -6px rgba(255, 77, 28, 0.45);
+.ag-window {
+  background-color: var(--ag-panel);
+  box-shadow: var(--ag-window-shadow);
 }
 
-@keyframes ag-laser-spin {
+/* Micro-interaction layer (tasteskill motion.md: 150ms in, 120ms out, 90ms press) */
+.ag-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 22px;
+  border-radius: 9999px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 120ms var(--ag-ease),
+    color 120ms var(--ag-ease),
+    border-color 120ms var(--ag-ease),
+    transform 90ms var(--ag-ease);
+}
+
+.ag-btn-primary {
+  background-color: var(--ag-accent);
+  color: var(--ag-accent-ink);
+  border: 1px solid transparent;
+}
+
+.ag-btn-secondary {
+  background-color: var(--ag-panel);
+  color: var(--ag-ink);
+  border: 1px solid var(--ag-line-strong);
+}
+
+.ag-btn-inverse {
+  background-color: var(--ag-inv-ink);
+  color: var(--ag-inv-bg);
+  border: 1px solid transparent;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ag-btn:hover {
+    transform: translateY(-1px);
+    transition-duration: 150ms, 150ms, 150ms, 90ms;
+  }
+  .ag-btn-primary:hover {
+    background-color: color-mix(in oklab, var(--ag-accent) 86%, var(--ag-ink));
+  }
+  .ag-btn-secondary:hover {
+    background-color: color-mix(in oklab, var(--ag-panel) 92%, var(--ag-ink));
+    border-color: color-mix(in oklab, var(--ag-ink) 38%, transparent);
+  }
+  .ag-btn-inverse:hover {
+    background-color: color-mix(in oklab, var(--ag-inv-ink) 88%, var(--ag-accent));
+  }
+  .ag-btn:active {
+    transform: translateY(1px) scale(0.985);
+  }
+
+  .ag-card-lift {
+    transition: transform 180ms var(--ag-ease), border-color 180ms var(--ag-ease);
+  }
+  .ag-card-lift:hover {
+    transform: translateY(-2px);
+    border-color: var(--ag-line-strong);
+  }
+}
+
+/* Drawn underline links (tasteskill motion.md) */
+.ag-link {
+  text-decoration: none;
+  background-image:
+    linear-gradient(currentColor, currentColor),
+    linear-gradient(var(--ag-line-strong), var(--ag-line-strong));
+  background-repeat: no-repeat;
+  background-size: 0% 1px, 100% 1px;
+  background-position: right 0 bottom 0, 0 100%;
+  padding-bottom: 2px;
+  transition: background-size 120ms var(--ag-ease), color 120ms var(--ag-ease);
+}
+
+.ag-link:hover,
+.ag-link:focus-visible {
+  background-size: 100% 1px, 100% 1px;
+  background-position: left 0 bottom 0, 0 100%;
+  transition-duration: 150ms;
+}
+
+/* Hero load-once entrance (rests immediately under reduced motion) */
+@keyframes ag-hero-rise {
+  from {
+    opacity: 0.01;
+    transform: translateY(10px);
+  }
   to {
-    --ag-angle: 360deg;
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@keyframes ag-scan-sweep {
-  0% {
-    transform: translateY(-100%);
-    opacity: 0;
+@keyframes ag-hero-window {
+  from {
+    opacity: 0.01;
+    transform: scale(0.985);
   }
-  15% {
-    opacity: 0.9;
-  }
-  85% {
-    opacity: 0.9;
-  }
-  100% {
-    transform: translateY(420%);
-    opacity: 0;
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
-.ag-scan-beam {
-  animation: ag-scan-sweep 2.4s cubic-bezier(0.32, 0.04, 0.2, 1) infinite;
+.ag-enter-text {
+  animation: ag-hero-rise 620ms var(--ag-ease-enter) both;
+}
+
+.ag-enter-media {
+  animation: ag-hero-window 760ms var(--ag-ease-enter) 80ms both;
 }
 
 .ag-tabular {
@@ -156,18 +337,14 @@
   scrollbar-width: none;
 }
 
-.ag-pill-glide {
-  transition:
-    transform 340ms var(--ag-spring),
-    width 340ms var(--ag-spring);
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .ag-laser-cta,
-  .ag-scan-beam {
-    animation: none;
-  }
-  .ag-pill-glide {
-    transition: none;
+  .ag-enter-text,
+  .ag-enter-media,
+  .ag-btn,
+  .ag-card-lift,
+  .ag-link {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
   }
 }

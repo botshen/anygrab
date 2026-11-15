@@ -1,14 +1,8 @@
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowDown, Check, Copy, Layers, Sparkles, Terminal } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { ArrowRight, Check, Copy, Pause, Play, Star } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import type { ActiveTab } from '../data/types';
-import type { SiteLocale } from '../i18n';
-import { isDesktopViewport, isMotionCapableBrowser } from '../utils/motion';
-
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { GITHUB_REPO_URL, type SiteLocale } from '../i18n';
+import { isMotionCapableBrowser } from '../utils/motion';
 
 interface OverviewViewProps {
   locale: SiteLocale;
@@ -27,7 +21,6 @@ interface StageSpecimen {
   rawTokens: string;
   cleanTokens: string;
   savedPct: string;
-  durationMs: string;
   swatches: string[];
   codeSnippet: string;
 }
@@ -36,94 +29,65 @@ const STAGE_SPECIMENS: StageSpecimen[] = [
   {
     id: 'pricing',
     selector: 'article.tier-pro',
-    labelZh: 'Pro 定价卡',
-    labelEn: 'Pro Pricing Card',
+    labelZh: '定价卡',
+    labelEn: 'Pricing card',
     rawTokens: '3,840',
     cleanTokens: '218',
     savedPct: '-94.3%',
-    durationMs: '3.4 ms',
-    swatches: ['#08090C', '#FF4D1C', '#10B981', '#F4F5F8'],
-    codeSnippet: `<article class="rounded-2xl border border-white/10 bg-[#101217] p-5">
-  <span class="font-mono text-[11px] text-[#FF4D1C]">PRO</span>
-  <h3 class="mt-1 font-bold text-[#F4F5F8]">Team Pro</h3>
-  <div class="mt-2 text-3xl font-extrabold">$29/mo</div>
-  <button class="mt-4 w-full rounded-lg border border-white/15 py-2">
-    Deploy Component
-  </button>
+    swatches: ['#141413', '#C93E18', '#0E7550', '#F6F5F0'],
+    codeSnippet: `<article class="rounded-xl border p-5">
+  <span class="font-mono text-xs">Pro</span>
+  <h3 class="mt-1 text-lg font-medium">Team Pro · $29/mo</h3>
 </article>`,
   },
   {
     id: 'metrics',
-    selector: 'div.mrr-spark-tile',
-    labelZh: 'MRR 增长卡',
-    labelEn: 'MRR Sparkline',
+    selector: 'div.mrr-spark',
+    labelZh: '增长卡',
+    labelEn: 'Revenue card',
     rawTokens: '6,120',
     cleanTokens: '164',
     savedPct: '-97.3%',
-    durationMs: '2.8 ms',
-    swatches: ['#101217', '#10B981', '#F4F5F8', '#A1A7B5'],
-    codeSnippet: `<section class="rounded-2xl border border-white/10 bg-[#101217] p-5">
-  <div class="text-xs text-[#A1A7B5]">NET MRR</div>
-  <div class="mt-1 flex items-baseline gap-2">
-    <span class="text-2xl font-bold tabular-nums">$148,420</span>
-    <span class="text-xs font-mono text-[#10B981]">+32.8%</span>
-  </div>
+    swatches: ['#141413', '#0E7550', '#636059', '#FFFFFF'],
+    codeSnippet: `<section class="rounded-xl border p-5">
+  <span class="text-xs">Net MRR</span>
+  <p class="mt-1 text-2xl font-medium tabular-nums">$148,420</p>
 </section>`,
   },
   {
     id: 'table',
     selector: 'table.fin-ledger',
-    labelZh: '合并财务表',
-    labelEn: 'Merged Table',
+    labelZh: '合并表',
+    labelEn: 'Merged table',
     rawTokens: '4,620',
     cleanTokens: '194',
     savedPct: '-95.8%',
-    durationMs: '3.1 ms',
-    swatches: ['#0B0D12', '#171A22', '#F4F5F8', '#10B981'],
-    codeSnippet: `<table class="w-full border-collapse text-xs tabular-nums">
-  <thead>
-    <tr><th rowspan="2">Region</th><th colspan="2">FY26 H1</th></tr>
-    <tr><th>Q1</th><th>Q2</th></tr>
-  </thead>
-  <tbody><tr><td>APAC</td><td>$42.8M</td><td>$58.4M</td></tr></tbody>
+    swatches: ['#141413', '#ECEAE2', '#0E7550', '#FFFFFF'],
+    codeSnippet: `<table class="w-full text-sm tabular-nums">
+  <tr><th rowspan="2">Region</th><th colspan="2">FY26 H1</th></tr>
+  <tr><td>APAC</td><td>$42.8M</td><td>$58.4M</td></tr>
 </table>`,
   },
 ];
 
-function ReticleBrackets() {
+function ReticleCorners() {
   return (
     <>
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute top-0 left-0 h-3.5 w-3.5 border-t-2 border-l-2 border-[var(--ag-accent)]"
+        className="pointer-events-none absolute top-0 left-0 h-3 w-3 border-t-2 border-l-2 border-[var(--ag-accent)]"
       />
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute top-0 right-0 h-3.5 w-3.5 border-t-2 border-r-2 border-[var(--ag-accent)]"
+        className="pointer-events-none absolute top-0 right-0 h-3 w-3 border-t-2 border-r-2 border-[var(--ag-accent)]"
       />
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 left-0 h-3.5 w-3.5 border-b-2 border-l-2 border-[var(--ag-accent)]"
+        className="pointer-events-none absolute bottom-0 left-0 h-3 w-3 border-b-2 border-l-2 border-[var(--ag-accent)]"
       />
       <span
         aria-hidden="true"
-        className="pointer-events-none absolute right-0 bottom-0 h-3.5 w-3.5 border-r-2 border-b-2 border-[var(--ag-accent)]"
-      />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute top-0 left-1/2 h-2 w-px -translate-x-1/2 bg-[var(--ag-accent)]"
-      />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute bottom-0 left-1/2 h-2 w-px -translate-x-1/2 bg-[var(--ag-accent)]"
-      />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 left-0 h-px w-2 -translate-y-1/2 bg-[var(--ag-accent)]"
-      />
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute top-1/2 right-0 h-px w-2 -translate-y-1/2 bg-[var(--ag-accent)]"
+        className="pointer-events-none absolute right-0 bottom-0 h-3 w-3 border-r-2 border-b-2 border-[var(--ag-accent)]"
       />
     </>
   );
@@ -132,138 +96,25 @@ function ReticleBrackets() {
 export function OverviewView({ locale, onNavigate }: OverviewViewProps) {
   const isZh = locale === 'zh-CN';
   const [activeIdx, setActiveIdx] = useState<number>(0);
-  const [isHoveringStage, setIsHoveringStage] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [isHovering, setIsHovering] = useState<boolean>(false);
   const [copiedCli, setCopiedCli] = useState<boolean>(false);
-  const [xrayStep, setXrayStep] = useState<number>(0);
-
-  const stageRef = useRef<HTMLDivElement | null>(null);
-  const reticleGlowRef = useRef<HTMLDivElement | null>(null);
-  const xrayWrapperRef = useRef<HTMLDivElement | null>(null);
-  const noiseLayerRef = useRef<HTMLDivElement | null>(null);
-  const tokenLayerRef = useRef<HTMLDivElement | null>(null);
-  const cleanLayerRef = useRef<HTMLDivElement | null>(null);
-  const xrayBeamRef = useRef<HTMLDivElement | null>(null);
 
   const activeSpecimen = STAGE_SPECIMENS[activeIdx] ?? STAGE_SPECIMENS[0];
 
   useEffect(() => {
-    if (!isMotionCapableBrowser() || isHoveringStage) return;
+    if (!isMotionCapableBrowser() || isPaused || isHovering) return;
     const id = window.setInterval(() => {
       setActiveIdx((prev) => (prev + 1) % STAGE_SPECIMENS.length);
-    }, 2600);
+    }, 3200);
     return () => window.clearInterval(id);
-  }, [isHoveringStage]);
-
-  useEffect(() => {
-    if (!isMotionCapableBrowser()) return;
-    const stageEl = stageRef.current;
-    const glowEl = reticleGlowRef.current;
-    if (!stageEl || !glowEl) return;
-
-    let rafId = 0;
-    let targetX = 50;
-    let targetY = 48;
-    let currentX = 50;
-    let currentY = 48;
-
-    const tick = () => {
-      currentX += (targetX - currentX) * 0.14;
-      currentY += (targetY - currentY) * 0.14;
-      glowEl.style.background = `radial-gradient(280px circle at ${currentX}% ${currentY}%, rgba(255, 77, 28, 0.14), transparent 72%)`;
-      if (Math.abs(targetX - currentX) > 0.05 || Math.abs(targetY - currentY) > 0.05) {
-        rafId = window.requestAnimationFrame(tick);
-      } else {
-        rafId = 0;
-      }
-    };
-
-    const onMove = (e: MouseEvent) => {
-      const rect = stageEl.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      targetX = ((e.clientX - rect.left) / rect.width) * 100;
-      targetY = ((e.clientY - rect.top) / rect.height) * 100;
-      if (!rafId) {
-        rafId = window.requestAnimationFrame(tick);
-      }
-    };
-
-    stageEl.addEventListener('mousemove', onMove);
-    return () => {
-      stageEl.removeEventListener('mousemove', onMove);
-      if (rafId) window.cancelAnimationFrame(rafId);
-    };
-  }, []);
-
-  // GSAP ScrollTrigger pinned 3D Stacked X-Ray Peel (true axonometric layer separation)
-  useEffect(() => {
-    if (!isMotionCapableBrowser() || !isDesktopViewport()) return;
-    const wrapper = xrayWrapperRef.current;
-    const noiseEl = noiseLayerRef.current;
-    const tokenEl = tokenLayerRef.current;
-    const cleanEl = cleanLayerRef.current;
-    const beamEl = xrayBeamRef.current;
-    if (!wrapper || !noiseEl || !tokenEl || !cleanEl) return;
-
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: wrapper,
-          start: 'top 92px',
-          end: '+=520',
-          scrub: 0.45,
-          pin: true,
-          anticipatePin: 1,
-          onUpdate: (self) => {
-            const p = self.progress;
-            if (p < 0.34) setXrayStep(0);
-            else if (p < 0.68) setXrayStep(1);
-            else setXrayStep(2);
-          },
-        },
-      });
-
-      // Phase 1: Top DOM waste membrane peels upward-left & fades to translucent ghost
-      tl.fromTo(
-        noiseEl,
-        { y: 0, x: 0, scale: 1, opacity: 0.98 },
-        { y: -112, x: -34, scale: 0.91, opacity: 0.28, ease: 'none', duration: 0.5 },
-        0,
-      );
-
-      if (beamEl) {
-        tl.fromTo(
-          beamEl,
-          { yPercent: 0, opacity: 0.9 },
-          { yPercent: 260, opacity: 0.45, ease: 'none', duration: 0.9 },
-          0,
-        );
-      }
-
-      // Phase 2: Middle Token Palette sheet slides right & fans out cleanly
-      tl.fromTo(
-        tokenEl,
-        { y: 12, x: 10, scale: 0.97, opacity: 0.85 },
-        { y: -38, x: 26, scale: 1.0, opacity: 1, ease: 'none', duration: 0.55 },
-        0.18,
-      );
-
-      // Phase 3: Clean Component Layer rises forward into sharp emerald lock
-      tl.fromTo(
-        cleanEl,
-        { y: 36, x: 24, scale: 0.94 },
-        { y: 48, x: 0, scale: 1.02, ease: 'none', duration: 0.6 },
-        0.36,
-      );
-    }, wrapper);
-
-    return () => ctx.revert();
-  }, []);
+  }, [isPaused, isHovering]);
 
   const handleCopyCli = () => {
     try {
       void navigator.clipboard?.writeText(CLI_QUICK_CMD)?.catch(() => {});
     } catch {
-      // Ignore in test env
+      // Ignore in test environments
     }
     setCopiedCli(true);
     setTimeout(() => setCopiedCli(false), 1600);
@@ -273,475 +124,292 @@ export function OverviewView({ locale, onNavigate }: OverviewViewProps) {
     <section
       id="overview"
       aria-label="Product Overview"
-      className="min-w-0 space-y-12 sm:space-y-16"
+      className="py-10 sm:py-14 lg:py-16"
     >
-      {/* 1. Centered Monumental Hero + Optical Reticle Theater */}
-      <div className="min-w-0 pt-1 text-center sm:pt-3">
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#101217] px-3.5 py-1 font-mono text-[11px] font-medium text-[#A1A7B5]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[var(--ag-emerald)] shadow-[0_0_8px_#10B981]" />
-          <span>
-            {isZh
-              ? 'MIT 开源 · 4.2ms 本地 AST 光学剥离'
-              : 'MIT OPEN SOURCE · 4.2MS LOCAL AST ENGINE'}
-          </span>
-        </div>
+      <div className="ag-wrap">
+        {/* tasteskill dealt `collage` Split Hero: span-5 text left, span-7 lit UI collage right */}
+        <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-8">
+          <div className="ag-enter-text min-w-0 lg:col-span-5 lg:pt-2">
+            <p className="text-[13px] font-medium text-[var(--ag-muted)]">
+              {isZh
+                ? 'MIT 开源项目 · 本地 4.2 毫秒提纯'
+                : 'MIT open source · 4.2 ms local AST engine'}
+            </p>
 
-        <h1 className="mx-auto mt-4 max-w-4xl text-[clamp(2.35rem,5.4vw,4.5rem)] leading-[1.06] font-extrabold tracking-[-0.038em] text-[#F4F5F8]">
-          {isZh ? '点一下，扒走好界面' : 'Point. Click. Ship Clean UI.'}
-        </h1>
+            <h1 className="mt-4 text-[clamp(2.35rem,3.8vw,3.9rem)] leading-[1.05] font-medium tracking-[-0.038em] text-[var(--ag-ink)]">
+              {isZh ? '点一下，扒走好界面' : 'Point. Click. Ship Clean UI.'}
+            </h1>
 
-        <p className="mx-auto mt-3 max-w-2xl px-2 text-[13px] leading-[1.6] text-[#A1A7B5] sm:text-base">
-          {isZh ? (
-            <>
-              剔除 90% 网页废码，直喂{' '}
-              <span className="inline-block">反重力 (Antigravity) · Codex · Cursor</span>
-            </>
-          ) : (
-            <>
-              Strip 90% DOM bloat in 4ms for{' '}
-              <span className="inline-block">Antigravity · Codex · Cursor</span>
-            </>
-          )}
-        </p>
+            <p className="mt-5 max-w-[44ch] text-[17px] leading-[1.6] text-[var(--ag-ink-secondary)]">
+              {isZh
+                ? '点选任意网页元素，剥离 90% 废码，直出 Tailwind 与设计色板喂给 反重力 (Antigravity)、Codex 与 Cursor。'
+                : 'Click any webpage element to strip 90% DOM bloat into clean Tailwind and design tokens for Antigravity, Codex, and Cursor.'}
+            </p>
 
-        {/* Primary Action Hierarchy: Solid Vermilion CTA dominates cleanly */}
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5 px-1">
-          <button
-            type="button"
-            onClick={() => onNavigate('playground')}
-            className="inline-flex items-center gap-2 rounded-full bg-[#FF4D1C] px-6 py-2.5 text-sm font-bold text-white shadow-[0_0_32px_-6px_rgba(255,77,28,0.65)] transition hover:brightness-110"
-          >
-            <span>{isZh ? '打开双沙盒实测' : 'Launch Live Lab'}</span>
-            <ArrowDown className="h-4 w-4" />
-          </button>
+            {/* Primary + Open-Source Star CTA pair (copy.md rule 5: max 2 hero buttons) */}
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <button
+                type="button"
+                onClick={() => onNavigate('playground')}
+                className="ag-btn ag-btn-primary w-full sm:w-auto"
+              >
+                <span>{isZh ? '进入在线沙盒' : 'Try live sandbox'}</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
 
-          <button
-            type="button"
-            onClick={handleCopyCli}
-            className="ag-no-scrollbar inline-flex max-w-full items-center gap-2 overflow-x-auto rounded-full border border-white/12 bg-[#101217] px-4 py-2.5 font-mono text-[11.5px] whitespace-nowrap text-[#A1A7B5] transition hover:border-white/25 hover:text-[#F4F5F8]"
-          >
-            <Terminal className="h-3.5 w-3.5 shrink-0 text-[var(--ag-accent)]" />
-            <span>{CLI_QUICK_CMD}</span>
-            {copiedCli ? (
-              <Check className="h-3.5 w-3.5 shrink-0 text-[var(--ag-emerald)]" />
-            ) : (
-              <Copy className="h-3.5 w-3.5 shrink-0 text-[#7C8292]" />
-            )}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => onNavigate('quickstart')}
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-4 py-2.5 text-xs font-medium text-[#A1A7B5] transition hover:border-white/20 hover:text-[#F4F5F8]"
-          >
-            <span>{isZh ? 'Chrome 插件下载' : 'Get Extension'}</span>
-          </button>
-        </div>
-
-        {/* Full-Bleed Kinetic Optical Reticle Stage (min-w-0 prevents mobile overflow) */}
-        <div
-          ref={stageRef}
-          onMouseEnter={() => setIsHoveringStage(true)}
-          onMouseLeave={() => setIsHoveringStage(false)}
-          className="ag-grid-stage relative mx-auto mt-8 max-w-[1160px] min-w-0 overflow-hidden rounded-2xl border border-white/12 p-3.5 text-left shadow-[0_28px_80px_rgba(0,0,0,0.75)] sm:p-7"
-        >
-          <div
-            ref={reticleGlowRef}
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 transition-opacity duration-300"
-          />
-
-          {/* Stage Top Instrument HUD */}
-          <div className="relative z-10 flex min-w-0 flex-wrap items-center justify-between gap-2.5 border-b border-white/8 pb-3.5">
-            <div className="flex flex-wrap items-center gap-1.5">
-              {STAGE_SPECIMENS.map((item, idx) => {
-                const selected = idx === activeIdx;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setActiveIdx(idx)}
-                    className={`rounded-full px-3 py-1 font-mono text-[11px] transition ${
-                      selected
-                        ? 'border border-[var(--ag-accent)]/60 bg-[var(--ag-accent-soft)] font-semibold text-[#F4F5F8]'
-                        : 'border border-white/8 bg-white/[0.03] text-[#A1A7B5] hover:border-white/20 hover:text-[#F4F5F8]'
-                    }`}
-                  >
-                    {isZh ? item.labelZh : item.labelEn}
-                  </button>
-                );
-              })}
+              <a
+                href={GITHUB_REPO_URL}
+                target="_blank"
+                rel="noreferrer"
+                data-testid="hero-github-star"
+                className="ag-btn ag-btn-secondary w-full sm:w-auto"
+              >
+                <Star className="h-4 w-4 fill-current text-[var(--ag-accent)]" />
+                <span>{isZh ? '去 GitHub 点 Star' : 'Star on GitHub'}</span>
+              </a>
             </div>
 
-            <div className="ag-tabular flex flex-wrap items-center gap-2 font-mono text-[11px]">
-              <span className="text-[#7C8292] line-through">{activeSpecimen.rawTokens} tok</span>
-              <span className="text-[#A1A7B5]">→</span>
-              <span className="rounded-full border border-[var(--ag-emerald)]/40 bg-[var(--ag-emerald-soft)] px-2.5 py-0.5 font-bold text-[#10B981]">
-                {activeSpecimen.savedPct} · {activeSpecimen.cleanTokens} tok
-              </span>
-              <span className="text-[#7C8292]">{activeSpecimen.durationMs}</span>
+            {/* Quiet 1-click CLI command line */}
+            <div className="mt-6 flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleCopyCli}
+                className="inline-flex min-h-[38px] max-w-full items-center gap-2.5 rounded-lg border border-[var(--ag-line)] bg-[var(--ag-panel)] px-3.5 font-mono text-[13px] text-[var(--ag-ink-secondary)] transition-colors hover:border-[var(--ag-line-strong)] hover:text-[var(--ag-ink)]"
+              >
+                <span className="truncate">{CLI_QUICK_CMD}</span>
+                {copiedCli ? (
+                  <Check className="h-3.5 w-3.5 shrink-0 text-[var(--ag-emerald)]" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5 shrink-0 text-[var(--ag-muted)]" />
+                )}
+              </button>
             </div>
           </div>
 
-          {/* Stage Main Theater: Muted Demo Target Frame (Left) + Extracted Tokens & Code (Right) */}
-          <div className="relative z-10 mt-5 grid min-w-0 items-center gap-5 lg:grid-cols-12">
-            <div className="relative min-w-0 overflow-hidden rounded-xl border border-white/12 bg-[#101217]/95 p-4 sm:p-5 lg:col-span-6">
-              <ReticleBrackets />
-              <div
-                aria-hidden="true"
-                className="ag-scan-beam pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#FF4D1C] to-transparent opacity-80"
-              />
+          {/* Right: Lit Studio Frame with Live Product Window + Distilled Result Card */}
+          <div
+            onMouseEnter={() => setIsHovering(true)}
+            onMouseLeave={() => setIsHovering(false)}
+            className="ag-enter-media ag-hero-art relative min-w-0 overflow-hidden rounded-[20px] p-4 sm:p-7 lg:col-span-7"
+          >
+            {/* Main Product Window */}
+            <div className="ag-window overflow-hidden rounded-[14px]">
+              <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--ag-line)] bg-[var(--ag-panel-muted)] px-4 py-2.5">
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center gap-1.5" aria-hidden="true">
+                    <i className="h-2.5 w-2.5 rounded-full bg-[var(--ag-line-strong)]" />
+                    <i className="h-2.5 w-2.5 rounded-full bg-[var(--ag-line-strong)]" />
+                    <i className="h-2.5 w-2.5 rounded-full bg-[var(--ag-line-strong)]" />
+                  </span>
+                  <span className="ml-1 font-mono text-[13px] text-[var(--ag-muted)]">
+                    {activeSpecimen.selector}
+                  </span>
+                </div>
 
-              <div className="mb-3 flex items-center justify-between font-mono text-[11px]">
-                <span className="truncate font-semibold text-[var(--ag-accent)]">
-                  {activeSpecimen.selector}
-                </span>
-                <span className="shrink-0 text-[#7C8292]">LOCKED</span>
+                <div className="flex flex-wrap items-center gap-1">
+                  {STAGE_SPECIMENS.map((item, idx) => {
+                    const selected = idx === activeIdx;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setActiveIdx(idx)}
+                        className={`min-h-[30px] rounded-full px-2.5 text-[13px] transition-colors ${
+                          selected
+                            ? 'bg-[var(--ag-ink)] font-medium text-[var(--ag-bg)]'
+                            : 'text-[var(--ag-muted)] hover:text-[var(--ag-ink)]'
+                        }`}
+                      >
+                        {isZh ? item.labelZh : item.labelEn}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              {activeSpecimen.id === 'pricing' && (
-                <div className="rounded-xl border border-white/10 bg-[#171A22] p-4 sm:p-5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-bold text-[#F4F5F8]">Team Pro</span>
-                    <span className="rounded-md bg-[var(--ag-accent-soft)] px-2 py-0.5 font-mono text-[11px] font-semibold text-[var(--ag-accent)]">
-                      PRO
-                    </span>
-                  </div>
-                  <div className="ag-tabular mt-2 text-3xl font-extrabold text-[#F4F5F8]">
-                    $29<span className="text-xs font-normal text-[#A1A7B5]">/mo</span>
-                  </div>
-                  <div className="mt-4 flex items-center justify-between rounded-lg border border-white/15 bg-[#222632] px-4 py-2 text-xs font-semibold text-[#F4F5F8]">
-                    <span>Deploy Component</span>
-                    <span className="text-[#A1A7B5]">→</span>
-                  </div>
-                </div>
-              )}
+              <div className="p-4 sm:p-6">
+                <div className="relative rounded-xl border border-[var(--ag-line)] bg-[var(--ag-bg)] p-4 sm:p-5">
+                  <ReticleCorners />
 
-              {activeSpecimen.id === 'metrics' && (
-                <div className="rounded-xl border border-white/10 bg-[#171A22] p-4 sm:p-5">
-                  <div className="flex items-center justify-between font-mono text-[11px] text-[#A1A7B5]">
-                    <span>NET MRR</span>
-                    <span className="text-[#10B981]">+32.8%</span>
-                  </div>
-                  <div className="ag-tabular mt-1.5 text-3xl font-extrabold text-[#F4F5F8]">
-                    $148,420
-                  </div>
-                  <svg
-                    viewBox="0 0 280 54"
-                    className="mt-4 h-12 w-full overflow-visible"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M0 44 L45 38 L92 40 L140 24 L188 28 L235 12 L280 6"
-                      fill="none"
-                      stroke="#10B981"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                </div>
-              )}
+                  {activeSpecimen.id === 'pricing' && (
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[15px] font-medium text-[var(--ag-ink)]">
+                          Team Pro
+                        </span>
+                        <span className="rounded-full bg-[var(--ag-accent-soft)] px-2.5 py-0.5 font-mono text-[13px] font-medium text-[var(--ag-accent)]">
+                          Pro
+                        </span>
+                      </div>
+                      <div className="ag-tabular mt-2 text-3xl font-medium text-[var(--ag-ink)]">
+                        $29
+                        <span className="text-sm font-normal text-[var(--ag-muted)]"> / mo</span>
+                      </div>
+                      <div className="mt-4 flex items-center justify-between rounded-lg border border-[var(--ag-line-strong)] bg-[var(--ag-panel)] px-3.5 py-2 text-[14px] font-medium text-[var(--ag-ink)]">
+                        <span>{isZh ? '一键提取组件' : 'Extract component'}</span>
+                        <span className="text-[var(--ag-muted)]">→</span>
+                      </div>
+                    </div>
+                  )}
 
-              {activeSpecimen.id === 'table' && (
-                <div className="overflow-x-auto rounded-xl border border-white/10 bg-[#171A22] p-3">
-                  <table className="ag-tabular w-full border-collapse font-mono text-[11px]">
-                    <thead>
-                      <tr className="border-b border-white/10 text-[#A1A7B5]">
-                        <th rowSpan={2} className="border-r border-white/10 px-2.5 py-2 text-left">
-                          Region
-                        </th>
-                        <th colSpan={2} className="border-b border-white/10 px-2.5 py-1.5">
-                          FY26 H1
-                        </th>
-                      </tr>
-                      <tr className="border-b border-white/10 text-[#A1A7B5]">
-                        <th className="px-2.5 py-1.5 text-right">Q1</th>
-                        <th className="px-2.5 py-1.5 text-right">Q2</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/8 text-[#F4F5F8]">
-                      <tr>
-                        <td className="border-r border-white/10 px-2.5 py-2">APAC</td>
-                        <td className="px-2.5 py-2 text-right">$42.8M</td>
-                        <td className="px-2.5 py-2 text-right font-bold text-[#10B981]">
-                          $58.4M
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="border-r border-white/10 px-2.5 py-2">NA</td>
-                        <td className="px-2.5 py-2 text-right">$61.2M</td>
-                        <td className="px-2.5 py-2 text-right font-bold text-[#10B981]">
-                          $74.9M
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                  {activeSpecimen.id === 'metrics' && (
+                    <div>
+                      <div className="flex items-center justify-between text-[13px] text-[var(--ag-muted)]">
+                        <span>Net MRR</span>
+                        <span className="font-mono font-medium text-[var(--ag-emerald)]">
+                          +32.8%
+                        </span>
+                      </div>
+                      <div className="ag-tabular mt-1.5 text-3xl font-medium text-[var(--ag-ink)]">
+                        $148,420
+                      </div>
+                      <svg
+                        viewBox="0 0 280 48"
+                        className="mt-3 h-11 w-full overflow-visible"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M0 40 L45 34 L92 36 L140 22 L188 25 L235 10 L280 5"
+                          fill="none"
+                          stroke="var(--ag-emerald)"
+                          strokeWidth="2.2"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </div>
+                  )}
+
+                  {activeSpecimen.id === 'table' && (
+                    <div className="overflow-x-auto">
+                      <table className="ag-tabular w-full border-collapse text-[13px]">
+                        <thead>
+                          <tr className="border-b border-[var(--ag-line)] text-[var(--ag-muted)]">
+                            <th
+                              rowSpan={2}
+                              className="border-r border-[var(--ag-line)] px-3 py-2 text-left font-medium"
+                            >
+                              Region
+                            </th>
+                            <th
+                              colSpan={2}
+                              className="border-b border-[var(--ag-line)] px-3 py-1.5 font-medium"
+                            >
+                              FY26 H1
+                            </th>
+                          </tr>
+                          <tr className="border-b border-[var(--ag-line)] text-[var(--ag-muted)]">
+                            <th className="px-3 py-1.5 text-right font-medium">Q1</th>
+                            <th className="px-3 py-1.5 text-right font-medium">Q2</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[var(--ag-line)] text-[var(--ag-ink)]">
+                          <tr>
+                            <td className="border-r border-[var(--ag-line)] px-3 py-2">APAC</td>
+                            <td className="px-3 py-2 text-right">$42.8M</td>
+                            <td className="px-3 py-2 text-right font-medium text-[var(--ag-emerald)]">
+                              $58.4M
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="border-r border-[var(--ag-line)] px-3 py-2">NA</td>
+                            <td className="px-3 py-2 text-right">$61.2M</td>
+                            <td className="px-3 py-2 text-right font-medium text-[var(--ag-emerald)]">
+                              $74.9M
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
 
-            <div className="min-w-0 space-y-3 lg:col-span-6">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {activeSpecimen.swatches.map((hex) => (
-                    <span
-                      key={hex}
-                      className="inline-flex items-center gap-1.5 rounded-md border border-white/10 bg-[#101217] px-2 py-1 font-mono text-[11px] text-[#F4F5F8]"
-                    >
+            {/* Collage Lower Result Card + 32px Pause Control */}
+            <div className="mt-4 flex items-end justify-between gap-3">
+              <div className="ag-window min-w-0 flex-1 rounded-[12px] p-4">
+                <div className="ag-tabular flex flex-wrap items-center justify-between gap-2 text-[13px]">
+                  <div className="flex items-center gap-1.5">
+                    {activeSpecimen.swatches.map((hex) => (
                       <span
-                        className="h-2.5 w-2.5 rounded-xs border border-white/20"
+                        key={hex}
+                        title={hex}
+                        className="h-3.5 w-3.5 rounded-[3px] border border-[var(--ag-line-strong)]"
                         style={{ backgroundColor: hex }}
                       />
-                      {hex}
+                    ))}
+                    <span className="ml-1 font-mono text-[var(--ag-muted)]">
+                      {activeSpecimen.rawTokens} → {activeSpecimen.cleanTokens} tok
                     </span>
-                  ))}
-                </div>
-                <span className="font-mono text-[11px] text-[#7C8292]">
-                  {isZh ? '纯净输出' : 'AST OUTPUT'}
-                </span>
-              </div>
-
-              <pre className="rounded-xl border border-white/10 bg-[#08090C]/90 p-3.5 font-mono text-[11px] leading-[1.6] whitespace-pre-wrap break-words text-[#D8DCE6] sm:p-4 sm:text-[11.5px]">
-                <code>{activeSpecimen.codeSnippet}</code>
-              </pre>
-            </div>
-          </div>
-        </div>
-
-        {/* Open Architectural 3-Column Contrast Strip (NO extra box cards — sits cleanly on #08090C canvas) */}
-        <div className="mx-auto mt-6 grid max-w-[1160px] divide-y divide-white/8 border-y border-white/8 text-left sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-          <div className="px-4 py-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#F4F5F8]">
-                {isZh ? '发截图' : 'Screenshots'}
-              </span>
-              <span className="font-mono text-[11px] text-[#7C8292]">~50 / 100</span>
-            </div>
-            <div className="mt-1 text-xs text-[#A1A7B5]">
-              {isZh ? '丢失精确色号与圆角' : 'Lost hex & border radii'}
-            </div>
-          </div>
-
-          <div className="px-4 py-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#F4F5F8]">
-                {isZh ? 'F12 扒源码' : 'Raw F12 DOM'}
-              </span>
-              <span className="font-mono text-[11px] text-[var(--ag-accent)]">27k+ tok</span>
-            </div>
-            <div className="mt-1 text-xs text-[#A1A7B5]">
-              {isZh ? '废代码撑爆上下文额度' : 'Bloats context & breaks UI'}
-            </div>
-          </div>
-
-          <div className="px-4 py-4">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-[#F4F5F8]">
-                {isZh ? 'AnyGrab 提纯' : 'AnyGrab AST'}
-              </span>
-              <span className="font-mono text-[11px] font-bold text-[#10B981]">99.6 / 100</span>
-            </div>
-            <div className="mt-1 text-xs text-[#A1A7B5]">
-              {isZh ? '218 tok 直出纯净代码' : '218 tok · Tailwind + Tokens'}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. True Pinned 3D Stacked X-Ray Peel Stage (Open canvas + axonometric exploded stack) */}
-      <div
-        id="xray-stage"
-        ref={xrayWrapperRef}
-        className="mx-auto max-w-[1160px] min-w-0 border-t border-white/10 pt-10"
-      >
-        <div className="flex flex-wrap items-end justify-between gap-4 pb-6">
-          <div className="flex items-center gap-3">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-[#101217] text-[var(--ag-accent)]">
-              <Layers className="h-4 w-4" />
-            </span>
-            <div>
-              <div className="font-mono text-[11px] font-semibold tracking-wider text-[var(--ag-accent)] uppercase">
-                X-RAY DISSECTION · GSAP SCROLLTRIGGER
-              </div>
-              <h2 className="text-2xl font-extrabold tracking-tight text-[#F4F5F8] sm:text-3xl">
-                {isZh ? '滚轮透视 · 三层剥离' : 'Scroll to Peel DOM'}
-              </h2>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {[
-              { idx: 0, label: isZh ? '01 剥废码' : '01 Strip' },
-              { idx: 1, label: isZh ? '02 提令牌' : '02 Tokens' },
-              { idx: 2, label: isZh ? '03 出代码' : '03 Code' },
-            ].map((step) => (
-              <button
-                key={step.idx}
-                type="button"
-                onClick={() => setXrayStep(step.idx)}
-                className={`rounded-full px-3 py-1 font-mono text-[11px] transition ${
-                  xrayStep === step.idx
-                    ? 'bg-[#F4F5F8] font-bold text-[#08090C]'
-                    : 'border border-white/10 text-[#A1A7B5] hover:text-[#F4F5F8]'
-                }`}
-              >
-                {step.label}
-              </button>
-            ))}
-
-            <button
-              type="button"
-              onClick={() => onNavigate('playground')}
-              className="ml-1 inline-flex items-center gap-1 rounded-full border border-white/10 px-3 py-1 text-[11px] text-[#A1A7B5] transition hover:border-white/25 hover:text-[#F4F5F8]"
-            >
-              <span>{isZh ? '跳过动效 ↓' : 'Skip ↓'}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Left: 3D Stacked Axonometric Layers | Right: 3-Phase Live Telemetry Readout */}
-        <div className="grid items-center gap-8 lg:grid-cols-12">
-          <div
-            className="ag-grid-stage relative min-h-[340px] overflow-hidden rounded-2xl border border-white/12 p-5 sm:min-h-[380px] sm:p-8 lg:col-span-7"
-            style={{ perspective: '1200px' }}
-          >
-            <div
-              ref={xrayBeamRef}
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-x-0 top-0 z-30 h-[2px] bg-gradient-to-r from-transparent via-[#FF4D1C] to-transparent"
-            />
-
-            <div className="relative mx-auto flex max-w-[440px] flex-col gap-3">
-              {/* Layer 1: Top Wireframe Waste Membrane (peels up-left on scroll!) */}
-              <div
-                ref={noiseLayerRef}
-                className={`rounded-xl border bg-[#0B0D12]/95 p-4 backdrop-blur-md transition-colors ${
-                  xrayStep === 0
-                    ? 'border-[var(--ag-accent)] shadow-[0_0_28px_-8px_rgba(255,77,28,0.5)]'
-                    : 'border-white/10'
-                }`}
-              >
-                <div className="flex items-center justify-between font-mono text-[11px]">
-                  <span className="font-bold text-[var(--ag-accent)]">01 · NOISE SHELL</span>
-                  <span className="text-[#7C8292]">-91.8%</span>
-                </div>
-                <div className="mt-2 font-mono text-[11px] text-[#7C8292] line-through">
-                  &lt;div class=&quot;css-19x82a&quot;&gt; × 20 · 4KB &lt;svg&gt;
-                </div>
-              </div>
-
-              {/* Layer 2: Design Token Sheet */}
-              <div
-                ref={tokenLayerRef}
-                className={`rounded-xl border bg-[#101217]/95 p-4 backdrop-blur-md transition-colors ${
-                  xrayStep === 1
-                    ? 'border-[var(--ag-accent)] shadow-[0_0_28px_-8px_rgba(255,77,28,0.45)]'
-                    : 'border-white/12'
-                }`}
-              >
-                <div className="flex items-center justify-between font-mono text-[11px]">
-                  <span className="font-bold text-[#F4F5F8]">02 · DESIGN TOKENS</span>
-                  <span className="text-[#A1A7B5]">Inter · 16px</span>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1.5">
-                  {['#08090C', '#FF4D1C', '#10B981', '#F4F5F8'].map((hex) => (
-                    <span
-                      key={hex}
-                      className="inline-flex items-center gap-1 rounded border border-white/10 bg-[#171A22] px-2 py-0.5 font-mono text-[11px] text-[#F4F5F8]"
-                    >
-                      <span className="h-2 w-2 rounded-xs" style={{ backgroundColor: hex }} />
-                      {hex}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Layer 3: Distilled Tailwind / JSX Result */}
-              <div
-                ref={cleanLayerRef}
-                className={`rounded-xl border bg-[#171A22]/95 p-4 backdrop-blur-md transition-colors ${
-                  xrayStep === 2
-                    ? 'border-[var(--ag-emerald)] shadow-[0_0_28px_-8px_rgba(16,185,129,0.5)]'
-                    : 'border-white/14'
-                }`}
-              >
-                <div className="flex items-center justify-between font-mono text-[11px]">
-                  <span className="inline-flex items-center gap-1 font-bold text-[#10B981]">
-                    <Sparkles className="h-3 w-3" />
-                    03 · CLEAN JSX / TAILWIND
+                  </div>
+                  <span className="rounded-full bg-[var(--ag-emerald-soft)] px-2.5 py-0.5 font-mono font-medium text-[var(--ag-emerald)]">
+                    {activeSpecimen.savedPct}
                   </span>
-                  <span className="text-[#10B981]">218 TOK</span>
                 </div>
-                <pre className="mt-2 font-mono text-[11px] leading-[1.5] whitespace-pre-wrap break-words text-[#D8DCE6]">
-                  <code>{`<Card className="rounded-2xl p-5"><Price>$29/mo</Price></Card>`}</code>
+
+                <pre className="mt-2.5 overflow-x-auto font-mono text-[12.5px] leading-[1.55] whitespace-pre-wrap break-words text-[var(--ag-code-ink)]">
+                  <code>{activeSpecimen.codeSnippet}</code>
                 </pre>
               </div>
+
+              <button
+                type="button"
+                onClick={() => setIsPaused((p) => !p)}
+                aria-label={
+                  isPaused
+                    ? isZh
+                      ? '继续轮播示例'
+                      : 'Resume specimen cycle'
+                    : isZh
+                      ? '暂停轮播示例'
+                      : 'Pause specimen cycle'
+                }
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[var(--ag-line-strong)] bg-[var(--ag-panel)] text-[var(--ag-ink)] transition-colors hover:border-[var(--ag-accent)]"
+              >
+                {isPaused ? <Play className="h-3.5 w-3.5" /> : <Pause className="h-3.5 w-3.5" />}
+              </button>
             </div>
           </div>
+        </div>
 
-          {/* Right: 3 Compact Phase Indicators on Open Canvas */}
-          <div className="min-w-0 divide-y divide-white/8 lg:col-span-5">
-            {[
-              {
-                idx: 0,
-                code: 'PHASE 01',
-                titleZh: '剥离混淆废码',
-                titleEn: 'Strip DOM Clutter',
-                metric: '20 div → 1 tag',
-              },
-              {
-                idx: 1,
-                code: 'PHASE 02',
-                titleZh: '抽离设计规范',
-                titleEn: 'Extract Tokens',
-                metric: 'Hex · Radius · Font',
-              },
-              {
-                idx: 2,
-                code: 'PHASE 03',
-                titleZh: '合成纯净组件',
-                titleEn: 'Clean Tailwind / JSX',
-                metric: '218 tok · 4.2ms',
-              },
-            ].map((item) => {
-              const active = xrayStep === item.idx;
-              return (
-                <button
-                  key={item.code}
-                  type="button"
-                  onClick={() => setXrayStep(item.idx)}
-                  className={`flex w-full items-center justify-between gap-4 border-l-2 py-5 pl-4 text-left transition ${
-                    active
-                      ? 'border-[var(--ag-accent)]'
-                      : 'border-white/10 hover:border-white/25'
-                  }`}
-                >
-                  <div>
-                    <div
-                      className={`font-mono text-[11px] font-bold ${
-                        active ? 'text-[var(--ag-accent)]' : 'text-[#8E95A5]'
-                      }`}
-                    >
-                      {item.code}
-                    </div>
-                    <div
-                      className={`mt-1 text-lg font-extrabold ${
-                        active ? 'text-[#F4F5F8]' : 'text-[#A1A7B5]'
-                      }`}
-                    >
-                      {isZh ? item.titleZh : item.titleEn}
-                    </div>
-                  </div>
-                  <span
-                    className={`font-mono text-xs ${
-                      active ? 'font-semibold text-[#10B981]' : 'text-[#8E95A5]'
-                    }`}
-                  >
-                    {item.metric}
-                  </span>
-                </button>
-              );
-            })}
+        {/* Docked 3-Fact Comparison Row (open hairlines, zero card boxes) */}
+        <div className="mt-10 grid divide-y divide-[var(--ag-line)] border-y border-[var(--ag-line)] sm:mt-14 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          <div className="py-4 sm:pr-6">
+            <div className="ag-tabular flex items-baseline justify-between gap-2">
+              <span className="text-[15px] font-medium text-[var(--ag-ink)]">
+                {isZh ? '发截图' : 'Screenshots'}
+              </span>
+              <span className="font-mono text-[13px] text-[var(--ag-muted)]">~50 / 100</span>
+            </div>
+            <p className="mt-1 text-[14px] text-[var(--ag-muted)]">
+              {isZh ? '丢失精确色号与圆角间距' : 'Loses exact hex values and spacing'}
+            </p>
+          </div>
+
+          <div className="py-4 sm:px-6">
+            <div className="ag-tabular flex items-baseline justify-between gap-2">
+              <span className="text-[15px] font-medium text-[var(--ag-ink)]">
+                {isZh ? 'F12 扒源码' : 'Raw F12 DOM'}
+              </span>
+              <span className="font-mono text-[13px] text-[var(--ag-accent)]">27k+ tok</span>
+            </div>
+            <p className="mt-1 text-[14px] text-[var(--ag-muted)]">
+              {isZh ? '冗余脚本撑爆上下文窗口' : 'Floods context with scripts and wrappers'}
+            </p>
+          </div>
+
+          <div className="py-4 sm:pl-6">
+            <div className="ag-tabular flex items-baseline justify-between gap-2">
+              <span className="text-[15px] font-medium text-[var(--ag-ink)]">
+                {isZh ? 'AnyGrab 提纯' : 'AnyGrab AST'}
+              </span>
+              <span className="font-mono text-[13px] font-medium text-[var(--ag-emerald)]">
+                99.6 / 100
+              </span>
+            </div>
+            <p className="mt-1 text-[14px] text-[var(--ag-muted)]">
+              {isZh ? '218 tok 直出纯净代码与色板' : '218 tok clean Tailwind and tokens'}
+            </p>
           </div>
         </div>
       </div>
