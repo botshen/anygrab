@@ -154,9 +154,16 @@ export function QuickStartView({ locale }: QuickStartViewProps) {
         <div className="grid gap-6 lg:grid-cols-2">
           {/* 1. Chrome MV3 3-Step Setup */}
           <div className="space-y-5 rounded-[16px] border border-[var(--ag-line)] bg-[var(--ag-panel)] p-6">
-            <h3 className="text-[19px] font-medium text-[var(--ag-ink)]">
-              {isZh ? 'Chrome 浏览器扩展' : 'Chrome MV3 extension'}
-            </h3>
+            <div className="space-y-1">
+              <h3 className="text-[19px] font-medium text-[var(--ag-ink)]">
+                {isZh ? '方式一：Chrome 浏览器扩展' : 'Option 1 · Chrome MV3 extension'}
+              </h3>
+              <p className="text-[13px] text-[var(--ag-muted)]">
+                {isZh
+                  ? '无需 MCP · 适合登录后后台、动态渲染页与可视化指哪抓哪。'
+                  : 'No MCP needed · Best for logged-in apps, SPAs, and visual picking.'}
+              </p>
+            </div>
 
             <ol className="divide-y divide-[var(--ag-line)] border-y border-[var(--ag-line)] text-[14px]">
               <li className="flex items-center justify-between gap-3 py-3.5">
@@ -182,7 +189,7 @@ export function QuickStartView({ locale }: QuickStartViewProps) {
                 <div className="min-w-0">
                   <span className="mr-2.5 font-mono text-[13px] text-[var(--ag-muted)]">02</span>
                   <span className="text-[var(--ag-ink)]">
-                    {isZh ? '加载已解压扩展，选择 ' : 'Load unpacked folder '}
+                    {isZh ? '解压后加载目录 ' : 'Load unpacked folder '}
                   </span>
                   <code className="ml-1 rounded bg-[var(--ag-accent-soft)] px-1.5 py-0.5 font-mono text-[13px] font-medium text-[var(--ag-accent)]">
                     apps/extension/dist
@@ -202,8 +209,8 @@ export function QuickStartView({ locale }: QuickStartViewProps) {
                   <span className="mr-2.5 font-mono text-[13px] text-[var(--ag-muted)]">03</span>
                   <span className="text-[var(--ag-ink)]">
                     {isZh
-                      ? '打开插件内的「30 秒练习靶场」即刻试抓'
-                      : 'Open popup and launch the 30s Practice Arena'}
+                      ? '点击扩展（或进「30 秒练习靶场」），悬停选中后点击即复制，直接 Cmd+V 贴给 AI'
+                      : 'Click the icon (or 30s Practice Arena), hover & click to copy, then Cmd+V into AI'}
                   </span>
                 </div>
               </li>
@@ -211,17 +218,24 @@ export function QuickStartView({ locale }: QuickStartViewProps) {
 
             <CopyCodeBlock
               code={`npx anygrab https://ui.shadcn.com/pricing --budget 1200 | pbcopy`}
-              label="CLI · npx anygrab"
+              label={isZh ? '方式二：终端 CLI · npx anygrab' : 'Option 2 · CLI (npx anygrab)'}
               isZh={isZh}
             />
           </div>
 
           {/* 2. MCP Server Setup */}
           <div className="min-w-0 space-y-5 rounded-[16px] border border-[var(--ag-line)] bg-[var(--ag-panel)] p-6">
-            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-              <h3 className="text-[19px] font-medium text-[var(--ag-ink)]">
-                MCP Server (anygrab-mcp)
-              </h3>
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+              <div className="space-y-1">
+                <h3 className="text-[19px] font-medium text-[var(--ag-ink)]">
+                  {isZh ? '方式三：MCP 服务 (anygrab-mcp)' : 'Option 3 · MCP Server (anygrab-mcp)'}
+                </h3>
+                <p className="text-[13px] text-[var(--ag-muted)]">
+                  {isZh
+                    ? '可选 · 让 AI 助手直接抓取公开网页，无需手动去浏览器点选。'
+                    : 'Optional · Let coding agents fetch public URLs directly without clicking.'}
+                </p>
+              </div>
 
               <div
                 className="grid w-full grid-cols-2 gap-1 rounded-lg bg-[var(--ag-panel-muted)] p-1 sm:inline-flex sm:w-auto"
