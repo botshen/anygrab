@@ -1,4 +1,4 @@
-import { VERSION } from '@anygrab/core';
+import { VERSION } from 'anygrab-core';
 import { Star } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { LeaderboardView } from './components/LeaderboardView';

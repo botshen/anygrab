@@ -4,7 +4,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { estimateTokens, VERSION, type GrabResult, type OutputFormat } from '@anygrab/core';
+import { estimateTokens, VERSION, type GrabResult, type OutputFormat } from 'anygrab-core';
 import { grabFromFile, grabFromHtml, grabFromUrl, type NodeGrabOptions } from './index';
 
 const VALID_FORMATS = new Set<OutputFormat>(['prompt', 'tailwind-html', 'jsx', 'markdown']);

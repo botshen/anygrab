@@ -1,5 +1,5 @@
 {
-  "name": "@anygrab/core",
+  "name": "anygrab-core",
   "version": "0.2.0",
   "description": "Zero-dependency token-budget-aware DOM & CSS distillation engine for AI Agents and RAG.",
   "type": "module",

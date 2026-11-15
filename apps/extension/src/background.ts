@@ -1,4 +1,4 @@
-import { VERSION } from '@anygrab/core';
+import { VERSION } from 'anygrab-core';
 import { loadSettings, saveSettings } from './shared/storage';
 import type {
   ExtensionMessage,

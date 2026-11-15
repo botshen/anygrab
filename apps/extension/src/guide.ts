@@ -1,4 +1,4 @@
-import { VERSION } from '@anygrab/core';
+import { VERSION } from 'anygrab-core';
 import { bootstrapContentScript, type AnyGrabPicker } from './content';
 import type { GrabExecutionOutcome } from './picker/picker-controller';
 import { copyTextToClipboard } from './shared/clipboard';

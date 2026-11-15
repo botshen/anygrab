@@ -1,4 +1,4 @@
-import { grab } from '@anygrab/core';
+import { grab } from 'anygrab-core';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { formatGrabToastSummary } from '../picker/dom-utils';
 import { copyTextToClipboard } from '../shared/clipboard';

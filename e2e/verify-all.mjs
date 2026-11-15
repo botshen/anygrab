@@ -1190,7 +1190,7 @@ async function verifyPlaygroundE2E() {
     const outputCodeLocator = page.locator('[aria-label="Distilled Output Code"]');
     await outputCodeLocator.waitFor({ state: 'visible' });
 
-    // Verify `prompt` format in `zh-CN` calls `@anygrab/core` with `locale: 'zh-CN'`
+    // Verify `prompt` format in `zh-CN` calls `anygrab-core` with `locale: 'zh-CN'`
     await playgroundSection.locator('button[data-format="prompt"]').click();
     const zhPromptCode = (await outputCodeLocator.textContent()) ?? '';
     assert.match(
@@ -1199,7 +1199,7 @@ async function verifyPlaygroundE2E() {
       'Playground in zh-CN must output Chinese AI replication prompt',
     );
     assert.match(zhPromptCode, /## 设计规范（自动提取）/);
-    assert.doesNotMatch(zhPromptCode, /css-19x82a/, 'Playground must run real @anygrab/core cleaner');
+    assert.doesNotMatch(zhPromptCode, /css-19x82a/, 'Playground must run real anygrab-core cleaner');
 
     // Switch to `tailwind-html` & Preset #6 (Kanban 10 Cards)
     await playgroundSection.locator('button[data-format="tailwind-html"]').click();
@@ -1279,7 +1279,7 @@ async function verifyPlaygroundE2E() {
     for (const tabLabel of ['Antigravity', 'Codex CLI', 'Cursor', 'Claude Code']) {
       await quickStartSection.getByRole('tab', { name: tabLabel, exact: true }).click();
       const qsText = await quickStartSection.innerText();
-      assert.match(qsText, /@anygrab\/mcp/, `Quick Start ${tabLabel} snippet must configure @anygrab/mcp`);
+      assert.match(qsText, /anygrab-mcp/, `Quick Start ${tabLabel} snippet must configure anygrab-mcp`);
     }
     logPass('Section 5 · Download & MCP Setup', '3-step Chrome MV3 guide + 4 MCP client snippets verified');
 
@@ -1303,7 +1303,7 @@ async function verifyPlaygroundE2E() {
     assert.equal(await page.evaluate(() => document.documentElement.lang), 'zh-CN');
     const restoredZhPrompt = (await page.locator('[aria-label="Distilled Output Code"]').textContent()) ?? '';
     assert.match(restoredZhPrompt, /请 1:1 视觉与布局还原/);
-    logPass('Official Website Runtime Language Switcher (`zh-CN` ↔ `en`)', 'UI copy + @anygrab/core prompt switched seamlessly');
+    logPass('Official Website Runtime Language Switcher (`zh-CN` ↔ `en`)', 'UI copy + anygrab-core prompt switched seamlessly');
 
     // 7. Verify Light / Dark Theme Switcher & Open-Source GitHub Star CTAs
     assert.equal(
@@ -1379,7 +1379,7 @@ async function verifyCliAndMcpSubprocesses() {
   assert.ok(fs.existsSync(CLI_BIN_PATH), `Missing CLI bundle at ${CLI_BIN_PATH}`);
   assert.ok(fs.existsSync(MCP_BIN_PATH), `Missing MCP bundle at ${MCP_BIN_PATH}`);
 
-  // 0. Programmatic `@anygrab/core` bilingual `locale: 'zh-CN' | 'en'` SDK verification
+  // 0. Programmatic `anygrab-core` bilingual `locale: 'zh-CN' | 'en'` SDK verification
   const coreEntryUrl = pathToFileURL(path.join(REPO_ROOT, 'packages', 'core', 'dist', 'index.js')).href;
   const { grab } = await import(coreEntryUrl);
   const sampleHtml = `<div style="display:flex;gap:12px;padding:16px;border-radius:12px;background:#1e293b;color:#f8fafc"><h2>旗舰卡片</h2><span>¥99</span></div>`;
@@ -1389,7 +1389,7 @@ async function verifyCliAndMcpSubprocesses() {
   assert.match(zhGrabRes.output, /## 设计规范（自动提取）/);
   assert.match(enGrabRes.output, /# AnyGrab Distilled UI Context/);
   assert.match(enGrabRes.output, /## Design Tokens/);
-  logPass('`@anygrab/core` SDK bilingual `locale: "zh-CN" | "en"` check', 'Chinese & English prompts verified');
+  logPass('`anygrab-core` SDK bilingual `locale: "zh-CN" | "en"` check', 'Chinese & English prompts verified');
 
   const fixtureServer = await startFixtureHttpServer();
 
@@ -1610,7 +1610,7 @@ async function verifyOpenSourceCompliance({ skipRebuild = false } = {}) {
     await runWorkspaceToolchainChecks();
   }
 
-  // 2. `@anygrab/core` strict zero runtime dependencies check
+  // 2. `anygrab-core` strict zero runtime dependencies check
   const corePkg = JSON.parse(
     fs.readFileSync(path.join(REPO_ROOT, 'packages', 'core', 'package.json'), 'utf8'),
   );
@@ -1620,7 +1620,7 @@ async function verifyOpenSourceCompliance({ skipRebuild = false } = {}) {
     0,
     `packages/core/package.json MUST have 0 runtime dependencies, found: ${runtimeDepKeys.join(', ')}`,
   );
-  logPass('`@anygrab/core` zero runtime dependencies', 'dependencies: {}');
+  logPass('`anygrab-core` zero runtime dependencies', 'dependencies: {}');
 
   // 3. Full-repo sensitive commercial reverse-engineering keyword scan
   // Constructed from split pairs so `e2e/verify-all.mjs` itself contains 0 literal matches.

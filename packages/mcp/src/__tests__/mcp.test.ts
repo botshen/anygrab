@@ -8,7 +8,7 @@ import { Client } from '@modelcontextprotocol/sdk/client/index.js';
 import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
 import { InMemoryTransport } from '@modelcontextprotocol/sdk/inMemory.js';
 import { afterEach, describe, expect, it } from 'vitest';
-import type { DesignTokens, GrabMetrics } from '@anygrab/core';
+import type { DesignTokens, GrabMetrics } from 'anygrab-core';
 import { createAnyGrabMcpServer } from '../index';
 
 interface TextContentBlock {
@@ -27,7 +27,7 @@ function getTextBlocks(result: Record<string, unknown>): TextContentBlock[] {
   );
 }
 
-describe('@anygrab/mcp protocol server & tools', () => {
+describe('anygrab-mcp protocol server & tools', () => {
   const activeServers: Array<ReturnType<typeof createServer>> = [];
   const activeCleanup: Array<() => Promise<void>> = [];
 

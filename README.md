@@ -26,7 +26,7 @@ Modern AI Coding Agents (**Antigravity**, **Claude Code**, **Cursor**, **Codex**
 - Article extractors (`Readability`, `defuddle`, `Turndown`) strip **100% of visual layout, Flexbox/Grid structure, design tokens, and interactive ARIA controls**, and frequently mangle complex `rowspan`/`colspan` data tables.
 - Dev-server tools (`react-grab`) require local React Fiber instrumentation and cannot inspect **arbitrary external production webpages** or static HTML snapshots.
 
-**AnyGrab** bridges that gap as a **zero-dependency, deterministic TypeScript compiler** (`@anygrab/core`) paired with a **1-line CLI**, **Stdio MCP Server**, **Chrome MV3 Shadow-DOM Picker**, and **Interactive Benchmark Playground**:
+**AnyGrab** bridges that gap as a **zero-dependency, deterministic TypeScript compiler** (`anygrab-core`) paired with a **1-line CLI**, **Stdio MCP Server**, **Chrome MV3 Shadow-DOM Picker**, and **Interactive Benchmark Playground**:
 
 ```text
 Raw SaaS Pricing HTML + Computed CSS :  27,397 tokens  (noisy resets, 13 giant SVGs, css-19x82a)
@@ -117,7 +117,7 @@ flowchart LR
     RAW["Raw HTML + &lt;style&gt; String<br/>(Zero-Dep Fallback Parser)"]
   end
 
-  subgraph Core["@anygrab/core (Zero Runtime Dependencies)"]
+  subgraph Core["anygrab-core (Zero Runtime Dependencies)"]
     ADAPT["Declarative Adapters<br/>(docs-mdx / github-ui / arxiv / pricing)"]
     STYLE["Style Differ &amp; Cascade<br/>(300+ Default Subtractions + var() Expand)"]
     CLEAN["DOM Cleaner &amp; 2D Table Grid<br/>(SVG Compact + Wrapper Unwrap)"]
@@ -128,7 +128,7 @@ flowchart LR
   subgraph Outputs["Outputs &amp; Integrations"]
     FMT["4 Formats + DesignTokens<br/>(prompt / tailwind-html / jsx / markdown)"]
     CLI["anygrab CLI &amp; Node SDK"]
-    MCP["@anygrab/mcp Stdio Server"]
+    MCP["anygrab-mcp Stdio Server"]
     EXT["Chrome MV3 Shadow-DOM Picker"]
   end
 
@@ -143,12 +143,12 @@ flowchart LR
 
 ---
 
-## Programmatic SDK (`@anygrab/core` & `anygrab`)
+## Programmatic SDK (`anygrab-core` & `anygrab`)
 
 ### Universal Zero-Dependency Core (Browser / Edge / Cloudflare Workers / Node)
 
 ```ts
-import { grab, extractDesignTokens } from '@anygrab/core';
+import { grab, extractDesignTokens } from 'anygrab-core';
 
 const result = grab(document.querySelector('#pricing-tier')!, {
   format: 'prompt',         // 'prompt' | 'tailwind-html' | 'jsx' | 'markdown'
@@ -182,7 +182,7 @@ const res = await grabFromUrl('https://example.com', {
 
 ## MCP Server Setup (Antigravity / Claude Code / Cursor / Codex)
 
-`@anygrab/mcp` exposes **3 local Stdio tools** (`grab_url`, `grab_html`, `extract_design_tokens`) with zero cloud keys required:
+`anygrab-mcp` exposes **3 local Stdio tools** (`grab_url`, `grab_html`, `extract_design_tokens`) with zero cloud keys required:
 
 ### Antigravity / Cursor / Claude Desktop (`mcp_config.json` / `.cursor/mcp.json`)
 
@@ -191,7 +191,7 @@ const res = await grabFromUrl('https://example.com', {
   "mcpServers": {
     "anygrab": {
       "command": "npx",
-      "args": ["-y", "@anygrab/mcp"]
+      "args": ["-y", "anygrab-mcp"]
     }
   }
 }
@@ -200,7 +200,7 @@ const res = await grabFromUrl('https://example.com', {
 ### Claude Code CLI
 
 ```bash
-claude mcp add anygrab -- npx -y @anygrab/mcp
+claude mcp add anygrab -- npx -y anygrab-mcp
 ```
 
 ### OpenAI Codex CLI (`~/.codex/config.toml`)
@@ -208,7 +208,7 @@ claude mcp add anygrab -- npx -y @anygrab/mcp
 ```toml
 [mcp_servers.anygrab]
 command = "npx"
-args = ["-y", "@anygrab/mcp"]
+args = ["-y", "anygrab-mcp"]
 ```
 
 | MCP Tool | Description |

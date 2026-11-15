@@ -1,4 +1,4 @@
-import type { OutputFormat } from '@anygrab/core';
+import type { OutputFormat } from 'anygrab-core';
 import { getMessages } from '../shared/i18n';
 import { FORMAT_CYCLE, HOST_ID, type ExtensionSettings } from '../shared/types';
 

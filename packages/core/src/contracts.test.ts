@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { estimateTokens, grab, registerAdapter, clearAdapters, getAdapters } from './index';
 import type { AnyGrabAdapter, GrabOptions } from './types';
 
-describe('@anygrab/core type contracts', () => {
+describe('anygrab-core type contracts', () => {
   it('returns a complete GrabResult adhering to core contracts', () => {
     const options: GrabOptions = {
       format: 'markdown',

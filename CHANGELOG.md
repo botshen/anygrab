@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Bilingual AI Replication Prompts (`@anygrab/core`):**
+- **Bilingual AI Replication Prompts (`anygrab-core`):**
   - Added `locale?: 'en' | 'zh-CN'` (`GrabLocale`) to `GrabOptions`. When `format: 'prompt'` and `locale: 'zh-CN'`, AnyGrab generates zero-jargon, ready-to-paste Simplified Chinese UI replication instructions with localized design-token annotations for Antigravity, Codex, Cursor, and Claude Code.
 - **Bilingual Chrome MV3 Extension & Interactive Practice Arena (`@anygrab/extension`):**
   - Standard Chrome `_locales/{en,zh_CN}/messages.json` internationalization plus automatic `navigator.language` detection and one-click `中 / EN` runtime switching across both the Popup and floating Shadow-DOM HUD.
@@ -24,7 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **`@anygrab/core` (`packages/core`):**
+- **`anygrab-core` (`packages/core`):**
   - Zero-dependency cross-environment HTML/DOM parser (`DOMParser` + pure-Node fallback parser & CSS selector engine).
   - Dual-mode CSS cascade resolver (`window.getComputedStyle` + `<style>`/inline specificity engine with CSS custom property `var(--x)` expansion and 300+ browser default style subtractions).
   - Deterministic CSS-to-Tailwind CSS v4 reverse compiler with CSS-in-JS / CSS Modules hash class stripping (`css-*`, `sc-*`, `jsx-*`) and optional `:hover` utility extraction.
@@ -33,8 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Design token extractor (`colors`, `fonts`, `radii`, `shadows`, `spacings`) and 4 built-in public adapters (`docs-mdx`, `github-ui`, `arxiv-paper`, `marketing-pricing`).
 - **`anygrab` (`packages/cli`):**
   - Zero-config CLI (`npx anygrab <url | file.html | ->`) with concurrent `<link rel="stylesheet">` fetching & inlining (`4000ms` timeout protection), `--budget`, `--format`, `--selector`, `--hover`, `--tokens-only`, `--json`, and stderr compression telemetry.
-  - Node.js programmatic SDK (`grabFromUrl`, `grabFromFile`, `grabFromHtml`) re-exporting `@anygrab/core`.
-- **`@anygrab/mcp` (`packages/mcp`):**
+  - Node.js programmatic SDK (`grabFromUrl`, `grabFromFile`, `grabFromHtml`) re-exporting `anygrab-core`.
+- **`anygrab-mcp` (`packages/mcp`):**
   - Stdio Model Context Protocol server (`anygrab-mcp`) exposing `grab_url`, `grab_html`, and `extract_design_tokens` tools for Antigravity, Claude Code, Cursor, and Codex.
 - **`@anygrab/extension` (`apps/extension`):**
   - Chrome Manifest V3 visual element picker (`Alt+Shift+G`) mounted inside an isolated Open Shadow Root (`#__anygrab-host__`) with `ArrowUp`/`ArrowDown` ancestor/child navigation, `Tab` live format cycling, token budget controls, and recent history popup.

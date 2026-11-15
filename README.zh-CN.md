@@ -26,7 +26,7 @@
 - 传统正文提取器（`Readability`、`defuddle`、`Turndown`）：暴力丢弃 **100% 的 Flex/Grid 视觉布局、色板圆角阴影与表单 ARIA 交互语义**，遇到含 `rowspan`/`colspan` 的复杂合并表头更是直接错位崩坏。
 - 本地开发工具（`react-grab`）：强依赖本地注入 React 源码环境，对**任意外部线上网页**或静态 HTML 快照完全失效。
 
-**AnyGrab** 以 **零运行时依赖的确定性 TypeScript 核心编译器（`@anygrab/core`）** 为底座，四位一体提供 **一行 `npx` CLI**、**本地 Stdio MCP 服务**、**Chrome MV3 零污染拾取插件** 与 **纯静态在线交互靶场**：
+**AnyGrab** 以 **零运行时依赖的确定性 TypeScript 核心编译器（`anygrab-core`）** 为底座，四位一体提供 **一行 `npx` CLI**、**本地 Stdio MCP 服务**、**Chrome MV3 零污染拾取插件** 与 **纯静态在线交互靶场**：
 
 ```text
 原始 SaaS 定价页 + 全量计算样式 :  27,397 tokens  (默认重置噪音 + 13 个巨型 SVG + css-19x82a 哈希类)
@@ -117,7 +117,7 @@ flowchart LR
     RAW["原始 HTML + &lt;style&gt; 字符串<br/>(零依赖纯 TS 回退解析器)"]
   end
 
-  subgraph Core["@anygrab/core (严格零运行时依赖)"]
+  subgraph Core["anygrab-core (严格零运行时依赖)"]
     ADAPT["声明式站点适配器<br/>(docs-mdx / github-ui / arxiv / pricing)"]
     STYLE["双模 CSS 级联与默认样式减法<br/>(剔除 300+ 默认废话 + var() 变量展开)"]
     CLEAN["DOM 降噪与 2D 虚拟网格表格<br/>(SVG 语义折叠 + 冗余 div 解包)"]
@@ -128,7 +128,7 @@ flowchart LR
   subgraph Outputs["多模态输出与工具链集成"]
     FMT["4 大格式 + DesignTokens<br/>(prompt / tailwind-html / jsx / markdown)"]
     CLI["anygrab CLI 与 Node SDK"]
-    MCP["@anygrab/mcp 本地服务"]
+    MCP["anygrab-mcp 本地服务"]
     EXT["Chrome MV3 Shadow-DOM 拾取扩展"]
   end
 
@@ -148,7 +148,7 @@ flowchart LR
 ### 跨环境零依赖内核（浏览器 / Edge Worker / Node.js 通用）
 
 ```ts
-import { grab } from '@anygrab/core';
+import { grab } from 'anygrab-core';
 
 const result = grab(document.querySelector('#pricing-tier')!, {
   format: 'prompt',         // 'prompt' | 'tailwind-html' | 'jsx' | 'markdown'
@@ -182,7 +182,7 @@ const res = await grabFromUrl('https://example.com', {
 
 ## MCP 服务配置（Antigravity / Claude Code / Cursor / Codex）
 
-`@anygrab/mcp` 提供纯本地 Stdio 协议服务，内置 **`grab_url`**、**`grab_html`**、**`extract_design_tokens`** 三大工具，无需任何云端 API Key：
+`anygrab-mcp` 提供纯本地 Stdio 协议服务，内置 **`grab_url`**、**`grab_html`**、**`extract_design_tokens`** 三大工具，无需任何云端 API Key：
 
 ### Antigravity / Cursor / Claude Desktop（`mcp_config.json` 或 `.cursor/mcp.json`）
 
@@ -191,7 +191,7 @@ const res = await grabFromUrl('https://example.com', {
   "mcpServers": {
     "anygrab": {
       "command": "npx",
-      "args": ["-y", "@anygrab/mcp"]
+      "args": ["-y", "anygrab-mcp"]
     }
   }
 }
@@ -200,7 +200,7 @@ const res = await grabFromUrl('https://example.com', {
 ### Claude Code 命令行一键挂载
 
 ```bash
-claude mcp add anygrab -- npx -y @anygrab/mcp
+claude mcp add anygrab -- npx -y anygrab-mcp
 ```
 
 ### OpenAI Codex CLI（`~/.codex/config.toml`）
@@ -208,7 +208,7 @@ claude mcp add anygrab -- npx -y @anygrab/mcp
 ```toml
 [mcp_servers.anygrab]
 command = "npx"
-args = ["-y", "@anygrab/mcp"]
+args = ["-y", "anygrab-mcp"]
 ```
 
 ---

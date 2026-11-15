@@ -1,4 +1,4 @@
-import type { ResolvedStyle, StyleResolver } from '@anygrab/core';
+import type { ResolvedStyle, StyleResolver } from 'anygrab-core';
 import type { FetchExternalCssResponse } from './types';
 
 export interface HoverCssRule {
@@ -259,7 +259,7 @@ function extractHoverFromRuleList(ruleList: CSSRuleList, target: HoverCssRule[])
 }
 
 /**
- * Builds the `StyleResolver` passed to `@anygrab/core`'s `grab()`.
+ * Builds the `StyleResolver` passed to `anygrab-core`'s `grab()`.
  * - Standard calls `(el, pseudo)` delegate directly to `window.getComputedStyle(el, pseudo)`.
  * - When `pseudo === ':hover'` and `hoverRules` are provided, resolves matched `:hover`
  *   stylesheet declarations (including recursive `var(--xxx, fallback)` expansion via

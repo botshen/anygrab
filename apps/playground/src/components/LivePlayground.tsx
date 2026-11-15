@@ -1,4 +1,4 @@
-import { grab, type OutputFormat } from '@anygrab/core';
+import { grab, type OutputFormat } from 'anygrab-core';
 import {
   AlertTriangle,
   Check,

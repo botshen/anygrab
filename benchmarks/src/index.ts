@@ -1,4 +1,4 @@
-import { estimateTokens, grab, type GrabResult } from '@anygrab/core';
+import { estimateTokens, grab, type GrabResult } from 'anygrab-core';
 import { parseHTML } from 'linkedom';
 import { runTurndownGfm } from './evaluator';
 

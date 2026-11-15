@@ -1,4 +1,4 @@
-import type { OutputFormat } from '@anygrab/core';
+import type { OutputFormat } from 'anygrab-core';
 
 export type ExtensionLocale = 'zh-CN' | 'en';
 

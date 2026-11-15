@@ -39,9 +39,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build @anygrab/core & @anygrab/playground
+      - name: Build anygrab-core & @anygrab/playground
         run: |
-          pnpm --filter @anygrab/core build
+          pnpm --filter anygrab-core build
           pnpm --filter @anygrab/playground build
 
       - name: Configure GitHub Pages

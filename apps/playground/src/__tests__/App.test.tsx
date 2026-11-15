@@ -175,7 +175,7 @@ describe('AnyGrab Bilingual Official Product Website (v0.2.0)', () => {
     expect(container.textContent).toContain('已复制');
   });
 
-  it('passes active locale into @anygrab/core grab() in Live Playground and supports dual sandbox previews', () => {
+  it('passes active locale into anygrab-core grab() in Live Playground and supports dual sandbox previews', () => {
     act(() => {
       root.render(<App />);
     });
@@ -189,11 +189,11 @@ describe('AnyGrab Bilingual Official Product Website (v0.2.0)', () => {
 
     const outputPre = container.querySelector('pre[aria-label="Distilled Output Code"]');
     expect(outputPre).not.toBeNull();
-    // Chinese locale generates localized Chinese prompt directly from @anygrab/core!
+    // Chinese locale generates localized Chinese prompt directly from anygrab-core!
     expect(outputPre!.textContent).toContain('请 1:1 视觉与布局还原以下从网页提取的 UI 组件');
     expect(outputPre!.textContent).toContain('## 设计规范（自动提取）');
 
-    // Switch to EN and verify @anygrab/core output immediately switches to English prompt
+    // Switch to EN and verify anygrab-core output immediately switches to English prompt
     const enBtn = container.querySelector<HTMLButtonElement>('button[data-locale="en"]');
     act(() => {
       enBtn!.click();

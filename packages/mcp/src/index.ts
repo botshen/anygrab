@@ -7,7 +7,7 @@ import {
   VERSION,
   type DesignTokens,
   type OutputFormat,
-} from '@anygrab/core';
+} from 'anygrab-core';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';

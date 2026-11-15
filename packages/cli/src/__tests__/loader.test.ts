@@ -49,7 +49,7 @@ describe('anygrab SDK exports & HTML/CSS loader', () => {
     return `http://127.0.0.1:${port}`;
   }
 
-  it('re-exports @anygrab/core functions and constants cleanly', () => {
+  it('re-exports anygrab-core functions and constants cleanly', () => {
     expect(typeof grab).toBe('function');
     expect(typeof estimateTokens).toBe('function');
     expect(typeof extractDesignTokens).toBe('function');

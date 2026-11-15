@@ -1,4 +1,4 @@
-import { VERSION, type OutputFormat } from '@anygrab/core';
+import { VERSION, type OutputFormat } from 'anygrab-core';
 import { copyTextToClipboard } from './shared/clipboard';
 import { getMessages, toggleLocale } from './shared/i18n';
 import {

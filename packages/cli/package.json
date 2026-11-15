@@ -43,7 +43,7 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@anygrab/core": "workspace:*",
+    "anygrab-core": "workspace:*",
     "linkedom": "^0.18.15"
   }
 }

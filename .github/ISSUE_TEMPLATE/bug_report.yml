@@ -14,9 +14,9 @@ body:
     attributes:
       label: Affected Package / Surface
       options:
-        - "@anygrab/core (DOM/CSS distillation, Tailwind/JSX/Markdown formatter, token budget)"
+        - "anygrab-core (DOM/CSS distillation, Tailwind/JSX/Markdown formatter, token budget)"
         - "anygrab (CLI / Node SDK / stylesheet inliner)"
-        - "@anygrab/mcp (MCP stdio server)"
+        - "anygrab-mcp (MCP stdio server)"
         - "@anygrab/extension (Chrome MV3 visual picker)"
         - "@anygrab/playground (Interactive Playground & Benchmark site)"
     validations:

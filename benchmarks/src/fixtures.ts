@@ -708,7 +708,7 @@ function createApiDocsFixture(): BenchmarkFixture {
           <h2>TypeScript SDK Example</h2>
           <button type="button" class="endpoint-pill" style="cursor: pointer; border: 1px solid #312e81;">Copy SDK Snippet</button>
         </div>
-        <pre class="code-block"><code class="language-typescript">import { grab } from '@anygrab/core';
+        <pre class="code-block"><code class="language-typescript">import { grab } from 'anygrab-core';
 
 const result = grab(document.querySelector('main')!, {
   format: 'jsx',
@@ -768,7 +768,7 @@ console.log(result.metrics.compressionRatio);</code></pre>
       expectedKeyTexts: [
         'POST /v1/distill',
         'Distill Webpage Subtree',
-        "import { grab } from '@anygrab/core'",
+        "import { grab } from 'anygrab-core'",
         'maxTokens',
         'compactSvg',
         'Request Body Parameters',

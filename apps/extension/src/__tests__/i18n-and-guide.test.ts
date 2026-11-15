@@ -79,7 +79,7 @@ describe('Bilingual i18n (zh-CN / en), Plain-Language Popup & Built-In Practice 
     expect(popupRoot.textContent).toContain('How to Use · 30s Practice');
   });
 
-  it('switches Shadow DOM HUD language live and generates Chinese AI Prompt via @anygrab/core', async () => {
+  it('switches Shadow DOM HUD language live and generates Chinese AI Prompt via anygrab-core', async () => {
     document.body.innerHTML = `
       <div class="demo-card" style="padding: 16px; border-radius: 12px; background-color: #4f46e5; color: #ffffff;">
         <h3>企业数据总览</h3>
@@ -108,7 +108,7 @@ describe('Bilingual i18n (zh-CN / en), Plain-Language Popup & Built-In Practice 
     const outcome = await picker.grabSelected();
 
     expect(outcome).not.toBeNull();
-    // Verify @anygrab/core produced Chinese replication prompt
+    // Verify anygrab-core produced Chinese replication prompt
     expect(outcome?.result.output).toContain('请 1:1 视觉与布局还原以下从网页提取的 UI 组件');
     expect(outcome?.toastText).toContain('已复制！已为你剔除');
     expect(outcome?.toastText).toContain('反重力 / Codex');

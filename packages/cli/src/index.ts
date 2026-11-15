@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { grab, type GrabOptions, type GrabResult } from '@anygrab/core';
+import { grab, type GrabOptions, type GrabResult } from 'anygrab-core';
 import {
   DEFAULT_CSS_TIMEOUT_MS,
   DEFAULT_FETCH_TIMEOUT_MS,
@@ -15,7 +15,7 @@ import {
   type StylesheetInlineResult,
 } from './loader';
 
-export * from '@anygrab/core';
+export * from 'anygrab-core';
 export {
   DEFAULT_CSS_TIMEOUT_MS,
   DEFAULT_FETCH_TIMEOUT_MS,

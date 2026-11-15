@@ -35,7 +35,7 @@ importers:
 
   apps/extension:
     dependencies:
-      '@anygrab/core':
+      anygrab-core:
         specifier: workspace:*
         version: link:../../packages/core
     devDependencies:
@@ -45,7 +45,7 @@ importers:
 
   apps/playground:
     dependencies:
-      '@anygrab/core':
+      anygrab-core:
         specifier: workspace:*
         version: link:../../packages/core
       gsap:
@@ -85,7 +85,7 @@ importers:
 
   benchmarks:
     dependencies:
-      '@anygrab/core':
+      anygrab-core:
         specifier: workspace:*
         version: link:../packages/core
       linkedom:
@@ -104,7 +104,7 @@ importers:
 
   packages/cli:
     dependencies:
-      '@anygrab/core':
+      anygrab-core:
         specifier: workspace:*
         version: link:../core
       linkedom:
@@ -115,12 +115,12 @@ importers:
 
   packages/mcp:
     dependencies:
-      '@anygrab/core':
-        specifier: workspace:*
-        version: link:../core
       '@modelcontextprotocol/sdk':
         specifier: ^1.32.2
         version: 1.32.2(zod@3.25.76)
+      anygrab-core:
+        specifier: workspace:*
+        version: link:../core
       linkedom:
         specifier: ^0.18.15
         version: 0.18.15

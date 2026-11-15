@@ -1,4 +1,4 @@
-import { grab, type GrabOptions, type GrabResult, type OutputFormat } from '@anygrab/core';
+import { grab, type GrabOptions, type GrabResult, type OutputFormat } from 'anygrab-core';
 import { copyTextToClipboard } from '../shared/clipboard';
 import { collectHoverRulesFromDocument, createPageStyleResolver } from '../shared/hover-styles';
 import { toggleLocale } from '../shared/i18n';

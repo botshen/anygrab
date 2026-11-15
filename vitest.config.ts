@@ -7,7 +7,7 @@ const rootDir = fileURLToPath(new URL('.', import.meta.url));
 export default defineConfig({
   resolve: {
     alias: {
-      '@anygrab/core': resolve(rootDir, 'packages/core/src/index.ts'),
+      'anygrab-core': resolve(rootDir, 'packages/core/src/index.ts'),
     },
   },
   test: {

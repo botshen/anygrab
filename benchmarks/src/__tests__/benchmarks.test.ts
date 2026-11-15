@@ -1,4 +1,4 @@
-import { estimateTokens } from '@anygrab/core';
+import { estimateTokens } from 'anygrab-core';
 import { describe, expect, it } from 'vitest';
 import {
   BENCHMARK_FIXTURES,

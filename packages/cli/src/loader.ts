@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { dirname, isAbsolute, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import type { GrabOptions } from '@anygrab/core';
+import type { GrabOptions } from 'anygrab-core';
 import { parseHTML } from 'linkedom';
 
 export const DEFAULT_FETCH_TIMEOUT_MS = 10_000;

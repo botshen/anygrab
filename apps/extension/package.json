@@ -14,7 +14,7 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@anygrab/core": "workspace:*"
+    "anygrab-core": "workspace:*"
   },
   "devDependencies": {
     "@types/chrome": "^0.3.7"

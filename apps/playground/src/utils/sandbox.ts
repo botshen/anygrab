@@ -1,4 +1,4 @@
-import type { OutputFormat } from '@anygrab/core';
+import type { OutputFormat } from 'anygrab-core';
 import type { SiteLocale } from '../i18n';
 
 function stripScriptsAndInlineHandlers(html: string): string {

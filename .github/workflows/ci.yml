@@ -39,14 +39,14 @@ jobs:
       - name: Install dependencies (frozen lockfile)
         run: pnpm install --frozen-lockfile
 
-      - name: Verify @anygrab/core has zero runtime dependencies
+      - name: Verify anygrab-core has zero runtime dependencies
         run: |
           node -e '
             const fs = require("node:fs");
             const pkg = JSON.parse(fs.readFileSync("packages/core/package.json", "utf8"));
             const deps = Object.keys(pkg.dependencies || {});
             if (deps.length > 0) {
-              console.error("@anygrab/core must have zero runtime dependencies, found:", deps);
+              console.error("anygrab-core must have zero runtime dependencies, found:", deps);
               process.exit(1);
             }
           '

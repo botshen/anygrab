@@ -8,7 +8,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { AddressInfo } from 'node:net';
 import { afterEach, describe, expect, it } from 'vitest';
-import { VERSION, type DesignTokens, type GrabResult } from '@anygrab/core';
+import { VERSION, type DesignTokens, type GrabResult } from 'anygrab-core';
 import { parseCliArgs, runCli, type CliIo } from '../cli';
 
 function createMockIo(options: { stdinText?: string; isTTY?: boolean } = {}): {

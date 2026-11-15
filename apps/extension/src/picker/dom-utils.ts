@@ -1,4 +1,4 @@
-import { estimateTokens, type OutputFormat } from '@anygrab/core';
+import { estimateTokens, type OutputFormat } from 'anygrab-core';
 import { FORMAT_SHORT_LABELS, HOST_ID, type ExtensionLocale } from '../shared/types';
 
 const NON_PICKABLE_TAGS = new Set([

@@ -22,7 +22,7 @@ const MCP_CONFIGS: Record<
   "mcpServers": {
     "anygrab": {
       "command": "npx",
-      "args": ["-y", "@anygrab/mcp"]
+      "args": ["-y", "anygrab-mcp"]
     }
   }
 }`,
@@ -32,7 +32,7 @@ const MCP_CONFIGS: Record<
     configPath: '~/.codex/config.toml',
     snippet: `[mcp_servers.anygrab]
 command = "npx"
-args = ["-y", "@anygrab/mcp"]`,
+args = ["-y", "anygrab-mcp"]`,
   },
   cursor: {
     label: 'Cursor',
@@ -41,7 +41,7 @@ args = ["-y", "@anygrab/mcp"]`,
   "mcpServers": {
     "anygrab": {
       "command": "npx",
-      "args": ["-y", "@anygrab/mcp"]
+      "args": ["-y", "anygrab-mcp"]
     }
   }
 }`,
@@ -49,7 +49,7 @@ args = ["-y", "@anygrab/mcp"]`,
   'claude-code': {
     label: 'Claude Code',
     configPath: 'Terminal',
-    snippet: `claude mcp add anygrab -- npx -y @anygrab/mcp`,
+    snippet: `claude mcp add anygrab -- npx -y anygrab-mcp`,
   },
 };
 
@@ -220,7 +220,7 @@ export function QuickStartView({ locale }: QuickStartViewProps) {
           <div className="min-w-0 space-y-5 rounded-[16px] border border-[var(--ag-line)] bg-[var(--ag-panel)] p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
               <h3 className="text-[19px] font-medium text-[var(--ag-ink)]">
-                MCP Server (@anygrab/mcp)
+                MCP Server (anygrab-mcp)
               </h3>
 
               <div

@@ -1,4 +1,4 @@
-import { estimateTokens, grab } from '@anygrab/core';
+import { estimateTokens, grab } from 'anygrab-core';
 import { parseHTML } from 'linkedom';
 import TurndownService from 'turndown';
 import { gfm } from 'turndown-plugin-gfm';

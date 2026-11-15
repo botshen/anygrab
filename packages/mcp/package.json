@@ -1,5 +1,5 @@
 {
-  "name": "@anygrab/mcp",
+  "name": "anygrab-mcp",
   "version": "0.2.0",
   "description": "Model Context Protocol (MCP) server for AnyGrab DOM & UI context distillation.",
   "type": "module",
@@ -36,7 +36,7 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "dependencies": {
-    "@anygrab/core": "workspace:*",
+    "anygrab-core": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.32.2",
     "linkedom": "^0.18.15",
     "zod": "^3.25.0"

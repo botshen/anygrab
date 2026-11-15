@@ -6,8 +6,8 @@ Thank you for your interest in contributing to **AnyGrab**! Our goal is to build
 
 ## Core Architectural Principles
 
-1. **Zero Runtime Dependencies in `@anygrab/core`:**
-   `packages/core/package.json` must maintain `"dependencies": {}` so `@anygrab/core` runs identically in Browsers, Chrome MV3 Service Workers/Content Scripts, Cloudflare Workers, Deno, Bun, and Node.js.
+1. **Zero Runtime Dependencies in `anygrab-core`:**
+   `packages/core/package.json` must maintain `"dependencies": {}` so `anygrab-core` runs identically in Browsers, Chrome MV3 Service Workers/Content Scripts, Cloudflare Workers, Deno, Bun, and Node.js.
 2. **Deterministic, Sub-5ms Execution (Zero Runtime LLM Calls):**
    All distillation rules, CSS-to-Tailwind mappings, virtual-grid table expansions, and AST salience scoring must be deterministic TypeScript algorithms.
 3. **100% Standards-Based & Non-Adversarial:**
@@ -41,9 +41,9 @@ pnpm bench
 
 | Path | Package | Description |
 | :--- | :--- | :--- |
-| `packages/core` | `@anygrab/core` | Zero-dependency DOM/CSS distiller, Tailwind v4 reverse compiler, 2D table grid & AST budget pruner |
+| `packages/core` | `anygrab-core` | Zero-dependency DOM/CSS distiller, Tailwind v4 reverse compiler, 2D table grid & AST budget pruner |
 | `packages/cli` | `anygrab` | Node.js CLI (`npx anygrab`) + stylesheet inliner + programmatic Node SDK |
-| `packages/mcp` | `@anygrab/mcp` | Stdio Model Context Protocol server (`grab_url`, `grab_html`, `extract_design_tokens`) |
+| `packages/mcp` | `anygrab-mcp` | Stdio Model Context Protocol server (`grab_url`, `grab_html`, `extract_design_tokens`) |
 | `apps/extension` | `@anygrab/extension` | Chrome Manifest V3 visual element picker (Open Shadow DOM isolated HUD) |
 | `apps/playground` | `@anygrab/playground` | Zero-backend Vite + React 19 interactive Playground & `AnyGrab-Bench` leaderboard |
 | `benchmarks` | `@anygrab/benchmarks` | 10-fixture DOM torture suite & multi-baseline fidelity evaluator |
@@ -104,8 +104,8 @@ Add a test in `packages/core/src/` verifying:
 3. Primary content and code/tables remain intact across `markdown`, `tailwind-html`, and `jsx` formats.
 
 ```bash
-pnpm --filter @anygrab/core test
-pnpm --filter @anygrab/core typecheck
+pnpm --filter anygrab-core test
+pnpm --filter anygrab-core typecheck
 ```
 
 Looking for ideas? Check [`docs/GOOD_FIRST_ISSUES.md`](./docs/GOOD_FIRST_ISSUES.md) for 12 ready-to-claim 30-minute tasks!
